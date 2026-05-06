@@ -111,7 +111,6 @@ async function handleRegister() {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
-        // ถ้าโค้ดค้าง มักจะค้างที่บรรทัดด้านล่างนี้ หากยังไม่ได้กดสร้างฐานข้อมูลในเว็บ Firebase
         await setDoc(doc(db, "users", user.uid), {
             fullName: name,
             studentId: id,
@@ -136,7 +135,6 @@ async function handleRegister() {
         } else if (errorCode === 'auth/weak-password') {
             showModal('warning', 'รหัสผ่านอ่อนเกินไป', 'กรุณาตั้งรหัสผ่านอย่างน้อย 6 ตัวอักษร');
         } else if (errorCode === 'permission-denied') {
-            // เพิ่มการดักจับหากสร้างฐานข้อมูลแล้ว แต่ลืมแก้ Rules
             showModal('error', 'ข้อผิดพลาดฐานข้อมูล', 'ไม่สามารถบันทึกข้อมูลได้ กรุณาเปิด Test Mode ในแท็บ Rules ของ Firestore Database');
         } else {
             showModal('error', 'เกิดข้อผิดพลาด', 'ข้อผิดพลาด: ' + error.message);
