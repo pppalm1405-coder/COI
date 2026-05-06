@@ -1,15 +1,11 @@
 // script.js
 
 // ==========================================
-// 1. นำเข้า Firebase SDK (ดึงผ่าน CDN สำหรับเว็บ)
+// 1. นำเข้า Firebase SDK
 // ==========================================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
-
-// นำเข้าโมดูลสำหรับ Authentication (เข้าสู่ระบบ/สมัครสมาชิก)
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-// นำเข้าโมดูลสำหรับ Firestore (ฐานข้อมูลสำหรับเก็บประวัติและ Role)
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 // ==========================================
@@ -25,11 +21,10 @@ const firebaseConfig = {
   measurementId: "G-WWCVXW155M"
 };
 
-// Initialize Firebase App และเครื่องมือต่างๆ
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
-const auth = getAuth(app); // ตัวแปรจัดการระบบล็อกอิน
-const db = getFirestore(app); // ตัวแปรจัดการฐานข้อมูล
+const auth = getAuth(app); 
+const db = getFirestore(app); 
 
 console.log("🔥 Firebase Initialized Successfully!");
 
@@ -37,7 +32,6 @@ console.log("🔥 Firebase Initialized Successfully!");
 // 3. ฟังก์ชันระบบ UI & Firebase Logic
 // ==========================================
 
-// --- ฟังก์ชันสลับหน้า ---
 function switchView(viewId) {
     document.getElementById('loginView').classList.add('hidden-section');
     document.getElementById('registerView').classList.add('hidden-section');
@@ -47,10 +41,12 @@ function switchView(viewId) {
     document.getElementById(viewId).classList.remove('hidden-section');
     
     if(viewId === 'registerView') document.getElementById('registerForm').reset();
-    if(viewId === 'loginView') document.getElementById('loginForm').reset();
+    if(viewId === 'loginView') {
+        document.getElementById('loginForm').reset();
+        document.getElementById('loginError').classList.add('hidden'); // ซ่อน error เสมอตอนกลับมาหน้า login
+    }
 }
 
-// --- ฟังก์ชันสมัครสมาชิก (บันทึกลง Firebase จริง) ---
 async function handleRegister() {
     const name = document.getElementById('regName').value.trim();
     const id = document.getElementById('regId').value.trim();
@@ -72,11 +68,9 @@ async function handleRegister() {
     const role = document.querySelector('input[name="userRole"]:checked').value;
 
     try {
-        // 1. สร้างบัญชีผู้ใช้ใน Firebase Auth
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
-        // 2. นำข้อมูลส่วนตัวและสถานะ (Role) ไปเก็บใน Firestore Collection "users"
         await setDoc(doc(db, "users", user.uid), {
             fullName: name,
             studentId: id,
@@ -86,7 +80,6 @@ async function handleRegister() {
             createdAt: new Date()
         });
 
-        // 3. แสดงป๊อปอัพยืนยันเมื่อสำเร็จ
         showSuccessModal();
 
     } catch (error) {
@@ -102,7 +95,6 @@ async function handleRegister() {
     }
 }
 
-// --- ฟังก์ชันเปิด/ปิด ป๊อปอัพ ---
 function showSuccessModal() {
     document.getElementById('successModal').classList.remove('hidden-section');
 }
@@ -112,53 +104,51 @@ function closeModalAndLogin() {
     switchView('loginView');
 }
 
-// --- ฟังก์ชันเข้าสู่ระบบ (เช็ค Firebase จริงและแยกสถานะ) ---
+// --- ฟังก์ชันเข้าสู่ระบบฉบับอัปเดต (มีแจ้งเตือนสีแดง) ---
 async function handleLogin() {
     const emailInput = document.getElementById('emailInput').value.trim();
     const passwordInput = document.getElementById('passwordInput').value.trim();
+    const loginError = document.getElementById('loginError');
+
+    // ซ่อนข้อความแจ้งเตือนสีแดงก่อนทุกครั้งที่กดปุ่ม
+    loginError.classList.add('hidden');
 
     if (!emailInput || !passwordInput) {
-        alert("กรุณากรอกอีเมลและรหัสผ่าน");
+        loginError.innerText = "กรุณากรอกอีเมลและรหัสผ่านให้ครบถ้วน";
+        loginError.classList.remove('hidden');
         return;
     }
 
     try {
-        // 1. ล็อกอินด้วย Email & Password
         const userCredential = await signInWithEmailAndPassword(auth, emailInput, passwordInput);
         const user = userCredential.user;
 
-        // 2. ดึงข้อมูลสถานะ (Role) จาก Firestore
         const docRef = doc(db, "users", user.uid);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
             const userData = docSnap.data();
             
-            // 3. แยกหน้าตาม Role ที่ตั้งไว้ตอนสมัคร
             if (userData.role === 'admin') {
                 switchView('adminView');
             } else {
                 document.getElementById('studentWelcomeText').innerText = `ยินดีต้อนรับ, ${userData.fullName} (${userData.studentId})`;
                 switchView('studentView');
             }
+            document.getElementById('loginForm').reset();
         } else {
-            alert("ไม่พบข้อมูลสถานะผู้ใช้งานในระบบ ติดต่อแอดมิน");
+            loginError.innerText = "บัญชีนี้ไม่มีข้อมูลสถานะในระบบ ติดต่อแอดมิน";
+            loginError.classList.remove('hidden');
         }
-        
-        document.getElementById('loginForm').reset();
 
     } catch (error) {
-        const errorCode = error.code;
-        if (errorCode === 'auth/invalid-credential' || errorCode === 'auth/user-not-found' || errorCode === 'auth/wrong-password') {
-            alert("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
-        } else {
-            alert("เกิดข้อผิดพลาดในการเข้าสู่ระบบ: " + error.message);
-        }
         console.error("Login Error:", error);
+        // แสดงข้อความสีแดงเมื่อรหัสผิด หรือไม่มีอีเมลในระบบ
+        loginError.innerText = "ไม่มีข้อมูลบัญชีผู้ใช้งานนี้ หรือ รหัสผ่านไม่ถูกต้อง";
+        loginError.classList.remove('hidden');
     }
 }
 
-// --- ฟังก์ชันตรวจสอบและบันทึกข้อมูลฟอร์มกิจกรรม ---
 function submitActivity() {
     let isValid = true;
     const name = document.getElementById('actName');
@@ -172,8 +162,7 @@ function submitActivity() {
     if (file.files.length === 0) { showError(file, 'err-actFile'); isValid = false; } else { clearError(file, 'err-actFile'); }
 
     if (isValid) {
-        alert('ข้อมูลถูกต้องครบถ้วน! (เดี๋ยวเราจะมาเขียนโค้ดอัปโหลดไฟล์ในขั้นตอนต่อไปครับ)');
-        // document.getElementById('activityForm').reset();
+        alert('ข้อมูลถูกต้องครบถ้วน! (รอการเชื่อมต่ออัปโหลดไฟล์)');
     }
 }
 
@@ -190,7 +179,7 @@ function clearError(inputElement, errorId) {
 }
 
 // ==========================================
-// 4. ผูกฟังก์ชันกับ Window เพื่อให้ HTML เรียกใช้ได้
+// 4. ผูกฟังก์ชันกับ Window
 // ==========================================
 window.switchView = switchView;
 window.handleRegister = handleRegister;
