@@ -156,12 +156,19 @@
                         <input type="text" id="actCertifier" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary transition" placeholder="ชื่ออาจารย์ หรือ หน่วยงาน">
                         <p class="text-red-500 text-xs mt-1 hidden" id="err-actCertifier">กรุณากรอกผู้รับรอง</p>
                     </div>
+                    
+                    <!-- 🔴 อัปเดตส่วนของการเลือกไฟล์ -->
                     <div>
-                        <label class="block text-sm font-medium mb-1">แนบไฟล์หลักฐาน (PDF/รูปภาพ) <span class="text-red-500">*</span></label>
-                        <input type="file" id="actFile" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-yellow-50 file:text-primaryDark hover:file:bg-yellow-100 border border-gray-300 rounded-lg p-1">
-                        <p class="text-red-500 text-xs mt-1 hidden" id="err-actFile">กรุณาแนบไฟล์หลักฐาน</p>
+                        <label class="block text-sm font-medium mb-1">แนบไฟล์หลักฐาน <span class="text-gray-400 font-normal">(เลือกได้หลายไฟล์)</span> <span class="text-red-500">*</span></label>
+                        <!-- เพิ่ม attribute multiple และ onchange -->
+                        <input type="file" id="actFile" multiple onchange="handleFileSelect()" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-yellow-50 file:text-primaryDark hover:file:bg-yellow-100 border border-gray-300 rounded-lg p-1">
+                        <p class="text-red-500 text-xs mt-1 hidden" id="err-actFile">กรุณาแนบไฟล์หลักฐานอย่างน้อย 1 ไฟล์</p>
+                        
+                        <!-- กล่องแสดงรายการไฟล์ที่เลือก (Preview Container) -->
+                        <div id="filePreviewContainer" class="mt-3 flex flex-col gap-2"></div>
                     </div>
-                    <button type="button" onclick="submitActivity()" class="w-full bg-primary hover:bg-primaryDark text-white font-semibold py-2 px-4 rounded-lg transition shadow">
+
+                    <button type="button" onclick="submitActivity()" class="w-full bg-primary hover:bg-primaryDark text-white font-semibold py-2 px-4 rounded-lg transition shadow mt-2">
                         💾 บันทึกข้อมูล
                     </button>
                 </form>
@@ -178,9 +185,8 @@
                                 <th class="p-3">สถานะ</th>
                             </tr>
                         </thead>
-                        <!-- เตรียม ID ไว้รองรับข้อมูลจริงจาก Firebase -->
                         <tbody id="studentTableBody">
-                            <!-- ข้อมูลจริงจะถูกโหลดมาแสดงตรงนี้โดยอัตโนมัติ -->
+                            <!-- ข้อมูลจะถูกโหลดมาแสดงตรงนี้โดยอัตโนมัติ -->
                         </tbody>
                     </table>
                 </div>
@@ -232,9 +238,8 @@
                             <th class="p-4 text-center">การจัดการ</th>
                         </tr>
                     </thead>
-                    <!-- เตรียม ID ไว้รองรับข้อมูลจริงจาก Firebase -->
                     <tbody id="adminTableBody">
-                        <!-- ข้อมูลจริงจะถูกโหลดมาแสดงตรงนี้โดยอัตโนมัติ -->
+                        <!-- ข้อมูลจะถูกโหลดมาแสดงตรงนี้โดยอัตโนมัติ -->
                     </tbody>
                 </table>
             </div>
