@@ -3,13 +3,15 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, where, getDocs, updateDoc, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+// 🔴 นำเข้า Storage สำหรับอัปโหลดไฟล์
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAzsDVuUVjDJbwN7NUgwrUyIHgk-9b82us",
   authDomain: "data-f0af4.firebaseapp.com",
   projectId: "data-f0af4",
-  storageBucket: "data-f0af4.firebasestorage.app",
+  storageBucket: "data-f0af4.firebasestorage.app", // ต้องแน่ใจว่าเปิดใช้งาน Storage แล้ว
   messagingSenderId: "777288072214",
   appId: "1:777288072214:web:7b0018ba4d5025252f8937",
   measurementId: "G-WWCVXW155M"
@@ -19,11 +21,16 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app); 
 const db = getFirestore(app); 
+const storage = getStorage(app); // เรียกใช้งาน Storage
 
 console.log("🔥 Firebase Initialized Successfully!");
 
+// ตัวแปรเก็บข้อมูล User ที่ล็อกอินอยู่
+let currentUserData = null;
+let currentUserId = null;
+
 // ==========================================
-// ระบบจัดการ Custom Modal อัจฉริยะ
+// 🔴 ระบบจัดการ Custom Modal อัจฉริยะ
 // ==========================================
 let modalCloseCallback = null;
 
@@ -66,7 +73,7 @@ function closeModal() {
 }
 
 // ==========================================
-// ลอจิกการทำงานของหน้าเว็บ
+// ลอจิกการทำงานของหน้าเว็บ (Login / Register)
 // ==========================================
 function switchView(viewId) {
     document.getElementById('loginView').classList.add('hidden-section');
@@ -80,6 +87,8 @@ function switchView(viewId) {
     if(viewId === 'loginView') {
         document.getElementById('loginForm').reset();
         document.getElementById('loginError').classList.add('hidden');
+        currentUserData = null;
+        currentUserId = null;
     }
 }
 
@@ -125,20 +134,8 @@ async function handleRegister() {
         });
 
     } catch (error) {
-        const errorCode = error.code;
-        if (errorCode === 'auth/configuration-not-found') {
-            showModal('error', 'ระบบขัดข้อง', 'คุณยังไม่ได้เปิดใช้งาน Sign-in provider ใน Firebase');
-        } else if (errorCode === 'auth/unauthorized-domain') {
-            showModal('error', 'ระบบขัดข้อง', 'โดเมนนี้ยังไม่ได้รับอนุญาตให้ใช้งานในระบบ');
-        } else if (errorCode === 'auth/email-already-in-use') {
-            showModal('error', 'อีเมลซ้ำ', 'อีเมลนี้ถูกใช้งานไปแล้ว กรุณาใช้อีเมลอื่นในการลงทะเบียน');
-        } else if (errorCode === 'auth/weak-password') {
-            showModal('warning', 'รหัสผ่านอ่อนเกินไป', 'กรุณาตั้งรหัสผ่านอย่างน้อย 6 ตัวอักษร');
-        } else if (errorCode === 'permission-denied') {
-            showModal('error', 'ข้อผิดพลาดฐานข้อมูล', 'ไม่สามารถบันทึกข้อมูลได้ กรุณาเปิด Test Mode ในแท็บ Rules ของ Firestore Database');
-        } else {
-            showModal('error', 'เกิดข้อผิดพลาด', 'ข้อผิดพลาด: ' + error.message);
-        }
+        // จัดการ Error...
+        showModal('error', 'เกิดข้อผิดพลาด', 'ข้อผิดพลาด: ' + error.message);
         console.error("Register Error:", error);
     } finally {
         btnRegister.disabled = false;
@@ -171,16 +168,19 @@ async function handleLogin() {
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-            const userData = docSnap.data();
+            currentUserData = docSnap.data();
+            currentUserId = user.uid;
             
-            if (userData.role === 'admin') {
+            if (currentUserData.role === 'admin') {
                 switchView('adminView');
+                loadAdminActivities(); // 🔴 โหลดข้อมูลเมื่อแอดมินล็อกอิน
             } else {
-                document.getElementById('studentWelcomeText').innerText = `ยินดีต้อนรับ, ${userData.fullName} (${userData.studentId})`;
+                document.getElementById('studentWelcomeText').innerText = `ยินดีต้อนรับ, ${currentUserData.fullName} (${currentUserData.studentId})`;
                 switchView('studentView');
+                document.getElementById('filePreviewContainer').innerHTML = '';
+                loadStudentActivities(); // 🔴 โหลดข้อมูลเมื่อนักศึกษาล็อกอิน
             }
             document.getElementById('loginForm').reset();
-            document.getElementById('filePreviewContainer').innerHTML = '';
         } else {
             loginError.innerText = "บัญชีนี้ไม่มีข้อมูลสถานะในระบบ ติดต่อแอดมิน";
             loginError.classList.remove('hidden');
@@ -188,11 +188,7 @@ async function handleLogin() {
 
     } catch (error) {
         console.error("Login Error:", error);
-        if (error.code === 'auth/configuration-not-found') {
-            loginError.innerText = "ระบบล็อกอินปิดอยู่ (ติดต่อผู้ดูแล Firebase)";
-        } else {
-            loginError.innerText = "ไม่มีข้อมูลบัญชีผู้ใช้งานนี้ หรือ รหัสผ่านไม่ถูกต้อง";
-        }
+        loginError.innerText = "ไม่มีข้อมูลบัญชีผู้ใช้งานนี้ หรือ รหัสผ่านไม่ถูกต้อง";
         loginError.classList.remove('hidden');
     } finally {
         btnLogin.disabled = false;
@@ -201,84 +197,233 @@ async function handleLogin() {
 }
 
 // ==========================================
-// 🔴 ระบบจัดการไฟล์แนบ (พรีวิวและคลิกเปิดไฟล์ได้)
+// 🔴 1. ระบบอัปโหลดและบันทึกข้อมูลจริง (Submit to Firestore & Storage)
+// ==========================================
+async function submitActivity() {
+    let isValid = true;
+    const name = document.getElementById('actName');
+    const date = document.getElementById('actDate');
+    const certifier = document.getElementById('actCertifier');
+    const fileInput = document.getElementById('actFile');
+
+    if (!name.value.trim()) { showError(name, 'err-actName'); isValid = false; } else { clearError(name, 'err-actName'); }
+    if (!date.value) { showError(date, 'err-actDate'); isValid = false; } else { clearError(date, 'err-actDate'); }
+    if (!certifier.value.trim()) { showError(certifier, 'err-actCertifier'); isValid = false; } else { clearError(certifier, 'err-actCertifier'); }
+    if (fileInput.files.length === 0) { showError(fileInput, 'err-actFile'); isValid = false; } else { clearError(fileInput, 'err-actFile'); }
+
+    if (!isValid) {
+        showModal('warning', 'ข้อมูลไม่ครบถ้วน', 'กรุณาตรวจสอบและกรอกข้อมูลในช่องสีแดงให้ครบถ้วน');
+        return;
+    }
+
+    const btnSubmit = document.getElementById('btnSubmitActivity');
+    const originalText = btnSubmit.innerHTML;
+    btnSubmit.disabled = true;
+    btnSubmit.innerHTML = "⏳ กำลังอัปโหลดและบันทึกข้อมูล...";
+
+    try {
+        let uploadedFiles = [];
+        
+        // 1. อัปโหลดไฟล์ขึ้น Firebase Storage
+        for (let i = 0; i < fileInput.files.length; i++) {
+            let file = fileInput.files[i];
+            // ตั้งชื่อไฟล์ไม่ให้ซ้ำกัน
+            let fileRef = storageRef(storage, `activities/${currentUserId}/${Date.now()}_${file.name}`);
+            await uploadBytes(fileRef, file);
+            let url = await getDownloadURL(fileRef); // ได้ URL จริงมาใช้งาน
+            uploadedFiles.push({ name: file.name, url: url });
+        }
+
+        // 2. บันทึกข้อมูลลง Firestore (Database)
+        await addDoc(collection(db, "activities"), {
+            uid: currentUserId,
+            studentId: currentUserData.studentId,
+            studentName: currentUserData.fullName,
+            actName: name.value.trim(),
+            actDate: date.value,
+            actCertifier: certifier.value.trim(),
+            files: uploadedFiles,
+            status: 'pending', // สถานะเริ่มต้นคือ "รอตรวจสอบ"
+            timestamp: new Date()
+        });
+
+        showModal('success', 'บันทึกข้อมูลสำเร็จ', 'ข้อมูลถูกส่งเข้าระบบเรียบร้อยแล้ว รอการตรวจสอบจากแอดมิน');
+        
+        document.getElementById('activityForm').reset();
+        document.getElementById('filePreviewContainer').innerHTML = ''; 
+        
+        // โหลดข้อมูลในตารางใหม่ทันที!
+        loadStudentActivities();
+
+    } catch (error) {
+        console.error("Submit Error:", error);
+        showModal('error', 'เกิดข้อผิดพลาดในการบันทึก', error.message);
+    } finally {
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = originalText;
+    }
+}
+
+// ==========================================
+// 🔴 2. ระบบดึงข้อมูลมาแสดงฝั่งนักศึกษา (Fetch Student Data)
+// ==========================================
+async function loadStudentActivities() {
+    const tbody = document.getElementById('studentTableBody');
+    tbody.innerHTML = '<tr><td colspan="3" class="text-center p-6 text-gray-500">⏳ กำลังโหลดข้อมูล...</td></tr>';
+
+    try {
+        // ดึงเฉพาะข้อมูลที่ UID ตรงกับคนที่ล็อกอินอยู่
+        const q = query(collection(db, "activities"), where("uid", "==", currentUserId));
+        const querySnapshot = await getDocs(q);
+
+        tbody.innerHTML = ''; // เคลียร์ตาราง
+        
+        if (querySnapshot.empty) {
+            tbody.innerHTML = '<tr><td colspan="3" class="text-center p-6 text-gray-500">ยังไม่มีประวัติการส่งกิจกรรม</td></tr>';
+            return;
+        }
+
+        querySnapshot.forEach((docSnap) => {
+            let data = docSnap.data();
+            
+            // จัดรูปแบบวันที่
+            const dateObj = new Date(data.actDate);
+            const formattedDate = dateObj.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
+
+            // เลือกสีสถานะ
+            let statusBadge = `<span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-semibold">รอตรวจสอบ</span>`;
+            if (data.status === 'approved') statusBadge = `<span class="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-semibold">อนุมัติแล้ว</span>`;
+            if (data.status === 'rejected') statusBadge = `<span class="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-semibold">ปฏิเสธ</span>`;
+
+            tbody.innerHTML += `
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="p-3 text-sm text-gray-600">${formattedDate}</td>
+                    <td class="p-3 text-sm font-medium text-gray-800">${data.actName}</td>
+                    <td class="p-3 text-center">${statusBadge}</td>
+                </tr>
+            `;
+        });
+    } catch (error) {
+        console.error("Load Student Data Error:", error);
+        tbody.innerHTML = '<tr><td colspan="3" class="text-center p-6 text-red-500">เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>';
+    }
+}
+
+// ==========================================
+// 🔴 3. ระบบดึงข้อมูลและจัดการฝั่งแอดมิน (Fetch Admin Data)
+// ==========================================
+async function loadAdminActivities() {
+    const tbody = document.getElementById('adminTableBody');
+    tbody.innerHTML = '<tr><td colspan="5" class="text-center p-6 text-gray-500">⏳ กำลังโหลดข้อมูล...</td></tr>';
+
+    try {
+        // ดึงข้อมูลกิจกรรม "ทั้งหมด" ของทุกคน
+        const q = query(collection(db, "activities"));
+        const querySnapshot = await getDocs(q);
+
+        tbody.innerHTML = '';
+        
+        if (querySnapshot.empty) {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center p-6 text-gray-500">ยังไม่มีนักศึกษาส่งกิจกรรมเข้ามา</td></tr>';
+            return;
+        }
+
+        querySnapshot.forEach((docSnap) => {
+            let data = docSnap.data();
+            let docId = docSnap.id;
+            
+            const dateObj = new Date(data.actDate);
+            const formattedDate = dateObj.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
+
+            // สร้างลิงก์สำหรับไฟล์แนบทั้งหมด
+            let filesHtml = '<div class="flex flex-col gap-1">';
+            data.files.forEach((file, index) => {
+                filesHtml += `<a href="${file.url}" target="_blank" class="text-blue-500 hover:text-blue-700 hover:underline text-xs flex items-center gap-1">📄 ไฟล์ ${index + 1}</a>`;
+            });
+            filesHtml += '</div>';
+
+            // ปุ่มจัดการสถานะ
+            let actionHtml = '';
+            if (data.status === 'pending') {
+                actionHtml = `
+                    <button onclick="updateActivityStatus('${docId}', 'approved')" class="bg-green-500 hover:bg-green-600 text-white text-xs px-3 py-1 rounded shadow transition w-full mb-1">อนุมัติ</button>
+                    <button onclick="updateActivityStatus('${docId}', 'rejected')" class="bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1 rounded shadow transition w-full">ปฏิเสธ</button>
+                `;
+            } else if (data.status === 'approved') {
+                actionHtml = `<span class="text-green-600 font-bold text-sm">✔ อนุมัติแล้ว</span>`;
+            } else {
+                actionHtml = `<span class="text-red-600 font-bold text-sm">✖ ปฏิเสธ</span>`;
+            }
+
+            tbody.innerHTML += `
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="p-4 text-sm font-bold text-gray-700">${data.studentId}</td>
+                    <td class="p-4 text-sm text-gray-600">${data.studentName}</td>
+                    <td class="p-4 text-sm text-gray-800">${data.actName}<br><span class="text-xs text-gray-400">วันที่ทำ: ${formattedDate}</span></td>
+                    <td class="p-4">${filesHtml}</td>
+                    <td class="p-4 text-center align-middle w-24">${actionHtml}</td>
+                </tr>
+            `;
+        });
+    } catch (error) {
+        console.error("Load Admin Data Error:", error);
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center p-6 text-red-500">เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>';
+    }
+}
+
+// 🔴 4. ฟังก์ชันเปลี่ยนสถานะโดยแอดมิน (Approve / Reject)
+window.updateActivityStatus = async function(docId, newStatus) {
+    if(!confirm("ยืนยันการทำรายการนี้?")) return;
+    try {
+        const docRef = doc(db, "activities", docId);
+        await updateDoc(docRef, {
+            status: newStatus
+        });
+        // โหลดตารางใหม่เพื่อให้ปุ่มเปลี่ยนเป็นข้อความ
+        loadAdminActivities();
+    } catch (error) {
+        showModal('error', 'ข้อผิดพลาด', 'ไม่สามารถอัปเดตสถานะได้: ' + error.message);
+    }
+}
+
+
+// ==========================================
+// ระบบจัดการ UI ไฟล์แนบ
 // ==========================================
 function handleFileSelect() {
     const input = document.getElementById('actFile');
     updateFilePreview(input);
 }
-
 function removeFile(indexToRemove) {
     const input = document.getElementById('actFile');
     const dt = new DataTransfer(); 
-    
     for (let i = 0; i < input.files.length; i++) {
-        if (i !== indexToRemove) {
-            dt.items.add(input.files[i]);
-        }
+        if (i !== indexToRemove) dt.items.add(input.files[i]);
     }
-    
     input.files = dt.files;
     updateFilePreview(input); 
 }
-
 function updateFilePreview(input) {
     const previewContainer = document.getElementById('filePreviewContainer');
     previewContainer.innerHTML = ''; 
-    
     Array.from(input.files).forEach((file, index) => {
         const fileItem = document.createElement('div');
         fileItem.className = "flex items-center justify-between bg-gray-50 border border-gray-200 p-2 rounded-lg text-sm transition-all hover:bg-gray-100";
-        
         let fileName = file.name;
-        if(fileName.length > 30) {
-            fileName = fileName.substring(0, 20) + "..." + fileName.substring(fileName.lastIndexOf('.'));
-        }
-
+        if(fileName.length > 30) fileName = fileName.substring(0, 20) + "..." + fileName.substring(fileName.lastIndexOf('.'));
         let fileSize = (file.size / 1024).toFixed(1) + " KB";
         if(file.size > 1024 * 1024) fileSize = (file.size / (1024 * 1024)).toFixed(1) + " MB";
-
-        // สร้าง URL จำลองเพื่อให้เปิดดูไฟล์ในเครื่องได้ทันที
         const fileUrl = URL.createObjectURL(file);
-
         fileItem.innerHTML = `
             <div class="flex items-center gap-2 overflow-hidden">
                 <span class="text-xl">📄</span>
-                <!-- เปลี่ยนชื่อไฟล์เป็นลิงก์สีฟ้า กดแล้วเปิดแท็บใหม่ -->
-                <a href="${fileUrl}" target="_blank" class="truncate text-blue-600 font-medium hover:underline hover:text-blue-800 cursor-pointer" title="คลิกเพื่อเปิดดูไฟล์นี้">
-                    ${fileName}
-                </a>
+                <a href="${fileUrl}" target="_blank" class="truncate text-blue-600 font-medium hover:underline hover:text-blue-800 cursor-pointer" title="คลิกเพื่อเปิดดูไฟล์นี้">${fileName}</a>
                 <span class="text-xs text-gray-400 font-normal ml-1 whitespace-nowrap">(${fileSize})</span>
             </div>
-            <button type="button" onclick="removeFile(${index})" class="text-red-400 hover:text-white hover:bg-red-500 font-bold w-6 h-6 rounded flex items-center justify-center transition-colors" title="ลบไฟล์นี้">
-                &times;
-            </button>
+            <button type="button" onclick="removeFile(${index})" class="text-red-400 hover:text-white hover:bg-red-500 font-bold w-6 h-6 rounded flex items-center justify-center transition-colors" title="ลบไฟล์นี้">&times;</button>
         `;
         previewContainer.appendChild(fileItem);
     });
-}
-
-// --- บันทึกกิจกรรม ---
-function submitActivity() {
-    let isValid = true;
-    const name = document.getElementById('actName');
-    const date = document.getElementById('actDate');
-    const certifier = document.getElementById('actCertifier');
-    const file = document.getElementById('actFile');
-
-    if (!name.value.trim()) { showError(name, 'err-actName'); isValid = false; } else { clearError(name, 'err-actName'); }
-    if (!date.value) { showError(date, 'err-actDate'); isValid = false; } else { clearError(date, 'err-actDate'); }
-    if (!certifier.value.trim()) { showError(certifier, 'err-actCertifier'); isValid = false; } else { clearError(certifier, 'err-actCertifier'); }
-    if (file.files.length === 0) { showError(file, 'err-actFile'); isValid = false; } else { clearError(file, 'err-actFile'); }
-
-    if (isValid) {
-        showModal('success', 'บันทึกข้อมูลสำเร็จ', 'ข้อมูลถูกตรวจสอบและเตรียมส่งเข้าสู่ระบบแล้ว (รออัปโหลดไฟล์ในขั้นตอนถัดไป)', () => {
-            document.getElementById('activityForm').reset();
-            document.getElementById('filePreviewContainer').innerHTML = ''; 
-        });
-    } else {
-        showModal('warning', 'ข้อมูลไม่ครบถ้วน', 'กรุณาตรวจสอบและกรอกข้อมูลในช่องสีแดงให้ครบถ้วน');
-    }
 }
 
 function showError(inputElement, errorId) {
@@ -286,16 +431,13 @@ function showError(inputElement, errorId) {
     inputElement.classList.remove('border-gray-300');
     document.getElementById(errorId).classList.remove('hidden');
 }
-
 function clearError(inputElement, errorId) {
     inputElement.classList.remove('border-red-500', 'bg-red-50');
     inputElement.classList.add('border-gray-300');
     document.getElementById(errorId).classList.add('hidden');
 }
 
-// ==========================================
-// 4. ผูกฟังก์ชันกับ Window
-// ==========================================
+// ผูกฟังก์ชันกับ Window
 window.switchView = switchView;
 window.handleRegister = handleRegister;
 window.closeModal = closeModal;
