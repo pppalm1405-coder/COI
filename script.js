@@ -1,11 +1,7 @@
 // script.js
 
-// ==========================================
-// 1. นำเข้า Supabase SDK ผ่าน CDN
-// ==========================================
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm";
 
-// 🔴 อัปเดต URL และ Publishable Key เรียบร้อยแล้ว (ปลอดภัย 100%)
 const supabaseUrl = 'https://qrkuiwnqwjzmpenmuchd.supabase.co';
 const supabaseKey = 'sb_publishable_AIuzxSZo9WwRAw_XjuxF7w_Ym84pcp1';
 
@@ -17,7 +13,7 @@ let currentUserData = null;
 let currentUserId = null;
 
 // ==========================================
-// ระบบจัดการ Custom Modal อัจฉริยะ
+// ระบบจัดการ Custom Modal
 // ==========================================
 let modalCloseCallback = null;
 
@@ -200,7 +196,7 @@ async function handleLogin() {
 }
 
 // ==========================================
-// 🔴 1. ระบบอัปโหลดและบันทึกข้อมูลเข้า Supabase
+// 🔴 ระบบอัปโหลดและดึงข้อมูล Supabase
 // ==========================================
 async function submitActivity() {
     let isValid = true;
@@ -274,9 +270,6 @@ async function submitActivity() {
     }
 }
 
-// ==========================================
-// 🔴 2. ระบบดึงข้อมูลมาแสดงฝั่งนักศึกษา
-// ==========================================
 async function loadStudentActivities() {
     const tbody = document.getElementById('studentTableBody');
     tbody.innerHTML = '<tr><td colspan="3" class="text-center p-6 text-gray-500">⏳ กำลังโหลดข้อมูล...</td></tr>';
@@ -319,9 +312,6 @@ async function loadStudentActivities() {
     }
 }
 
-// ==========================================
-// 🔴 3. ระบบดึงข้อมูลและจัดการฝั่งแอดมิน
-// ==========================================
 async function loadAdminActivities() {
     const tbody = document.getElementById('adminTableBody');
     tbody.innerHTML = '<tr><td colspan="5" class="text-center p-6 text-gray-500">⏳ กำลังโหลดข้อมูล...</td></tr>';
@@ -380,18 +370,24 @@ async function loadAdminActivities() {
 }
 
 window.updateActivityStatus = async function(docId, newStatus) {
-    if(!confirm("ยืนยันการทำรายการนี้?")) return;
-    try {
-        const { error } = await supabase
-            .from('activities')
-            .update({ status: newStatus })
-            .eq('id', docId);
+    let actionText = newStatus === 'approved' ? 'อนุมัติกิจกรรม' : 'ปฏิเสธกิจกรรม';
+    let btnColor = newStatus === 'approved' ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600';
 
-        if (error) throw error;
-        loadAdminActivities();
-    } catch (error) {
-        showModal('error', 'ข้อผิดพลาด', 'ไม่สามารถอัปเดตสถานะได้: ' + error.message);
-    }
+    showConfirmModal('ยืนยันการตรวจสอบ', `คุณต้องการ "${actionText}" ของนักศึกษาคนนี้ใช่หรือไม่?`, actionText, btnColor, async () => {
+        try {
+            const { error } = await supabase
+                .from('activities')
+                .update({ status: newStatus })
+                .eq('id', docId);
+
+            if (error) throw error;
+            
+            showModal('success', 'ทำรายการสำเร็จ', `ระบบได้บันทึกการ${actionText}เรียบร้อยแล้ว`);
+            loadAdminActivities();
+        } catch (error) {
+            showModal('error', 'ข้อผิดพลาด', 'ไม่สามารถอัปเดตสถานะได้: ' + error.message);
+        }
+    });
 }
 
 // ==========================================
@@ -443,6 +439,33 @@ function clearError(inputElement, errorId) {
     inputElement.classList.add('border-gray-300');
     document.getElementById(errorId).classList.add('hidden');
 }
+
+// ==========================================
+// ระบบจัดการ Confirm Modal อัจฉริยะ
+// ==========================================
+let confirmCallback = null;
+
+window.showConfirmModal = function(title, message, confirmText, btnColorClass, onConfirm) {
+    document.getElementById('confirmModalTitle').innerText = title;
+    document.getElementById('confirmModalMessage').innerText = message;
+    
+    const btn = document.getElementById('confirmModalBtn');
+    btn.innerText = confirmText;
+    btn.className = `w-1/2 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 shadow ${btnColorClass}`;
+    
+    confirmCallback = onConfirm;
+    document.getElementById('confirmModal').classList.remove('hidden-section');
+};
+
+window.closeConfirmModal = function() {
+    document.getElementById('confirmModal').classList.add('hidden-section');
+    confirmCallback = null;
+};
+
+document.getElementById('confirmModalBtn').addEventListener('click', () => {
+    if (confirmCallback) confirmCallback();
+    closeConfirmModal();
+});
 
 // ผูกฟังก์ชันกับ Window
 window.switchView = switchView;
