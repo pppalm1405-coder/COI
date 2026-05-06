@@ -5,8 +5,7 @@
     display: none !important;
 }
 
-/* คุณสามารถเพิ่ม Custom CSS ของคุณเองที่นี่ได้เลย */
-/* ตัวอย่างเช่น การปรับแต่ง Scrollbar */
+/* ปรับแต่ง Scrollbar ให้ดูสะอาดตาขึ้น */
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
