@@ -23,7 +23,7 @@ const db = getFirestore(app);
 console.log("🔥 Firebase Initialized Successfully!");
 
 // ==========================================
-// 🔴 ระบบจัดการ Custom Modal อัจฉริยะ
+// ระบบจัดการ Custom Modal อัจฉริยะ
 // ==========================================
 let modalCloseCallback = null;
 
@@ -180,6 +180,8 @@ async function handleLogin() {
                 switchView('studentView');
             }
             document.getElementById('loginForm').reset();
+            // ล้างการแสดงผลไฟล์ค้างไว้เมื่อล็อกอินใหม่
+            document.getElementById('filePreviewContainer').innerHTML = '';
         } else {
             loginError.innerText = "บัญชีนี้ไม่มีข้อมูลสถานะในระบบ ติดต่อแอดมิน";
             loginError.classList.remove('hidden');
@@ -199,6 +201,63 @@ async function handleLogin() {
     }
 }
 
+// ==========================================
+// 🔴 ระบบจัดการไฟล์แนบ (Multiple Files Preview)
+// ==========================================
+function handleFileSelect() {
+    const input = document.getElementById('actFile');
+    updateFilePreview(input);
+}
+
+// ฟังก์ชันลบไฟล์เฉพาะจุด
+function removeFile(indexToRemove) {
+    const input = document.getElementById('actFile');
+    const dt = new DataTransfer(); // ใช้ DataTransfer เพื่อแก้ไขรายการไฟล์ที่ Read-only
+    
+    // ดึงไฟล์เก่ามาใส่ใหม่หมดยกเว้นตัวที่กดลบ
+    for (let i = 0; i < input.files.length; i++) {
+        if (i !== indexToRemove) {
+            dt.items.add(input.files[i]);
+        }
+    }
+    
+    input.files = dt.files; // อัปเดตไฟล์กลับเข้าไปในช่อง Input
+    updateFilePreview(input); // อัปเดตหน้าตา UI
+}
+
+function updateFilePreview(input) {
+    const previewContainer = document.getElementById('filePreviewContainer');
+    previewContainer.innerHTML = ''; // เคลียร์ของเก่าทิ้ง
+    
+    // วนลูปสร้างกล่องแสดงไฟล์ทีละอัน
+    Array.from(input.files).forEach((file, index) => {
+        const fileItem = document.createElement('div');
+        fileItem.className = "flex items-center justify-between bg-gray-50 border border-gray-200 p-2 rounded-lg text-sm transition-all hover:bg-gray-100";
+        
+        // ตัดชื่อไฟล์ให้สั้นลงถ้ามันยาวเกินไป เพื่อความสวยงาม
+        let fileName = file.name;
+        if(fileName.length > 30) {
+            fileName = fileName.substring(0, 20) + "..." + fileName.substring(fileName.lastIndexOf('.'));
+        }
+
+        // คำนวณขนาดไฟล์ให้ดูง่ายๆ
+        let fileSize = (file.size / 1024).toFixed(1) + " KB";
+        if(file.size > 1024 * 1024) fileSize = (file.size / (1024 * 1024)).toFixed(1) + " MB";
+
+        fileItem.innerHTML = `
+            <div class="flex items-center gap-2 overflow-hidden">
+                <span class="text-xl">📄</span>
+                <span class="truncate text-gray-700 font-medium">${fileName} <span class="text-xs text-gray-400 font-normal ml-1">(${fileSize})</span></span>
+            </div>
+            <button type="button" onclick="removeFile(${index})" class="text-red-400 hover:text-white hover:bg-red-500 font-bold w-6 h-6 rounded flex items-center justify-center transition-colors" title="ลบไฟล์นี้">
+                &times;
+            </button>
+        `;
+        previewContainer.appendChild(fileItem);
+    });
+}
+
+// --- บันทึกกิจกรรม ---
 function submitActivity() {
     let isValid = true;
     const name = document.getElementById('actName');
@@ -214,6 +273,7 @@ function submitActivity() {
     if (isValid) {
         showModal('success', 'บันทึกข้อมูลสำเร็จ', 'ข้อมูลถูกตรวจสอบและเตรียมส่งเข้าสู่ระบบแล้ว (รออัปโหลดไฟล์ในขั้นตอนถัดไป)', () => {
             document.getElementById('activityForm').reset();
+            document.getElementById('filePreviewContainer').innerHTML = ''; // ล้างการแสดงผลไฟล์หลังบันทึกเสร็จ
         });
     } else {
         showModal('warning', 'ข้อมูลไม่ครบถ้วน', 'กรุณาตรวจสอบและกรอกข้อมูลในช่องสีแดงให้ครบถ้วน');
@@ -240,3 +300,5 @@ window.handleRegister = handleRegister;
 window.closeModal = closeModal;
 window.handleLogin = handleLogin;
 window.submitActivity = submitActivity;
+window.handleFileSelect = handleFileSelect; // ผูกฟังก์ชันจัดการไฟล์
+window.removeFile = removeFile;             // ผูกฟังก์ชันลบไฟล์
