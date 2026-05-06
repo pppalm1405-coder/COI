@@ -5,10 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบจัดเก็บชั่วโมงจิตอาสา | Student Activity Tracker</title>
     
-    <!-- โหลด Font Google (Prompt) -->
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- โหลด Tailwind CSS ผ่าน CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -25,8 +22,6 @@
             }
         }
     </script>
-
-    <!-- เชื่อมต่อไฟล์ CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-bgLight text-secondary min-h-screen font-sans relative">
@@ -49,10 +44,9 @@
                     <input type="password" id="passwordInput" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary" placeholder="••••••••">
                 </div>
                 
-                <!-- ข้อความแจ้งเตือนเมื่อ Login ผิดพลาด (ซ่อนไว้เป็นค่าเริ่มต้น) -->
                 <p id="loginError" class="text-red-500 text-sm text-center font-medium hidden">ไม่มีข้อมูลบัญชีผู้ใช้งานนี้ หรือ รหัสผ่านไม่ถูกต้อง</p>
 
-                <button type="button" onclick="handleLogin()" class="w-full bg-primary hover:bg-primaryDark text-white font-semibold py-2 px-4 rounded-lg transition duration-200 shadow-md">
+                <button type="button" id="btnLogin" onclick="handleLogin()" class="w-full bg-primary hover:bg-primaryDark text-white font-semibold py-2 px-4 rounded-lg transition duration-200 shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
                     เข้าสู่ระบบ
                 </button>
             </form>
@@ -111,7 +105,7 @@
                     </div>
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">รหัสผ่าน <span class="text-red-500">*</span></label>
+                            <label class="block text-sm font-medium text-gray-700">รหัสผ่าน (อย่างน้อย 6 ตัว) <span class="text-red-500">*</span></label>
                             <input type="password" id="regPassword" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary" placeholder="••••••••">
                         </div>
                         <div>
@@ -125,7 +119,7 @@
                     <button type="button" onclick="switchView('loginView')" class="w-1/3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg transition duration-200">
                         ย้อนกลับ
                     </button>
-                    <button type="button" onclick="handleRegister()" class="w-2/3 bg-primary hover:bg-primaryDark text-white font-semibold py-2 px-4 rounded-lg transition duration-200 shadow-md">
+                    <button type="button" id="btnRegister" onclick="handleRegister()" class="w-2/3 bg-primary hover:bg-primaryDark text-white font-semibold py-2 px-4 rounded-lg transition duration-200 shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
                         📝 บันทึกข้อมูลลงทะเบียน
                     </button>
                 </div>
@@ -204,6 +198,7 @@
 
     <!-- ==================== 4. หน้า Admin Dashboard ==================== -->
     <section id="adminView" class="hidden-section max-w-6xl mx-auto p-6">
+         <!-- ... (หน้า Admin คงเดิม) ... -->
          <div class="flex justify-between items-center mb-8">
             <div>
                 <h1 class="text-3xl font-bold text-gray-800">ระบบจัดการผู้ดูแล (Admin)</h1>
@@ -263,23 +258,23 @@
         </div>
     </section>
 
-    <!-- ==================== Modal ป๊อปอัพยืนยันการลงทะเบียน ==================== -->
-    <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden-section">
+    <!-- ==================== Custom Modal อัจฉริยะ (แทนที่ alert) ==================== -->
+    <div id="customModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden-section">
         <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center transform transition-all scale-modal">
-            <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-yellow-100 mb-4">
-                <svg class="h-10 w-10 text-primaryDark" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            <!-- Icon Container -->
+            <div id="modalIconContainer" class="mx-auto flex items-center justify-center h-16 w-16 rounded-full mb-4">
+                <svg id="modalIcon" class="h-10 w-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Icon ปรับเปลี่ยนด้วย JS -->
                 </svg>
             </div>
-            <h3 class="text-xl font-bold text-gray-800 mb-2">ลงทะเบียนสำเร็จ!</h3>
-            <p class="text-sm text-gray-500 mb-6">บัญชีของคุณถูกสร้างเรียบร้อยแล้ว กรุณาเข้าสู่ระบบเพื่อเริ่มต้นใช้งาน</p>
-            <button onclick="closeModalAndLogin()" class="w-full bg-secondary hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 shadow">
-                ไปหน้าเข้าสู่ระบบ
+            <h3 id="modalTitle" class="text-xl font-bold text-gray-800 mb-2">Title</h3>
+            <p id="modalMessage" class="text-sm text-gray-500 mb-6">Message</p>
+            <button id="modalBtn" onclick="closeModal()" class="w-full text-white font-semibold py-2 px-4 rounded-lg transition duration-200 shadow">
+                ตกลง
             </button>
         </div>
     </div>
 
-    <!-- เชื่อมต่อไฟล์ JavaScript เป็นแบบ Module -->
     <script type="module" src="script.js"></script>
 </body>
 </html>
