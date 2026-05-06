@@ -1,36 +1,23 @@
 // script.js
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, where, getDocs, updateDoc, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-// 🔴 นำเข้า Storage สำหรับอัปโหลดไฟล์
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+// ==========================================
+// 1. นำเข้า Supabase SDK ผ่าน CDN
+// ==========================================
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAzsDVuUVjDJbwN7NUgwrUyIHgk-9b82us",
-  authDomain: "data-f0af4.firebaseapp.com",
-  projectId: "data-f0af4",
-  storageBucket: "data-f0af4.firebasestorage.app", // ต้องแน่ใจว่าเปิดใช้งาน Storage แล้ว
-  messagingSenderId: "777288072214",
-  appId: "1:777288072214:web:7b0018ba4d5025252f8937",
-  measurementId: "G-WWCVXW155M"
-};
+// 🔴 อัปเดต URL และ Publishable Key เรียบร้อยแล้ว (ปลอดภัย 100%)
+const supabaseUrl = 'https://qrkuiwnqwjzmpenmuchd.supabase.co';
+const supabaseKey = 'sb_publishable_AIuzxSZo9WwRAw_XjuxF7w_Ym84pcp1';
 
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-const auth = getAuth(app); 
-const db = getFirestore(app); 
-const storage = getStorage(app); // เรียกใช้งาน Storage
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-console.log("🔥 Firebase Initialized Successfully!");
+console.log("🟢 Supabase Initialized Successfully!");
 
-// ตัวแปรเก็บข้อมูล User ที่ล็อกอินอยู่
 let currentUserData = null;
 let currentUserId = null;
 
 // ==========================================
-// 🔴 ระบบจัดการ Custom Modal อัจฉริยะ
+// ระบบจัดการ Custom Modal อัจฉริยะ
 // ==========================================
 let modalCloseCallback = null;
 
@@ -73,7 +60,7 @@ function closeModal() {
 }
 
 // ==========================================
-// ลอจิกการทำงานของหน้าเว็บ (Login / Register)
+// ลอจิกการทำงานของหน้าเว็บ
 // ==========================================
 function switchView(viewId) {
     document.getElementById('loginView').classList.add('hidden-section');
@@ -89,6 +76,7 @@ function switchView(viewId) {
         document.getElementById('loginError').classList.add('hidden');
         currentUserData = null;
         currentUserId = null;
+        supabase.auth.signOut();
     }
 }
 
@@ -104,7 +92,6 @@ async function handleRegister() {
         showModal('warning', 'ข้อมูลไม่ครบถ้วน', 'กรุณากรอกข้อมูลให้ครบทุกช่องก่อนดำเนินการต่อ');
         return;
     }
-
     if (password !== confirmPassword) {
         showModal('warning', 'รหัสผ่านไม่ตรงกัน', 'กรุณาตรวจสอบรหัสผ่านและการยืนยันรหัสผ่านอีกครั้ง');
         return;
@@ -117,26 +104,33 @@ async function handleRegister() {
     btnRegister.innerHTML = "⏳ กำลังดำเนินการลงทะเบียน...";
 
     try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-
-        await setDoc(doc(db, "users", user.uid), {
-            fullName: name,
-            studentId: id,
-            citizenId: cardId,
+        const { data: authData, error: authError } = await supabase.auth.signUp({
             email: email,
-            role: role,
-            createdAt: new Date()
+            password: password,
         });
+
+        if (authError) throw authError;
+
+        const { error: dbError } = await supabase.from('users').insert([
+            { 
+                id: authData.user.id, 
+                fullName: name, 
+                studentId: id, 
+                citizenId: cardId, 
+                email: email, 
+                role: role 
+            }
+        ]);
+
+        if (dbError) throw dbError;
 
         showModal('success', 'ลงทะเบียนสำเร็จ!', 'บัญชีของคุณถูกสร้างเรียบร้อยแล้ว กรุณาเข้าสู่ระบบเพื่อใช้งาน', () => {
             switchView('loginView');
         });
 
     } catch (error) {
-        // จัดการ Error...
-        showModal('error', 'เกิดข้อผิดพลาด', 'ข้อผิดพลาด: ' + error.message);
         console.error("Register Error:", error);
+        showModal('error', 'เกิดข้อผิดพลาด', 'ข้อผิดพลาด: ' + error.message);
     } finally {
         btnRegister.disabled = false;
         btnRegister.innerHTML = originalBtnText;
@@ -161,30 +155,39 @@ async function handleLogin() {
     btnLogin.innerHTML = "⏳ กำลังเข้าสู่ระบบ...";
 
     try {
-        const userCredential = await signInWithEmailAndPassword(auth, emailInput, passwordInput);
-        const user = userCredential.user;
+        const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+            email: emailInput,
+            password: passwordInput,
+        });
 
-        const docRef = doc(db, "users", user.uid);
-        const docSnap = await getDoc(docRef);
+        if (authError) throw authError;
 
-        if (docSnap.exists()) {
-            currentUserData = docSnap.data();
-            currentUserId = user.uid;
-            
-            if (currentUserData.role === 'admin') {
-                switchView('adminView');
-                loadAdminActivities(); // 🔴 โหลดข้อมูลเมื่อแอดมินล็อกอิน
-            } else {
-                document.getElementById('studentWelcomeText').innerText = `ยินดีต้อนรับ, ${currentUserData.fullName} (${currentUserData.studentId})`;
-                switchView('studentView');
-                document.getElementById('filePreviewContainer').innerHTML = '';
-                loadStudentActivities(); // 🔴 โหลดข้อมูลเมื่อนักศึกษาล็อกอิน
-            }
-            document.getElementById('loginForm').reset();
-        } else {
+        currentUserId = authData.user.id;
+
+        const { data: userData, error: userError } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', currentUserId)
+            .single();
+
+        if (userError || !userData) {
             loginError.innerText = "บัญชีนี้ไม่มีข้อมูลสถานะในระบบ ติดต่อแอดมิน";
             loginError.classList.remove('hidden');
+            return;
         }
+
+        currentUserData = userData;
+
+        if (userData.role === 'admin') {
+            switchView('adminView');
+            loadAdminActivities();
+        } else {
+            document.getElementById('studentWelcomeText').innerText = `ยินดีต้อนรับ, ${userData.fullName} (${userData.studentId})`;
+            switchView('studentView');
+            document.getElementById('filePreviewContainer').innerHTML = '';
+            loadStudentActivities();
+        }
+        document.getElementById('loginForm').reset();
 
     } catch (error) {
         console.error("Login Error:", error);
@@ -197,7 +200,7 @@ async function handleLogin() {
 }
 
 // ==========================================
-// 🔴 1. ระบบอัปโหลดและบันทึกข้อมูลจริง (Submit to Firestore & Storage)
+// 🔴 1. ระบบอัปโหลดและบันทึกข้อมูลเข้า Supabase
 // ==========================================
 async function submitActivity() {
     let isValid = true;
@@ -224,35 +227,42 @@ async function submitActivity() {
     try {
         let uploadedFiles = [];
         
-        // 1. อัปโหลดไฟล์ขึ้น Firebase Storage
         for (let i = 0; i < fileInput.files.length; i++) {
             let file = fileInput.files[i];
-            // ตั้งชื่อไฟล์ไม่ให้ซ้ำกัน
-            let fileRef = storageRef(storage, `activities/${currentUserId}/${Date.now()}_${file.name}`);
-            await uploadBytes(fileRef, file);
-            let url = await getDownloadURL(fileRef); // ได้ URL จริงมาใช้งาน
-            uploadedFiles.push({ name: file.name, url: url });
+            let filePath = `${currentUserId}/${Date.now()}_${file.name}`;
+            
+            const { data: uploadData, error: uploadError } = await supabase.storage
+                .from('activities')
+                .upload(filePath, file);
+
+            if (uploadError) throw uploadError;
+
+            const { data: publicUrlData } = supabase.storage
+                .from('activities')
+                .getPublicUrl(filePath);
+
+            uploadedFiles.push({ name: file.name, url: publicUrlData.publicUrl });
         }
 
-        // 2. บันทึกข้อมูลลง Firestore (Database)
-        await addDoc(collection(db, "activities"), {
-            uid: currentUserId,
-            studentId: currentUserData.studentId,
-            studentName: currentUserData.fullName,
-            actName: name.value.trim(),
-            actDate: date.value,
-            actCertifier: certifier.value.trim(),
-            files: uploadedFiles,
-            status: 'pending', // สถานะเริ่มต้นคือ "รอตรวจสอบ"
-            timestamp: new Date()
-        });
+        const { error: dbError } = await supabase.from('activities').insert([
+            {
+                uid: currentUserId,
+                studentId: currentUserData.studentId,
+                studentName: currentUserData.fullName,
+                actName: name.value.trim(),
+                actDate: date.value,
+                actCertifier: certifier.value.trim(),
+                files: uploadedFiles,
+                status: 'pending'
+            }
+        ]);
+
+        if (dbError) throw dbError;
 
         showModal('success', 'บันทึกข้อมูลสำเร็จ', 'ข้อมูลถูกส่งเข้าระบบเรียบร้อยแล้ว รอการตรวจสอบจากแอดมิน');
         
         document.getElementById('activityForm').reset();
         document.getElementById('filePreviewContainer').innerHTML = ''; 
-        
-        // โหลดข้อมูลในตารางใหม่ทันที!
         loadStudentActivities();
 
     } catch (error) {
@@ -265,40 +275,40 @@ async function submitActivity() {
 }
 
 // ==========================================
-// 🔴 2. ระบบดึงข้อมูลมาแสดงฝั่งนักศึกษา (Fetch Student Data)
+// 🔴 2. ระบบดึงข้อมูลมาแสดงฝั่งนักศึกษา
 // ==========================================
 async function loadStudentActivities() {
     const tbody = document.getElementById('studentTableBody');
     tbody.innerHTML = '<tr><td colspan="3" class="text-center p-6 text-gray-500">⏳ กำลังโหลดข้อมูล...</td></tr>';
 
     try {
-        // ดึงเฉพาะข้อมูลที่ UID ตรงกับคนที่ล็อกอินอยู่
-        const q = query(collection(db, "activities"), where("uid", "==", currentUserId));
-        const querySnapshot = await getDocs(q);
+        const { data, error } = await supabase
+            .from('activities')
+            .select('*')
+            .eq('uid', currentUserId)
+            .order('created_at', { ascending: false });
 
-        tbody.innerHTML = ''; // เคลียร์ตาราง
+        if (error) throw error;
+
+        tbody.innerHTML = ''; 
         
-        if (querySnapshot.empty) {
+        if (data.length === 0) {
             tbody.innerHTML = '<tr><td colspan="3" class="text-center p-6 text-gray-500">ยังไม่มีประวัติการส่งกิจกรรม</td></tr>';
             return;
         }
 
-        querySnapshot.forEach((docSnap) => {
-            let data = docSnap.data();
-            
-            // จัดรูปแบบวันที่
-            const dateObj = new Date(data.actDate);
+        data.forEach((item) => {
+            const dateObj = new Date(item.actDate);
             const formattedDate = dateObj.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
 
-            // เลือกสีสถานะ
             let statusBadge = `<span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-semibold">รอตรวจสอบ</span>`;
-            if (data.status === 'approved') statusBadge = `<span class="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-semibold">อนุมัติแล้ว</span>`;
-            if (data.status === 'rejected') statusBadge = `<span class="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-semibold">ปฏิเสธ</span>`;
+            if (item.status === 'approved') statusBadge = `<span class="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-semibold">อนุมัติแล้ว</span>`;
+            if (item.status === 'rejected') statusBadge = `<span class="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-semibold">ปฏิเสธ</span>`;
 
             tbody.innerHTML += `
                 <tr class="border-b hover:bg-gray-50">
                     <td class="p-3 text-sm text-gray-600">${formattedDate}</td>
-                    <td class="p-3 text-sm font-medium text-gray-800">${data.actName}</td>
+                    <td class="p-3 text-sm font-medium text-gray-800">${item.actName}</td>
                     <td class="p-3 text-center">${statusBadge}</td>
                 </tr>
             `;
@@ -310,46 +320,44 @@ async function loadStudentActivities() {
 }
 
 // ==========================================
-// 🔴 3. ระบบดึงข้อมูลและจัดการฝั่งแอดมิน (Fetch Admin Data)
+// 🔴 3. ระบบดึงข้อมูลและจัดการฝั่งแอดมิน
 // ==========================================
 async function loadAdminActivities() {
     const tbody = document.getElementById('adminTableBody');
     tbody.innerHTML = '<tr><td colspan="5" class="text-center p-6 text-gray-500">⏳ กำลังโหลดข้อมูล...</td></tr>';
 
     try {
-        // ดึงข้อมูลกิจกรรม "ทั้งหมด" ของทุกคน
-        const q = query(collection(db, "activities"));
-        const querySnapshot = await getDocs(q);
+        const { data, error } = await supabase
+            .from('activities')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
 
         tbody.innerHTML = '';
         
-        if (querySnapshot.empty) {
+        if (data.length === 0) {
             tbody.innerHTML = '<tr><td colspan="5" class="text-center p-6 text-gray-500">ยังไม่มีนักศึกษาส่งกิจกรรมเข้ามา</td></tr>';
             return;
         }
 
-        querySnapshot.forEach((docSnap) => {
-            let data = docSnap.data();
-            let docId = docSnap.id;
-            
-            const dateObj = new Date(data.actDate);
+        data.forEach((item) => {
+            const dateObj = new Date(item.actDate);
             const formattedDate = dateObj.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
 
-            // สร้างลิงก์สำหรับไฟล์แนบทั้งหมด
             let filesHtml = '<div class="flex flex-col gap-1">';
-            data.files.forEach((file, index) => {
+            item.files.forEach((file, index) => {
                 filesHtml += `<a href="${file.url}" target="_blank" class="text-blue-500 hover:text-blue-700 hover:underline text-xs flex items-center gap-1">📄 ไฟล์ ${index + 1}</a>`;
             });
             filesHtml += '</div>';
 
-            // ปุ่มจัดการสถานะ
             let actionHtml = '';
-            if (data.status === 'pending') {
+            if (item.status === 'pending') {
                 actionHtml = `
-                    <button onclick="updateActivityStatus('${docId}', 'approved')" class="bg-green-500 hover:bg-green-600 text-white text-xs px-3 py-1 rounded shadow transition w-full mb-1">อนุมัติ</button>
-                    <button onclick="updateActivityStatus('${docId}', 'rejected')" class="bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1 rounded shadow transition w-full">ปฏิเสธ</button>
+                    <button onclick="updateActivityStatus('${item.id}', 'approved')" class="bg-green-500 hover:bg-green-600 text-white text-xs px-3 py-1 rounded shadow transition w-full mb-1">อนุมัติ</button>
+                    <button onclick="updateActivityStatus('${item.id}', 'rejected')" class="bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1 rounded shadow transition w-full">ปฏิเสธ</button>
                 `;
-            } else if (data.status === 'approved') {
+            } else if (item.status === 'approved') {
                 actionHtml = `<span class="text-green-600 font-bold text-sm">✔ อนุมัติแล้ว</span>`;
             } else {
                 actionHtml = `<span class="text-red-600 font-bold text-sm">✖ ปฏิเสธ</span>`;
@@ -357,9 +365,9 @@ async function loadAdminActivities() {
 
             tbody.innerHTML += `
                 <tr class="border-b hover:bg-gray-50">
-                    <td class="p-4 text-sm font-bold text-gray-700">${data.studentId}</td>
-                    <td class="p-4 text-sm text-gray-600">${data.studentName}</td>
-                    <td class="p-4 text-sm text-gray-800">${data.actName}<br><span class="text-xs text-gray-400">วันที่ทำ: ${formattedDate}</span></td>
+                    <td class="p-4 text-sm font-bold text-gray-700">${item.studentId}</td>
+                    <td class="p-4 text-sm text-gray-600">${item.studentName}</td>
+                    <td class="p-4 text-sm text-gray-800">${item.actName}<br><span class="text-xs text-gray-400">วันที่ทำ: ${formattedDate}</span></td>
                     <td class="p-4">${filesHtml}</td>
                     <td class="p-4 text-center align-middle w-24">${actionHtml}</td>
                 </tr>
@@ -371,21 +379,20 @@ async function loadAdminActivities() {
     }
 }
 
-// 🔴 4. ฟังก์ชันเปลี่ยนสถานะโดยแอดมิน (Approve / Reject)
 window.updateActivityStatus = async function(docId, newStatus) {
     if(!confirm("ยืนยันการทำรายการนี้?")) return;
     try {
-        const docRef = doc(db, "activities", docId);
-        await updateDoc(docRef, {
-            status: newStatus
-        });
-        // โหลดตารางใหม่เพื่อให้ปุ่มเปลี่ยนเป็นข้อความ
+        const { error } = await supabase
+            .from('activities')
+            .update({ status: newStatus })
+            .eq('id', docId);
+
+        if (error) throw error;
         loadAdminActivities();
     } catch (error) {
         showModal('error', 'ข้อผิดพลาด', 'ไม่สามารถอัปเดตสถานะได้: ' + error.message);
     }
 }
-
 
 // ==========================================
 // ระบบจัดการ UI ไฟล์แนบ
