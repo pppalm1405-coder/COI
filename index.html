@@ -178,17 +178,9 @@
                                 <th class="p-3">สถานะ</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr class="border-b hover:bg-gray-50">
-                                <td class="p-3 text-sm">15 พ.ค. 2026</td>
-                                <td class="p-3 text-sm">อบรม First Aid เบื้องต้น</td>
-                                <td class="p-3"><span class="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-semibold">อนุมัติแล้ว</span></td>
-                            </tr>
-                            <tr class="border-b hover:bg-gray-50">
-                                <td class="p-3 text-sm">20 พ.ค. 2026</td>
-                                <td class="p-3 text-sm">ปลูกป่าชายเลน</td>
-                                <td class="p-3"><span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-semibold">รอตรวจสอบ</span></td>
-                            </tr>
+                        <!-- เตรียม ID ไว้รองรับข้อมูลจริงจาก Firebase -->
+                        <tbody id="studentTableBody">
+                            <!-- ข้อมูลจะถูกโหลดมาแสดงตรงนี้โดยอัตโนมัติ -->
                         </tbody>
                     </table>
                 </div>
@@ -240,29 +232,20 @@
                             <th class="p-4 text-center">การจัดการ</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr class="border-b hover:bg-gray-50">
-                            <td class="p-4 text-sm font-medium">64100001</td>
-                            <td class="p-4 text-sm">สมชาย ใจดี</td>
-                            <td class="p-4 text-sm">จิตอาสาทาสีโรงเรียน<br><span class="text-xs text-gray-400">10 พ.ค. 2026</span></td>
-                            <td class="p-4"><a href="#" class="text-blue-500 hover:underline text-sm flex items-center">📄 ดูไฟล์</a></td>
-                            <td class="p-4 flex justify-center gap-2">
-                                <button class="bg-green-500 hover:bg-green-600 text-white text-xs px-3 py-1 rounded shadow">อนุมัติ</button>
-                                <button class="bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1 rounded shadow">ปฏิเสธ</button>
-                            </td>
-                        </tr>
+                    <!-- เตรียม ID ไว้รองรับข้อมูลจริงจาก Firebase -->
+                    <tbody id="adminTableBody">
+                        <!-- ข้อมูลจะถูกโหลดมาแสดงตรงนี้โดยอัตโนมัติ -->
                     </tbody>
                 </table>
             </div>
         </div>
     </section>
 
-    <!-- ==================== Custom Modal อัจฉริยะ (แทนที่ alert) ==================== -->
+    <!-- ==================== Custom Modal อัจฉริยะ ==================== -->
     <div id="customModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden-section">
         <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center transform transition-all scale-modal">
             <div id="modalIconContainer" class="mx-auto flex items-center justify-center h-16 w-16 rounded-full mb-4">
                 <svg id="modalIcon" class="h-10 w-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Icon ปรับเปลี่ยนด้วย JS -->
                 </svg>
             </div>
             <h3 id="modalTitle" class="text-xl font-bold text-gray-800 mb-2">Title</h3>
