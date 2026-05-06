@@ -23,9 +23,9 @@ const db = getFirestore(app);
 console.log("🔥 Firebase Initialized Successfully!");
 
 // ==========================================
-// 🔴 ระบบจัดการ Custom Modal อัจฉริยะ (แทนที่ alert ทั้งหมด)
+// 🔴 ระบบจัดการ Custom Modal อัจฉริยะ
 // ==========================================
-let modalCloseCallback = null; // เก็บฟังก์ชันที่จะให้ทำงานหลังกดปิดป๊อปอัพ
+let modalCloseCallback = null;
 
 function showModal(type, title, message, callback = null) {
     const modal = document.getElementById('customModal');
@@ -37,7 +37,6 @@ function showModal(type, title, message, callback = null) {
     document.getElementById('modalMessage').innerText = message;
     modalCloseCallback = callback;
 
-    // รีเซ็ตคลาสก่อนตั้งค่าใหม่
     iconContainer.className = "mx-auto flex items-center justify-center h-16 w-16 rounded-full mb-4";
     btn.className = "w-full text-white font-semibold py-2 px-4 rounded-lg transition duration-200 shadow";
 
@@ -112,6 +111,7 @@ async function handleRegister() {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
+        // ถ้าโค้ดค้าง มักจะค้างที่บรรทัดด้านล่างนี้ หากยังไม่ได้กดสร้างฐานข้อมูลในเว็บ Firebase
         await setDoc(doc(db, "users", user.uid), {
             fullName: name,
             studentId: id,
@@ -121,7 +121,6 @@ async function handleRegister() {
             createdAt: new Date()
         });
 
-        // 🔴 เรียกป๊อปอัพความสำเร็จ แล้วสั่งให้เปลี่ยนหน้าเมื่อกด "ตกลง"
         showModal('success', 'ลงทะเบียนสำเร็จ!', 'บัญชีของคุณถูกสร้างเรียบร้อยแล้ว กรุณาเข้าสู่ระบบเพื่อใช้งาน', () => {
             switchView('loginView');
         });
@@ -136,6 +135,9 @@ async function handleRegister() {
             showModal('error', 'อีเมลซ้ำ', 'อีเมลนี้ถูกใช้งานไปแล้ว กรุณาใช้อีเมลอื่นในการลงทะเบียน');
         } else if (errorCode === 'auth/weak-password') {
             showModal('warning', 'รหัสผ่านอ่อนเกินไป', 'กรุณาตั้งรหัสผ่านอย่างน้อย 6 ตัวอักษร');
+        } else if (errorCode === 'permission-denied') {
+            // เพิ่มการดักจับหากสร้างฐานข้อมูลแล้ว แต่ลืมแก้ Rules
+            showModal('error', 'ข้อผิดพลาดฐานข้อมูล', 'ไม่สามารถบันทึกข้อมูลได้ กรุณาเปิด Test Mode ในแท็บ Rules ของ Firestore Database');
         } else {
             showModal('error', 'เกิดข้อผิดพลาด', 'ข้อผิดพลาด: ' + error.message);
         }
@@ -154,7 +156,6 @@ async function handleLogin() {
     loginError.classList.add('hidden');
 
     if (!emailInput || !passwordInput) {
-        // ใช้ Modal แจ้งเตือนเมื่อไม่กรอกข้อมูล
         showModal('warning', 'ข้อมูลไม่ครบ', 'กรุณากรอกอีเมลและรหัสผ่านให้ครบถ้วน');
         return;
     }
@@ -188,7 +189,6 @@ async function handleLogin() {
 
     } catch (error) {
         console.error("Login Error:", error);
-        // กรณีรหัสผิด ปล่อยให้ข้อความสีแดงขึ้นใต้ช่องกรอก (เป็น UX ที่ดีกว่าให้ป๊อปอัพเด้งขัดจังหวะการกรอกรหัสใหม่)
         if (error.code === 'auth/configuration-not-found') {
             loginError.innerText = "ระบบล็อกอินปิดอยู่ (ติดต่อผู้ดูแล Firebase)";
         } else {
@@ -214,13 +214,10 @@ function submitActivity() {
     if (file.files.length === 0) { showError(file, 'err-actFile'); isValid = false; } else { clearError(file, 'err-actFile'); }
 
     if (isValid) {
-        // ใช้ Modal ในการแจ้งเตือนว่าฟอร์มพร้อมส่งแล้ว
         showModal('success', 'บันทึกข้อมูลสำเร็จ', 'ข้อมูลถูกตรวจสอบและเตรียมส่งเข้าสู่ระบบแล้ว (รออัปโหลดไฟล์ในขั้นตอนถัดไป)', () => {
-            // เมื่อกดตกลง ให้ล้างฟอร์ม
             document.getElementById('activityForm').reset();
         });
     } else {
-        // แจ้งเตือนเมื่อกรอกไม่ครบ
         showModal('warning', 'ข้อมูลไม่ครบถ้วน', 'กรุณาตรวจสอบและกรอกข้อมูลในช่องสีแดงให้ครบถ้วน');
     }
 }
