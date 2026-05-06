@@ -1,16 +1,10 @@
 // script.js
 
-// ==========================================
-// 1. นำเข้า Firebase SDK
-// ==========================================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// ==========================================
-// 2. การตั้งค่า Firebase ของคุณ
-// ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyAzsDVuUVjDJbwN7NUgwrUyIHgk-9b82us",
   authDomain: "data-f0af4.firebaseapp.com",
@@ -29,9 +23,52 @@ const db = getFirestore(app);
 console.log("🔥 Firebase Initialized Successfully!");
 
 // ==========================================
-// 3. ฟังก์ชันระบบ UI & Firebase Logic
+// 🔴 ระบบจัดการ Custom Modal อัจฉริยะ (แทนที่ alert ทั้งหมด)
 // ==========================================
+let modalCloseCallback = null; // เก็บฟังก์ชันที่จะให้ทำงานหลังกดปิดป๊อปอัพ
 
+function showModal(type, title, message, callback = null) {
+    const modal = document.getElementById('customModal');
+    const iconContainer = document.getElementById('modalIconContainer');
+    const icon = document.getElementById('modalIcon');
+    const btn = document.getElementById('modalBtn');
+    
+    document.getElementById('modalTitle').innerText = title;
+    document.getElementById('modalMessage').innerText = message;
+    modalCloseCallback = callback;
+
+    // รีเซ็ตคลาสก่อนตั้งค่าใหม่
+    iconContainer.className = "mx-auto flex items-center justify-center h-16 w-16 rounded-full mb-4";
+    btn.className = "w-full text-white font-semibold py-2 px-4 rounded-lg transition duration-200 shadow";
+
+    if (type === 'success') {
+        iconContainer.classList.add('bg-green-100', 'text-green-600');
+        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>';
+        btn.classList.add('bg-green-500', 'hover:bg-green-600');
+    } else if (type === 'error') {
+        iconContainer.classList.add('bg-red-100', 'text-red-600');
+        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>';
+        btn.classList.add('bg-red-500', 'hover:bg-red-600');
+    } else if (type === 'warning') {
+        iconContainer.classList.add('bg-yellow-100', 'text-yellow-600');
+        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>';
+        btn.classList.add('bg-yellow-500', 'hover:bg-yellow-600');
+    }
+
+    modal.classList.remove('hidden-section');
+}
+
+function closeModal() {
+    document.getElementById('customModal').classList.add('hidden-section');
+    if (modalCloseCallback) {
+        modalCloseCallback();
+        modalCloseCallback = null;
+    }
+}
+
+// ==========================================
+// ลอจิกการทำงานของหน้าเว็บ
+// ==========================================
 function switchView(viewId) {
     document.getElementById('loginView').classList.add('hidden-section');
     document.getElementById('registerView').classList.add('hidden-section');
@@ -43,7 +80,7 @@ function switchView(viewId) {
     if(viewId === 'registerView') document.getElementById('registerForm').reset();
     if(viewId === 'loginView') {
         document.getElementById('loginForm').reset();
-        document.getElementById('loginError').classList.add('hidden'); // ซ่อน error เสมอตอนกลับมาหน้า login
+        document.getElementById('loginError').classList.add('hidden');
     }
 }
 
@@ -56,16 +93,20 @@ async function handleRegister() {
     const confirmPassword = document.getElementById('regConfirmPassword').value;
 
     if (!name || !id || !cardId || !email || !password || !confirmPassword) {
-        alert("กรุณากรอกข้อมูลให้ครบทุกช่อง");
+        showModal('warning', 'ข้อมูลไม่ครบถ้วน', 'กรุณากรอกข้อมูลให้ครบทุกช่องก่อนดำเนินการต่อ');
         return;
     }
 
     if (password !== confirmPassword) {
-        alert("รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน!");
+        showModal('warning', 'รหัสผ่านไม่ตรงกัน', 'กรุณาตรวจสอบรหัสผ่านและการยืนยันรหัสผ่านอีกครั้ง');
         return;
     }
 
     const role = document.querySelector('input[name="userRole"]:checked').value;
+    const btnRegister = document.getElementById('btnRegister');
+    const originalBtnText = btnRegister.innerHTML;
+    btnRegister.disabled = true;
+    btnRegister.innerHTML = "⏳ กำลังดำเนินการลงทะเบียน...";
 
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -80,44 +121,48 @@ async function handleRegister() {
             createdAt: new Date()
         });
 
-        showSuccessModal();
+        // 🔴 เรียกป๊อปอัพความสำเร็จ แล้วสั่งให้เปลี่ยนหน้าเมื่อกด "ตกลง"
+        showModal('success', 'ลงทะเบียนสำเร็จ!', 'บัญชีของคุณถูกสร้างเรียบร้อยแล้ว กรุณาเข้าสู่ระบบเพื่อใช้งาน', () => {
+            switchView('loginView');
+        });
 
     } catch (error) {
         const errorCode = error.code;
-        if (errorCode === 'auth/email-already-in-use') {
-            alert("อีเมลนี้ถูกใช้งานไปแล้ว กรุณาใช้อีเมลอื่น");
+        if (errorCode === 'auth/configuration-not-found') {
+            showModal('error', 'ระบบขัดข้อง', 'คุณยังไม่ได้เปิดใช้งาน Sign-in provider ใน Firebase');
+        } else if (errorCode === 'auth/unauthorized-domain') {
+            showModal('error', 'ระบบขัดข้อง', 'โดเมนนี้ยังไม่ได้รับอนุญาตให้ใช้งานในระบบ');
+        } else if (errorCode === 'auth/email-already-in-use') {
+            showModal('error', 'อีเมลซ้ำ', 'อีเมลนี้ถูกใช้งานไปแล้ว กรุณาใช้อีเมลอื่นในการลงทะเบียน');
         } else if (errorCode === 'auth/weak-password') {
-            alert("รหัสผ่านอ่อนเกินไป กรุณาตั้งรหัสผ่านอย่างน้อย 6 ตัวอักษร");
+            showModal('warning', 'รหัสผ่านอ่อนเกินไป', 'กรุณาตั้งรหัสผ่านอย่างน้อย 6 ตัวอักษร');
         } else {
-            alert("เกิดข้อผิดพลาดในการลงทะเบียน: " + error.message);
+            showModal('error', 'เกิดข้อผิดพลาด', 'ข้อผิดพลาด: ' + error.message);
         }
         console.error("Register Error:", error);
+    } finally {
+        btnRegister.disabled = false;
+        btnRegister.innerHTML = originalBtnText;
     }
 }
 
-function showSuccessModal() {
-    document.getElementById('successModal').classList.remove('hidden-section');
-}
-
-function closeModalAndLogin() {
-    document.getElementById('successModal').classList.add('hidden-section');
-    switchView('loginView');
-}
-
-// --- ฟังก์ชันเข้าสู่ระบบฉบับอัปเดต (มีแจ้งเตือนสีแดง) ---
 async function handleLogin() {
     const emailInput = document.getElementById('emailInput').value.trim();
     const passwordInput = document.getElementById('passwordInput').value.trim();
     const loginError = document.getElementById('loginError');
 
-    // ซ่อนข้อความแจ้งเตือนสีแดงก่อนทุกครั้งที่กดปุ่ม
     loginError.classList.add('hidden');
 
     if (!emailInput || !passwordInput) {
-        loginError.innerText = "กรุณากรอกอีเมลและรหัสผ่านให้ครบถ้วน";
-        loginError.classList.remove('hidden');
+        // ใช้ Modal แจ้งเตือนเมื่อไม่กรอกข้อมูล
+        showModal('warning', 'ข้อมูลไม่ครบ', 'กรุณากรอกอีเมลและรหัสผ่านให้ครบถ้วน');
         return;
     }
+
+    const btnLogin = document.getElementById('btnLogin');
+    const originalBtnText = btnLogin.innerHTML;
+    btnLogin.disabled = true;
+    btnLogin.innerHTML = "⏳ กำลังเข้าสู่ระบบ...";
 
     try {
         const userCredential = await signInWithEmailAndPassword(auth, emailInput, passwordInput);
@@ -143,9 +188,16 @@ async function handleLogin() {
 
     } catch (error) {
         console.error("Login Error:", error);
-        // แสดงข้อความสีแดงเมื่อรหัสผิด หรือไม่มีอีเมลในระบบ
-        loginError.innerText = "ไม่มีข้อมูลบัญชีผู้ใช้งานนี้ หรือ รหัสผ่านไม่ถูกต้อง";
+        // กรณีรหัสผิด ปล่อยให้ข้อความสีแดงขึ้นใต้ช่องกรอก (เป็น UX ที่ดีกว่าให้ป๊อปอัพเด้งขัดจังหวะการกรอกรหัสใหม่)
+        if (error.code === 'auth/configuration-not-found') {
+            loginError.innerText = "ระบบล็อกอินปิดอยู่ (ติดต่อผู้ดูแล Firebase)";
+        } else {
+            loginError.innerText = "ไม่มีข้อมูลบัญชีผู้ใช้งานนี้ หรือ รหัสผ่านไม่ถูกต้อง";
+        }
         loginError.classList.remove('hidden');
+    } finally {
+        btnLogin.disabled = false;
+        btnLogin.innerHTML = originalBtnText;
     }
 }
 
@@ -162,7 +214,14 @@ function submitActivity() {
     if (file.files.length === 0) { showError(file, 'err-actFile'); isValid = false; } else { clearError(file, 'err-actFile'); }
 
     if (isValid) {
-        alert('ข้อมูลถูกต้องครบถ้วน! (รอการเชื่อมต่ออัปโหลดไฟล์)');
+        // ใช้ Modal ในการแจ้งเตือนว่าฟอร์มพร้อมส่งแล้ว
+        showModal('success', 'บันทึกข้อมูลสำเร็จ', 'ข้อมูลถูกตรวจสอบและเตรียมส่งเข้าสู่ระบบแล้ว (รออัปโหลดไฟล์ในขั้นตอนถัดไป)', () => {
+            // เมื่อกดตกลง ให้ล้างฟอร์ม
+            document.getElementById('activityForm').reset();
+        });
+    } else {
+        // แจ้งเตือนเมื่อกรอกไม่ครบ
+        showModal('warning', 'ข้อมูลไม่ครบถ้วน', 'กรุณาตรวจสอบและกรอกข้อมูลในช่องสีแดงให้ครบถ้วน');
     }
 }
 
@@ -183,6 +242,6 @@ function clearError(inputElement, errorId) {
 // ==========================================
 window.switchView = switchView;
 window.handleRegister = handleRegister;
-window.closeModalAndLogin = closeModalAndLogin;
+window.closeModal = closeModal;
 window.handleLogin = handleLogin;
 window.submitActivity = submitActivity;
