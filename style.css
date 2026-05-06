@@ -1,25 +1,28 @@
 /* style.css */
 
-/* คลาสสำหรับซ่อน Element ที่เราใช้สลับหน้าจอ (SPA) */
 .hidden-section {
     display: none !important;
 }
 
-/* ปรับแต่ง Scrollbar ให้ดูสะอาดตาขึ้น */
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+/* แอนิเมชันสำหรับให้ Popup เด้งขึ้นมานุ่มๆ */
+.scale-modal {
+    animation: popIn 0.3s ease-out forwards;
 }
 
+@keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+::-webkit-scrollbar {
+    width: 8px; height: 8px;
+}
 ::-webkit-scrollbar-track {
     background: #f1f1f1; 
 }
- 
 ::-webkit-scrollbar-thumb {
-    background: #c1c1c1; 
-    border-radius: 4px;
+    background: #c1c1c1; border-radius: 4px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
     background: #a8a8a8; 
 }
