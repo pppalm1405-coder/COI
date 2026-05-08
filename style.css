@@ -5,23 +5,73 @@
 }
 
 .scale-modal {
-    animation: popIn 0.3s ease-out forwards;
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 @keyframes popIn {
-    0% { transform: scale(0.8); opacity: 0; }
+    0% { transform: scale(0.5); opacity: 0; }
     100% { transform: scale(1); opacity: 1; }
 }
 
+/* Scrollbar สวยงามเข้ากับธีม */
 ::-webkit-scrollbar {
     width: 8px; height: 8px;
 }
 ::-webkit-scrollbar-track {
-    background: #f1f1f1; 
+    background: #f1f5f9; 
 }
 ::-webkit-scrollbar-thumb {
-    background: #c1c1c1; border-radius: 4px;
+    background: #94a3b8; border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: #a8a8a8; 
+    background: #1e3a8a; 
+}
+
+/* Glassmorphism Effect สำหรับแผงควบคุมหลัก */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+/* =========================================
+   ระบบพื้นหลังเคลื่อนไหว (Floating Emojis) 
+   ========================================= */
+.floating-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    overflow: hidden;
+    background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+}
+
+.floating-emoji {
+    position: absolute;
+    font-size: 2.5rem;
+    opacity: 0;
+    bottom: -100px;
+    animation: floatUp 20s linear infinite;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+}
+
+/* จัดเรียงตำแหน่งและความเร็วให้ดูเป็นธรรมชาติ */
+.emoji-1 { left: 10%; animation-duration: 15s; animation-delay: 0s; font-size: 3rem; }
+.emoji-2 { left: 25%; animation-duration: 22s; animation-delay: 2s; font-size: 2rem; }
+.emoji-3 { left: 40%; animation-duration: 18s; animation-delay: 5s; font-size: 3.5rem; }
+.emoji-4 { left: 55%; animation-duration: 25s; animation-delay: 1s; font-size: 2.5rem; }
+.emoji-5 { left: 70%; animation-duration: 19s; animation-delay: 7s; font-size: 3rem; }
+.emoji-6 { left: 85%; animation-duration: 21s; animation-delay: 3s; font-size: 2.2rem; }
+.emoji-7 { left: 15%; animation-duration: 24s; animation-delay: 10s; font-size: 2.8rem; }
+.emoji-8 { left: 50%; animation-duration: 17s; animation-delay: 8s; font-size: 2rem; }
+.emoji-9 { left: 75%; animation-duration: 20s; animation-delay: 12s; font-size: 3.2rem; }
+.emoji-10 { left: 90%; animation-duration: 16s; animation-delay: 6s; font-size: 2.5rem; }
+
+@keyframes floatUp {
+    0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.15; } /* ปรับความจางให้ดูแพง */
+    90% { opacity: 0.15; }
+    100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
 }
