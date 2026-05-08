@@ -467,7 +467,7 @@ document.getElementById('confirmModalBtn').addEventListener('click', () => {
     closeConfirmModal();
 });
 
-// 🔴 ผูกฟังก์ชันปุ่มรีเฟรชให้เรียกใช้ได้
+// 🔴 ผูกฟังก์ชันปุ่มรีเฟรชให้เรียกใช้ได้อัตโนมัติ
 window.switchView = switchView;
 window.handleRegister = handleRegister;
 window.closeModal = closeModal;
