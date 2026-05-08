@@ -467,11 +467,13 @@ document.getElementById('confirmModalBtn').addEventListener('click', () => {
     closeConfirmModal();
 });
 
-// ผูกฟังก์ชันกับ Window
+// 🔴 ผูกฟังก์ชันปุ่มรีเฟรชให้เรียกใช้ได้
 window.switchView = switchView;
 window.handleRegister = handleRegister;
 window.closeModal = closeModal;
 window.handleLogin = handleLogin;
 window.submitActivity = submitActivity;
 window.handleFileSelect = handleFileSelect; 
-window.removeFile = removeFile;
+window.removeFile = removeFile; 
+window.loadStudentActivities = loadStudentActivities;
+window.loadAdminActivities = loadAdminActivities;
