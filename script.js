@@ -8,7 +8,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 let currentUserData = null;
 let currentUserId = null;
 let modalCloseCallback = null;
-let targetRejectId = null; // เก็บ ID ที่กำลังจะกดปฏิเสธ
+let targetRejectId = null;
 
 function showModal(type, title, message, callback = null) {
     const modal = document.getElementById('customModal');
@@ -60,10 +60,9 @@ function switchView(viewId) {
 }
 
 // ==========================================
-// ระบบลงทะเบียน พร้อมเช็ครหัส (ตัวเลข/ตัวอักษร)
+// ระบบลงทะเบียน พร้อมเช็ครหัสเพื่อกำหนดสถานะอัตโนมัติ
 // ==========================================
 async function handleRegister() {
-    const role = document.querySelector('input[name="userRole"]:checked').value;
     const name = document.getElementById('regName').value.trim();
     const id = document.getElementById('regId').value.trim();
     const cardId = document.getElementById('regCardId').value.trim();
@@ -71,7 +70,6 @@ async function handleRegister() {
     const password = document.getElementById('regPassword').value;
     const confirmPassword = document.getElementById('regConfirmPassword').value;
     
-    // ดึงค่าฟิลด์ใหม่ (อาจจะว่างได้ถ้าเป็นแอดมิน)
     const faculty = document.getElementById('regFaculty').value.trim();
     const major = document.getElementById('regMajor').value.trim();
     const year = document.getElementById('regYear').value;
@@ -83,12 +81,16 @@ async function handleRegister() {
         showModal('warning', 'รหัสผ่านไม่ตรงกัน', 'กรุณาตรวจสอบรหัสผ่านอีกครั้ง'); return;
     }
 
-    // 🔥 ระบบตรวจสอบรูปแบบรหัสประจำตัว (Validation)
-    if (role === 'student' && !/^[0-9]+$/.test(id)) {
-        showModal('warning', 'รูปแบบรหัสไม่ถูกต้อง', 'รหัสประจำตัวนักศึกษาต้องเป็น "ตัวเลข" เท่านั้นครับ'); return;
-    }
-    if (role === 'admin' && !/^[A-Za-zก-ฮะ-๙]+$/.test(id)) {
-        showModal('warning', 'รูปแบบรหัสไม่ถูกต้อง', 'รหัสฝ่ายกิจการนักศึกษาต้องเป็น "ตัวอักษร" เท่านั้นครับ'); return;
+    // 🔴 ระบบตรวจสอบรูปแบบรหัสประจำตัว (แยกสถานะอัตโนมัติ)
+    let role = '';
+    if (/^[0-9]+$/.test(id)) {
+        role = 'student'; // ถ้าเป็นตัวเลขล้วน -> นักศึกษา
+    } else if (/^[A-Za-zก-ฮะ-๙]+$/.test(id)) {
+        role = 'admin'; // ถ้าเป็นตัวอักษรล้วน -> แอดมิน
+    } else {
+        // ถ้าผสมกัน หรือ มีอักขระพิเศษ
+        showModal('warning', 'รูปแบบรหัสประจำตัวไม่ถูกต้อง', 'รหัสประจำตัวต้องเป็น "ตัวเลขล้วน" (สำหรับนักศึกษา) หรือ "ตัวอักษรล้วน" (สำหรับผู้ดูแลระบบ) เท่านั้นครับ'); 
+        return;
     }
 
     const btnRegister = document.getElementById('btnRegister');
@@ -102,11 +104,11 @@ async function handleRegister() {
         const { error: dbError } = await supabase.from('users').insert([{ 
             id: authData.user.id, fullName: name, studentId: id, citizenId: cardId, email: email, role: role,
             faculty: faculty, major: major, year: year,
-            avatar_url: `https://ui-avatars.com/api/?name=${name}&background=random` // รูปเริ่มต้น
+            avatar_url: `https://ui-avatars.com/api/?name=${name}&background=random`
         }]);
         if (dbError) throw dbError;
 
-        showModal('success', 'ขึ้นทะเบียนสำเร็จ!', 'ระบบบันทึกข้อมูลเรียบร้อยแล้ว', () => switchView('loginView'));
+        showModal('success', 'ขึ้นทะเบียนสำเร็จ!', 'ระบบบันทึกข้อมูลและกำหนดสิทธิ์ให้ท่านเรียบร้อยแล้ว', () => switchView('loginView'));
     } catch (error) {
         showModal('error', 'ข้อผิดพลาดระบบ', error.message);
     } finally {
@@ -136,7 +138,6 @@ async function handleLogin() {
             switchView('adminView');
             loadAdminActivities();
         } else {
-            // โหลดข้อมูลรูปโปรไฟล์ นศ.
             document.getElementById('profileImage').src = userData.avatar_url || `https://ui-avatars.com/api/?name=${userData.fullName}&background=random`;
             document.getElementById('studentWelcomeText').innerText = `นิสิต/นักศึกษา: ${userData.fullName} (${userData.studentId}) | คณะ${userData.faculty || '-'}`;
             switchView('studentView');
@@ -149,9 +150,6 @@ async function handleLogin() {
     }
 }
 
-// ==========================================
-// ระบบอัปโหลดรูปโปรไฟล์ (นศ.)
-// ==========================================
 window.handleAvatarUpload = async function(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -173,9 +171,6 @@ window.handleAvatarUpload = async function(event) {
     }
 }
 
-// ==========================================
-// ส่งกิจกรรม (เพิ่มช่องชั่วโมง)
-// ==========================================
 async function submitActivity() {
     const name = document.getElementById('actName').value.trim();
     const date = document.getElementById('actDate').value;
@@ -216,9 +211,6 @@ async function submitActivity() {
     }
 }
 
-// ==========================================
-// โหลดข้อมูลนักศึกษา (แสดงชั่วโมงรวม + เหตุผลปฏิเสธ)
-// ==========================================
 async function loadStudentActivities() {
     const tbody = document.getElementById('studentTableBody');
     tbody.innerHTML = '<tr><td colspan="3" class="text-center p-8">⏳ กำลังดึงข้อมูล...</td></tr>';
@@ -258,9 +250,6 @@ async function loadStudentActivities() {
     }
 }
 
-// ==========================================
-// ระบบแอดมินและการปฏิเสธพร้อมระบุเหตุผล
-// ==========================================
 async function loadAdminActivities() {
     const searchVal = document.getElementById('searchInput') ? document.getElementById('searchInput').value.trim() : '';
     const tbody = document.getElementById('adminTableBody');
@@ -291,7 +280,6 @@ async function loadAdminActivities() {
                 actionHtml = `<span class="text-red-600 font-bold text-sm">✖ ปฏิเสธแล้ว</span>`;
             }
 
-            // ข้อมูลเสริมจาก users table (ถ้ามี)
             let userMeta = item.users ? `คณะ: ${item.users.faculty || '-'} <br> สาขา: ${item.users.major || '-'}` : '';
 
             tbody.innerHTML += `
@@ -306,7 +294,6 @@ async function loadAdminActivities() {
     } catch (error) { console.error(error); }
 }
 
-// กดปุ่มอนุมัติ
 window.approveActivity = async function(docId) {
     try {
         await supabase.from('activities').update({ status: 'approved' }).eq('id', docId);
@@ -315,7 +302,6 @@ window.approveActivity = async function(docId) {
     } catch (error) { showModal('error', 'Error', error.message); }
 }
 
-// เปิดหน้าต่างกรอกเหตุผลปฏิเสธ
 window.openRejectModal = function(docId) {
     targetRejectId = docId;
     document.getElementById('rejectReasonInput').value = '';
@@ -327,7 +313,6 @@ window.closeRejectModal = function() {
     document.getElementById('rejectModal').classList.add('hidden-section');
 }
 
-// กดยืนยันการปฏิเสธ
 window.confirmReject = async function() {
     const reason = document.getElementById('rejectReasonInput').value.trim();
     if (!reason) { alert("กรุณาระบุเหตุผลเพื่อให้นักศึกษาแก้ไข"); return; }
@@ -340,9 +325,6 @@ window.confirmReject = async function() {
     } catch (error) { showModal('error', 'Error', error.message); }
 }
 
-// ==========================================
-// พรีวิว UI ไฟล์อัปโหลด
-// ==========================================
 window.handleFileSelect = function() {
     const input = document.getElementById('actFile');
     const preview = document.getElementById('filePreviewContainer');
@@ -352,6 +334,5 @@ window.handleFileSelect = function() {
     });
 }
 
-// ผูกฟังก์ชันเรียกใช้
 window.switchView = switchView; window.handleRegister = handleRegister; window.handleLogin = handleLogin;
 window.submitActivity = submitActivity; window.closeModal = closeModal; window.loadStudentActivities = loadStudentActivities; window.loadAdminActivities = loadAdminActivities;
