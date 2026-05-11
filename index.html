@@ -4,23 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบบริหารจัดการข้อมูลกิจกรรมเสริมหลักสูตร | Student e-Portfolio</title>
-    
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Prompt', 'sans-serif'] },
-                    colors: {
-                        primary: '#1E3A8A', 
-                        primaryDark: '#172554', 
-                        accent: '#F59E0B', 
-                        accentHover: '#D97706',
-                        bgLight: '#EFF6FF' 
-                    }
-                }
-            }
+            theme: { extend: { fontFamily: { sans: ['Prompt', 'sans-serif'] }, colors: { primary: '#1E3A8A', primaryDark: '#172554', accent: '#F59E0B', accentHover: '#D97706', bgLight: '#EFF6FF' } } }
         }
     </script>
     <link rel="stylesheet" href="style.css">
@@ -28,70 +16,52 @@
 <body class="text-gray-700 min-h-screen font-sans relative">
 
     <div class="floating-bg">
-        <div class="floating-emoji emoji-1">🎓</div>
-        <div class="floating-emoji emoji-2">📚</div>
-        <div class="floating-emoji emoji-3">🏫</div>
-        <div class="floating-emoji emoji-4">✍️</div>
-        <div class="floating-emoji emoji-5">🏅</div>
-        <div class="floating-emoji emoji-6">💡</div>
-        <div class="floating-emoji emoji-7">🎒</div>
-        <div class="floating-emoji emoji-8">🌟</div>
-        <div class="floating-emoji emoji-9">📖</div>
-        <div class="floating-emoji emoji-10">🎓</div>
+        <div class="floating-emoji emoji-1">🎓</div><div class="floating-emoji emoji-2">📚</div><div class="floating-emoji emoji-3">🏫</div><div class="floating-emoji emoji-4">✍️</div><div class="floating-emoji emoji-5">🏅</div>
+        <div class="floating-emoji emoji-6">💡</div><div class="floating-emoji emoji-7">🎒</div><div class="floating-emoji emoji-8">🌟</div><div class="floating-emoji emoji-9">📖</div><div class="floating-emoji emoji-10">🎓</div>
     </div>
 
     <section id="loginView" class="flex items-center justify-center min-h-screen p-4">
         <div class="glass-panel p-8 rounded-2xl shadow-xl w-full max-w-md border-t-4 border-primary relative overflow-hidden">
             <div class="absolute top-0 right-0 -mr-8 -mt-8 w-24 h-24 rounded-full bg-accent opacity-20"></div>
-            
             <div class="text-center mb-8 relative z-10">
                 <div class="mx-auto bg-primary text-white w-16 h-16 flex items-center justify-center rounded-full text-3xl mb-4 shadow-lg">🏫</div>
                 <h1 class="text-2xl font-bold text-primaryDark">ระบบบันทึกกิจกรรมนักศึกษา</h1>
-                <p class="text-sm text-gray-500 mt-2">เข้าสู่ระบบเพื่อจัดการแฟ้มสะสมผลงาน (e-Portfolio)</p>
+                <p class="text-sm text-gray-500 mt-2">เข้าสู่ระบบเพื่อจัดการแฟ้มสะสมผลงาน</p>
             </div>
-            
             <form id="loginForm" class="space-y-5 relative z-10">
                 <div>
-                    <label class="block text-sm font-semibold text-primaryDark mb-1">อีเมลสถาบัน / Email</label>
-                    <input type="email" id="emailInput" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary focus:border-primary transition-colors bg-white/80" placeholder="student@university.ac.th">
+                    <label class="block text-sm font-semibold text-primaryDark mb-1">อีเมลสถาบัน</label>
+                    <input type="email" id="emailInput" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary focus:border-primary transition-colors bg-white/80">
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-primaryDark mb-1">รหัสผ่าน / Password</label>
-                    <input type="password" id="passwordInput" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary focus:border-primary transition-colors bg-white/80" placeholder="••••••••">
+                    <label class="block text-sm font-semibold text-primaryDark mb-1">รหัสผ่าน</label>
+                    <input type="password" id="passwordInput" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary focus:border-primary transition-colors bg-white/80">
                 </div>
-                
                 <p id="loginError" class="text-red-500 text-sm text-center font-medium hidden bg-red-50 py-2 rounded-lg">ไม่พบข้อมูลผู้ใช้งาน หรือรหัสผ่านไม่ถูกต้อง</p>
-
-                <button type="button" id="btnLogin" onclick="handleLogin()" class="w-full bg-primary hover:bg-primaryDark text-white font-bold py-3 px-4 rounded-xl transition duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed">
-                    เข้าสู่ระบบ
-                </button>
+                <button type="button" id="btnLogin" onclick="handleLogin()" class="w-full bg-primary hover:bg-primaryDark text-white font-bold py-3 px-4 rounded-xl shadow-lg transition">เข้าสู่ระบบ</button>
             </form>
-
             <div class="mt-8 text-center relative z-10 border-t border-gray-200 pt-4">
-                <p class="text-sm text-gray-500">นักศึกษาใหม่? 
-                    <button onclick="switchView('registerView')" class="text-accent hover:text-accentHover hover:underline font-bold transition-colors">ขึ้นทะเบียนนักศึกษาที่นี่</button>
-                </p>
+                <p class="text-sm text-gray-500">นักศึกษาใหม่? <button onclick="switchView('registerView')" class="text-accent hover:text-accentHover hover:underline font-bold transition-colors">ขึ้นทะเบียนนักศึกษาที่นี่</button></p>
             </div>
         </div>
     </section>
 
     <section id="registerView" class="hidden-section flex items-center justify-center min-h-screen py-10 p-4">
-        <div class="glass-panel p-8 rounded-2xl shadow-xl w-full max-w-2xl border-t-4 border-accent relative">
+        <div class="glass-panel p-8 rounded-2xl shadow-xl w-full max-w-3xl border-t-4 border-accent relative">
             <div class="text-center mb-8">
                 <h1 class="text-2xl font-bold text-primaryDark">ขึ้นทะเบียนประวัติผู้ใช้งาน</h1>
                 <p class="text-sm text-gray-500 mt-1">กรอกข้อมูลพื้นฐานเพื่อสร้างฐานข้อมูลในระบบ</p>
             </div>
-            
             <form id="registerForm" class="space-y-5">
                 <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
-                    <label class="block text-sm font-semibold text-primaryDark mb-3">สถานภาพ (Status) <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-semibold text-primaryDark mb-3">สถานภาพ <span class="text-red-500">*</span></label>
                     <div class="flex space-x-4">
-                        <label class="flex items-center space-x-2 cursor-pointer bg-white px-4 py-3 rounded-xl border border-gray-200 w-1/2 justify-center hover:border-primary hover:shadow-md transition-all">
-                            <input type="radio" name="userRole" value="student" class="text-primary focus:ring-primary w-4 h-4" checked>
+                        <label class="flex items-center space-x-2 cursor-pointer bg-white px-4 py-3 rounded-xl border border-gray-200 w-1/2 justify-center hover:border-primary transition">
+                            <input type="radio" name="userRole" value="student" class="text-primary w-4 h-4" checked onchange="updateIdPlaceholder()">
                             <span class="text-sm font-bold text-gray-700">👩‍🎓 นิสิต / นักศึกษา</span>
                         </label>
-                        <label class="flex items-center space-x-2 cursor-pointer bg-white px-4 py-3 rounded-xl border border-gray-200 w-1/2 justify-center hover:border-primary hover:shadow-md transition-all">
-                            <input type="radio" name="userRole" value="admin" class="text-primary focus:ring-primary w-4 h-4">
+                        <label class="flex items-center space-x-2 cursor-pointer bg-white px-4 py-3 rounded-xl border border-gray-200 w-1/2 justify-center hover:border-primary transition">
+                            <input type="radio" name="userRole" value="admin" class="text-primary w-4 h-4" onchange="updateIdPlaceholder()">
                             <span class="text-sm font-bold text-gray-700">👨‍🏫 ฝ่ายกิจการนักศึกษา</span>
                         </label>
                     </div>
@@ -103,40 +73,52 @@
                         <input type="text" id="regName" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary focus:border-primary bg-white/80" placeholder="ระบุคำนำหน้าและชื่อ-สกุล">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">รหัสประจำตัว / รหัสบุคลากร <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">รหัสประจำตัว <span class="text-red-500">*</span> <span id="idHint" class="text-xs text-blue-600 font-normal">(กรอกเฉพาะตัวเลข)</span></label>
                         <input type="text" id="regId" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary focus:border-primary bg-white/80" placeholder="เช่น 6610XXXXXX">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">คณะ <span class="text-xs text-gray-400">(เฉพาะนักศึกษา)</span></label>
+                        <input type="text" id="regFaculty" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary focus:border-primary bg-white/80" placeholder="เช่น คณะวิทยาศาสตร์">
+                    </div>
+                    <div class="flex gap-2">
+                        <div class="w-2/3">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">สาขาวิชา</label>
+                            <input type="text" id="regMajor" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary bg-white/80" placeholder="เช่น วิทยาการคอมพิวเตอร์">
+                        </div>
+                        <div class="w-1/3">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">ชั้นปี</label>
+                            <select id="regYear" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary bg-white/80">
+                                <option value="">เลือก</option><option value="1">ปี 1</option><option value="2">ปี 2</option><option value="3">ปี 3</option><option value="4">ปี 4</option><option value="อื่นๆ">อื่นๆ</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">รหัสประจำตัวประชาชน 13 หลัก <span class="text-red-500">*</span></label>
-                    <input type="text" id="regCardId" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary focus:border-primary bg-white/80" placeholder="x-xxxx-xxxxx-xx-x" maxlength="13">
+                    <input type="text" id="regCardId" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary bg-white/80" maxlength="13">
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5 border-t border-gray-200 pt-5 mt-2">
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">อีเมลสถาบัน <span class="text-red-500">*</span></label>
-                        <input type="email" id="regEmail" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary focus:border-primary bg-white/80" placeholder="email@university.ac.th">
+                        <input type="email" id="regEmail" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary bg-white/80">
                     </div>
                     <div class="space-y-5">
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-1">รหัสผ่าน (ขั้นต่ำ 6 ตัวอักษร) <span class="text-red-500">*</span></label>
-                            <input type="password" id="regPassword" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary focus:border-primary bg-white/80" placeholder="••••••••">
+                            <input type="password" id="regPassword" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary bg-white/80">
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-1">ยืนยันรหัสผ่านอีกครั้ง <span class="text-red-500">*</span></label>
-                            <input type="password" id="regConfirmPassword" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary focus:border-primary bg-white/80" placeholder="••••••••">
+                            <input type="password" id="regConfirmPassword" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary bg-white/80">
                         </div>
                     </div>
                 </div>
 
                 <div class="pt-6 flex gap-4">
-                    <button type="button" onclick="switchView('loginView')" class="w-1/3 bg-white hover:bg-gray-50 border-2 border-gray-200 text-gray-700 font-bold py-3 px-4 rounded-xl transition duration-200">
-                        ย้อนกลับ
-                    </button>
-                    <button type="button" id="btnRegister" onclick="handleRegister()" class="w-2/3 bg-accent hover:bg-accentHover text-white font-bold py-3 px-4 rounded-xl transition duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed">
-                        📝 บันทึกประวัติขึ้นระบบ
-                    </button>
+                    <button type="button" onclick="switchView('loginView')" class="w-1/3 bg-white hover:bg-gray-50 border-2 border-gray-200 text-gray-700 font-bold py-3 rounded-xl transition">ย้อนกลับ</button>
+                    <button type="button" id="btnRegister" onclick="handleRegister()" class="w-2/3 bg-accent hover:bg-accentHover text-white font-bold py-3 rounded-xl shadow-md transition">📝 บันทึกประวัติขึ้นระบบ</button>
                 </div>
             </form>
         </div>
@@ -144,76 +126,70 @@
 
     <section id="studentView" class="hidden-section max-w-6xl mx-auto p-4 py-8">
         <div class="glass-panel rounded-2xl shadow-sm p-6 mb-8 flex flex-col md:flex-row justify-between items-center border-l-8 border-primary">
-            <div class="mb-4 md:mb-0">
-                <h1 class="text-3xl font-bold text-primaryDark flex items-center gap-3">
-                    <span class="text-4xl">🎓</span> ระบบแฟ้มสะสมผลงาน (e-Portfolio)
-                </h1>
-                <p class="text-gray-600 mt-1 font-medium" id="studentWelcomeText">ยินดีต้อนรับ</p>
+            <div class="flex items-center gap-5 mb-4 md:mb-0">
+                <div class="relative group">
+                    <div class="w-20 h-20 rounded-full overflow-hidden border-4 border-white shadow-md bg-gray-200">
+                        <img id="profileImage" src="https://ui-avatars.com/api/?name=Student&background=random" class="w-full h-full object-cover">
+                    </div>
+                    <button onclick="document.getElementById('avatarUpload').click()" class="absolute bottom-0 right-0 bg-primary text-white p-1.5 rounded-full shadow hover:bg-primaryDark transition" title="เปลี่ยนรูปโปรไฟล์">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    </button>
+                    <input type="file" id="avatarUpload" class="hidden" accept="image/*" onchange="handleAvatarUpload(event)">
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold text-primaryDark flex items-center gap-3">แฟ้มสะสมผลงาน (e-Portfolio)</h1>
+                    <p class="text-gray-600 mt-1 font-medium" id="studentWelcomeText">ยินดีต้อนรับ</p>
+                </div>
             </div>
-            <button onclick="switchView('loginView')" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-semibold px-5 py-2.5 rounded-xl shadow-sm transition-colors flex items-center gap-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                ออกจากระบบ
-            </button>
+            <button onclick="switchView('loginView')" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-semibold px-5 py-2.5 rounded-xl shadow-sm transition flex items-center gap-2">ออกจากระบบ</button>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div class="lg:col-span-1 glass-panel p-6 rounded-2xl shadow-md border-t-4 border-accent">
-                <h2 class="text-xl font-bold mb-5 flex items-center gap-2 text-primaryDark">
-                    <span>📝</span> แบบฟอร์มบันทึกกิจกรรม
-                </h2>
+                <h2 class="text-xl font-bold mb-5 flex items-center gap-2 text-primaryDark"><span>📝</span> แบบฟอร์มบันทึกกิจกรรม</h2>
                 <form id="activityForm" class="space-y-4">
                     <div>
-                        <label class="block text-sm font-semibold mb-1 text-gray-700">ชื่อโครงการ / กิจกรรม <span class="text-red-500">*</span></label>
-                        <input type="text" id="actName" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-primary focus:border-primary transition bg-white/80" placeholder="ระบุชื่อกิจกรรมที่เข้าร่วม">
-                        <p class="text-red-500 text-xs mt-1 hidden" id="err-actName">กรุณาระบุชื่อกิจกรรม</p>
+                        <label class="block text-sm font-semibold mb-1 text-gray-700">ชื่อกิจกรรม <span class="text-red-500">*</span></label>
+                        <input type="text" id="actName" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:border-primary transition">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm font-semibold mb-1 text-gray-700">วันที่จัด <span class="text-red-500">*</span></label>
+                            <input type="date" id="actDate" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:border-primary transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-1 text-gray-700">จำนวนชั่วโมง <span class="text-red-500">*</span></label>
+                            <input type="number" id="actHours" min="1" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:border-primary transition" placeholder="เช่น 5">
+                        </div>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold mb-1 text-gray-700">วันที่จัดกิจกรรม <span class="text-red-500">*</span></label>
-                        <input type="date" id="actDate" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-primary focus:border-primary transition bg-white/80">
-                        <p class="text-red-500 text-xs mt-1 hidden" id="err-actDate">กรุณาเลือกวันที่</p>
+                        <label class="block text-sm font-semibold mb-1 text-gray-700">หน่วยงาน / อาจารย์ที่ปรึกษา <span class="text-red-500">*</span></label>
+                        <input type="text" id="actCertifier" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:border-primary transition">
                     </div>
-                    <div>
-                        <label class="block text-sm font-semibold mb-1 text-gray-700">หน่วยงานที่จัด / อาจารย์ที่ปรึกษา <span class="text-red-500">*</span></label>
-                        <input type="text" id="actCertifier" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-primary focus:border-primary transition bg-white/80" placeholder="ผู้รับรองการเข้าร่วม">
-                        <p class="text-red-500 text-xs mt-1 hidden" id="err-actCertifier">กรุณาระบุผู้รับรอง</p>
-                    </div>
-                    
                     <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
-                        <label class="block text-sm font-semibold mb-2 text-primaryDark">อัปโหลดหลักฐานอ้างอิง <span class="text-gray-500 font-normal text-xs">(แนบได้หลายไฟล์ รูป/PDF)</span> <span class="text-red-500">*</span></label>
-                        <input type="file" id="actFile" multiple onchange="handleFileSelect()" class="w-full text-sm text-gray-600 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-primary file:text-white hover:file:bg-primaryDark cursor-pointer bg-white rounded-xl border border-gray-200 p-1 transition">
-                        <p class="text-red-500 text-xs mt-1 hidden" id="err-actFile">กรุณาแนบเอกสารหลักฐานอย่างน้อย 1 ฉบับ</p>
-                        
+                        <label class="block text-sm font-semibold mb-2 text-primaryDark">อัปโหลดหลักฐาน <span class="text-red-500">*</span></label>
+                        <input type="file" id="actFile" multiple onchange="handleFileSelect()" class="w-full text-sm text-gray-600 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-primary file:text-white cursor-pointer bg-white rounded-xl border border-gray-200 p-1">
                         <div id="filePreviewContainer" class="mt-3 flex flex-col gap-2"></div>
                     </div>
-
-                    <button type="button" id="btnSubmitActivity" onclick="submitActivity()" class="w-full bg-accent hover:bg-accentHover text-white font-bold py-3 px-4 rounded-xl transition shadow-lg mt-4 disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2">
-                        <span>📤</span> ส่งข้อมูลเข้าระบบ
-                    </button>
+                    <button type="button" id="btnSubmitActivity" onclick="submitActivity()" class="w-full bg-accent hover:bg-accentHover text-white font-bold py-3 px-4 rounded-xl shadow-lg mt-4 transition">ส่งข้อมูลเข้าระบบ</button>
                 </form>
             </div>
 
             <div class="lg:col-span-2 glass-panel p-6 rounded-2xl shadow-md border-t-4 border-primary">
                 <div class="flex justify-between items-center mb-5 border-b border-gray-200 pb-3">
-                    <h2 class="text-xl font-bold flex items-center gap-2 text-primaryDark">
-                        <span>📊</span> ประวัติการเข้าร่วมกิจกรรมเสริมหลักสูตร
-                    </h2>
-                    <button onclick="loadStudentActivities()" type="button" class="text-sm bg-blue-50 hover:bg-blue-100 text-primary font-bold px-4 py-2 rounded-lg flex items-center gap-2 transition border border-blue-200 shadow-sm" title="รีเฟรชข้อมูลล่าสุด">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                        รีเฟรชข้อมูล
-                    </button>
+                    <h2 class="text-xl font-bold flex items-center gap-2 text-primaryDark"><span>📊</span> ประวัติกิจกรรม <span id="totalHoursText" class="text-sm bg-green-100 text-green-700 px-3 py-1 rounded-full ml-2">รวม: 0 ชม.</span></h2>
+                    <button onclick="loadStudentActivities()" class="text-sm bg-blue-50 hover:bg-blue-100 text-primary font-bold px-4 py-2 rounded-lg border border-blue-200 shadow-sm transition">รีเฟรช</button>
                 </div>
-                
                 <div class="overflow-x-auto rounded-xl border border-gray-200">
                     <table class="w-full text-left border-collapse bg-white">
                         <thead>
                             <tr class="bg-gray-100 text-primaryDark text-sm">
                                 <th class="p-4 font-bold border-b w-1/4">วันที่ทำกิจกรรม</th>
                                 <th class="p-4 font-bold border-b w-1/2">รายละเอียดกิจกรรม</th>
-                                <th class="p-4 font-bold border-b text-center">สถานะการประเมิน</th>
+                                <th class="p-4 font-bold border-b text-center">สถานะ</th>
                             </tr>
                         </thead>
-                        <tbody id="studentTableBody" class="divide-y divide-gray-100">
-                        </tbody>
+                        <tbody id="studentTableBody" class="divide-y divide-gray-100"></tbody>
                     </table>
                 </div>
             </div>
@@ -221,39 +197,22 @@
     </section>
 
     <section id="adminView" class="hidden-section max-w-7xl mx-auto p-4 py-8">
-         <div class="glass-panel rounded-2xl shadow-sm p-6 mb-8 flex flex-col md:flex-row justify-between items-center border-l-8 border-accent">
-            <div class="mb-4 md:mb-0">
-                <h1 class="text-3xl font-bold text-primaryDark flex items-center gap-3">
-                    <span class="text-4xl">👨‍💻</span> ระบบจัดการฝ่ายกิจการนักศึกษา
-                </h1>
-                <p class="text-gray-600 mt-1 font-medium">ตรวจสอบและอนุมัติชั่วโมงกิจกรรมของนิสิต/นักศึกษา</p>
+         <div class="glass-panel rounded-2xl shadow-sm p-6 mb-8 flex justify-between items-center border-l-8 border-accent">
+            <div>
+                <h1 class="text-3xl font-bold text-primaryDark flex items-center gap-3">👨‍💻 ระบบจัดการฝ่ายกิจการนักศึกษา</h1>
+                <p class="text-gray-600 mt-1 font-medium">ตรวจสอบและอนุมัติชั่วโมงกิจกรรม</p>
             </div>
-            <button onclick="switchView('loginView')" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-semibold px-5 py-2.5 rounded-xl shadow-sm transition-colors flex items-center gap-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                ออกจากระบบ
-            </button>
+            <button onclick="switchView('loginView')" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-semibold px-5 py-2.5 rounded-xl shadow-sm transition">ออกจากระบบ</button>
         </div>
 
         <div class="glass-panel p-6 rounded-2xl shadow-sm mb-6 border border-gray-200">
-            <div class="flex flex-col md:flex-row gap-5 items-end">
-                <div class="w-full md:w-1/3">
-                    <label class="block text-sm font-semibold mb-2 text-primaryDark">ค้นหาจาก</label>
-                    <select class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary focus:border-primary bg-white/90 font-medium">
-                        <option>รหัสประจำตัวนักศึกษา</option>
-                        <option>ชื่อ - นามสกุล</option>
-                    </select>
+            <div class="flex gap-5 items-end">
+                <div class="w-1/3">
+                    <label class="block text-sm font-semibold mb-2 text-primaryDark">ค้นหาจากรหัสนักศึกษา</label>
+                    <input type="text" id="searchInput" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-primary bg-white/90" placeholder="พิมพ์รหัสเพื่อค้นหา...">
                 </div>
-                <div class="w-full md:w-1/2">
-                    <label class="block text-sm font-semibold mb-2 text-primaryDark">คำค้นหา</label>
-                    <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary focus:border-primary bg-white/90" placeholder="พิมพ์ข้อมูลที่ต้องการค้นหา...">
-                </div>
-                <div class="w-full md:w-auto flex gap-3">
-                    <button type="button" class="w-full bg-primary hover:bg-primaryDark text-white font-bold py-3 px-8 rounded-xl transition shadow-md flex items-center justify-center gap-2">
-                        🔍 ค้นหาข้อมูล
-                    </button>
-                    <button type="button" onclick="loadAdminActivities()" class="bg-blue-50 hover:bg-blue-100 text-primary border border-blue-200 font-bold py-3 px-4 rounded-xl transition shadow-md flex items-center justify-center" title="โหลดข้อมูลล่าสุด">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                    </button>
+                <div class="w-auto flex gap-3">
+                    <button onclick="loadAdminActivities()" class="bg-primary hover:bg-primaryDark text-white font-bold py-3 px-8 rounded-xl shadow-md transition">🔍 ค้นหา</button>
                 </div>
             </div>
         </div>
@@ -263,54 +222,50 @@
                 <table class="w-full text-left border-collapse bg-white">
                     <thead>
                         <tr class="bg-primaryDark text-white text-sm">
-                            <th class="p-4 font-semibold whitespace-nowrap">รหัสนักศึกษา</th>
-                            <th class="p-4 font-semibold whitespace-nowrap">รายนามผู้ยื่นเรื่อง</th>
+                            <th class="p-4 font-semibold">ข้อมูลนักศึกษา</th>
                             <th class="p-4 font-semibold">รายละเอียดกิจกรรม</th>
-                            <th class="p-4 font-semibold">เอกสารหลักฐานอ้างอิง</th>
-                            <th class="p-4 font-semibold text-center">พิจารณาผล</th>
+                            <th class="p-4 font-semibold">หลักฐาน</th>
+                            <th class="p-4 font-semibold text-center w-32">การพิจารณา</th>
                         </tr>
                     </thead>
-                    <tbody id="adminTableBody" class="divide-y divide-gray-200">
-                    </tbody>
+                    <tbody id="adminTableBody" class="divide-y divide-gray-200"></tbody>
                 </table>
             </div>
         </div>
     </section>
 
     <div id="customModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden-section">
-        <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-sm w-full text-center transform transition-all scale-modal border-t-8 border-primary">
+        <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-sm w-full text-center border-t-8 border-primary transform transition-all scale-modal">
             <div id="modalIconContainer" class="mx-auto flex items-center justify-center h-20 w-20 rounded-full mb-5">
-                <svg id="modalIcon" class="h-10 w-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                </svg>
+                <svg id="modalIcon" class="h-10 w-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"></svg>
             </div>
             <h3 id="modalTitle" class="text-2xl font-bold text-gray-800 mb-2">Title</h3>
             <p id="modalMessage" class="text-gray-500 mb-8 font-medium">Message</p>
-            <button id="modalBtn" onclick="closeModal()" class="w-full text-white font-bold py-3 px-4 rounded-xl transition duration-300 shadow-lg">
-                รับทราบ
-            </button>
+            <button id="modalBtn" onclick="closeModal()" class="w-full text-white font-bold py-3 px-4 rounded-xl shadow-lg">รับทราบ</button>
         </div>
     </div>
 
-    <div id="confirmModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden-section">
-        <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-sm w-full text-center transform transition-all scale-modal border-t-8 border-accent">
-            <div class="mx-auto flex items-center justify-center h-20 w-20 rounded-full mb-5 bg-blue-50 text-primary">
-                <svg class="h-10 w-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-                </svg>
-            </div>
-            <h3 id="confirmModalTitle" class="text-2xl font-bold text-gray-800 mb-2">ยืนยันการพิจารณา</h3>
-            <p id="confirmModalMessage" class="text-gray-500 mb-8 font-medium">คุณแน่ใจหรือไม่ที่จะดำเนินการนี้?</p>
+    <div id="rejectModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden-section">
+        <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full border-t-8 border-red-500 transform transition-all scale-modal">
+            <h3 class="text-xl font-bold text-gray-800 mb-2">ระบุเหตุผลที่ไม่อนุมัติ</h3>
+            <p class="text-sm text-gray-500 mb-4">ข้อมูลนี้จะถูกส่งกลับไปให้นักศึกษาเพื่อทำการแก้ไข</p>
+            <textarea id="rejectReasonInput" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-red-500 focus:ring-red-500 mb-6 bg-red-50" placeholder="เช่น เอกสารหลักฐานไม่ชัดเจน หรือ ไม่ระบุชื่ออาจารย์..."></textarea>
             <div class="flex gap-4">
-                <button onclick="closeConfirmModal()" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 px-4 rounded-xl transition duration-200">
-                    ยกเลิก
-                </button>
-                <button id="confirmModalBtn" class="w-1/2 text-white font-bold py-3 px-4 rounded-xl transition duration-300 shadow-lg">
-                    ยืนยัน
-                </button>
+                <button onclick="closeRejectModal()" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-xl transition">ยกเลิก</button>
+                <button onclick="confirmReject()" class="w-1/2 bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl shadow-lg transition">ยืนยันการปฏิเสธ</button>
             </div>
         </div>
     </div>
 
     <script type="module" src="script.js"></script>
+    <script>
+        // เปลี่ยนคำใบ้ช่องรหัสตามสถานะ
+        function updateIdPlaceholder() {
+            const role = document.querySelector('input[name="userRole"]:checked').value;
+            const hint = document.getElementById('idHint');
+            if(role === 'student') { hint.innerText = "(กรอกเฉพาะตัวเลขเท่านั้น)"; hint.className = "text-xs text-blue-600 font-normal"; }
+            else { hint.innerText = "(กรอกเฉพาะตัวอักษรภาษาอังกฤษ/ไทย)"; hint.className = "text-xs text-green-600 font-normal"; }
+        }
+    </script>
 </body>
 </html>
