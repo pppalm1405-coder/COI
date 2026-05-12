@@ -16,7 +16,7 @@
                         primaryDark: '#172554', 
                         accent: '#F59E0B', 
                         accentHover: '#D97706', 
-                        bgLight: '#F0F9FF' // เปลี่ยนให้สว่างและสดใสขึ้นนิดนึง
+                        bgLight: '#F0F9FF'
                     } 
                 } 
             }
@@ -460,8 +460,8 @@
         </div>
     </div>
 
-    <div class="text-center text-sm font-bold text-blue-300 mt-6 absolute bottom-4 w-full">
-        ✨ ระบบ e-Portfolio v6.0 (Colorful & Readable Edition) ✨
+    <div class="text-center text-sm font-bold text-blue-400 mt-6 absolute bottom-4 w-full">
+        ✨ ระบบ e-Portfolio v6.1 (Refined UI Edition) ✨
     </div>
 
     <script type="module">
@@ -518,7 +518,7 @@
             document.getElementById('summaryView').classList.add('hidden-section'); 
             
             document.getElementById(viewId).classList.remove('hidden-section');
-            window.scrollTo(0,0); // เลื่อนจอขึ้นบนสุดเวลาสลับหน้า
+            window.scrollTo(0,0); 
             
             if(viewId === 'registerView') document.getElementById('registerForm').reset();
             if(viewId === 'loginView') { document.getElementById('loginForm').reset(); supabase.auth.signOut(); }
@@ -668,22 +668,26 @@
                 data?.forEach(item => {
                     if (item.status === 'approved') total += Number(item.act_hours || 0);
                     
-                    let status = item.status === 'approved' ? '<span class="bg-green-100 text-green-700 px-4 py-1.5 rounded-full text-sm font-bold border border-green-200 shadow-sm">✔ อนุมัติแล้ว</span>' : 
-                                 (item.status === 'rejected' ? `<span class="bg-red-100 text-red-700 px-4 py-1.5 rounded-full text-sm font-bold border border-red-200 shadow-sm">✖ ไม่ผ่านเกณฑ์</span><p class="text-xs text-red-500 mt-2 font-medium bg-red-50 p-2 rounded-lg border border-red-100">เหตุผล: ${item.reject_reason || '-'}</p>` : 
-                                 '<span class="bg-yellow-100 text-yellow-700 px-4 py-1.5 rounded-full text-sm font-bold border border-yellow-200 shadow-sm">⏳ รอประเมิน</span>');
+                    // 🔴 แก้ปัญหาป้ายสถานะโดนบีบ ด้วย inline-flex และ whitespace-nowrap
+                    let statusHtml = '';
+                    if (item.status === 'approved') {
+                        statusHtml = `<span class="inline-flex items-center gap-1.5 bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-bold border border-green-200 shadow-sm whitespace-nowrap"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> อนุมัติแล้ว</span>`;
+                    } else if (item.status === 'rejected') {
+                        statusHtml = `<div class="flex flex-col items-center gap-1.5"><span class="inline-flex items-center gap-1.5 bg-red-100 text-red-700 px-4 py-2 rounded-full text-sm font-bold border border-red-200 shadow-sm whitespace-nowrap"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg> ไม่ผ่านเกณฑ์</span><span class="text-xs text-red-500 font-medium bg-red-50 px-3 py-1.5 rounded-lg border border-red-100 text-center w-full max-w-[150px] truncate" title="เหตุผล: ${item.reject_reason || '-'}">เหตุผล: ${item.reject_reason || '-'}</span></div>`;
+                    } else {
+                        statusHtml = `<span class="inline-flex items-center gap-1.5 bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full text-sm font-bold border border-yellow-200 shadow-sm whitespace-nowrap">⏳ รอประเมิน</span>`;
+                    }
                                  
-                    tbody.innerHTML += `<tr class="border-b border-gray-100 hover:bg-blue-50/50 transition-colors"><td class="p-5 text-base text-gray-600 font-medium">${item.actDate}</td><td class="p-5 text-lg font-bold text-gray-800">${item.actName} <span class="text-accent ml-2 text-base bg-yellow-50 px-2 py-1 rounded-lg border border-yellow-100">(${item.act_hours} ชม.)</span></td><td class="p-5 text-center align-middle">${status}</td></tr>`;
+                    tbody.innerHTML += `<tr class="border-b border-gray-100 hover:bg-blue-50/50 transition-colors"><td class="p-5 text-base text-gray-600 font-medium">${item.actDate}</td><td class="p-5 text-lg font-bold text-gray-800">${item.actName} <span class="text-accent ml-2 text-base bg-yellow-50 px-2 py-1 rounded-lg border border-yellow-100">(${item.act_hours} ชม.)</span></td><td class="p-5 text-center align-middle">${statusHtml}</td></tr>`;
                 });
                 
                 document.getElementById('totalHoursText').innerText = `รวมชั่วโมงที่ผ่าน: ${total} ชม.`;
                 document.getElementById('totalHoursText').className = total >= 40 ? "text-base bg-green-500 text-white px-5 py-2 rounded-full ml-3 font-bold shadow-md border-2 border-white" : "text-base bg-gray-100 text-gray-700 px-5 py-2 rounded-full ml-3 font-bold border border-gray-200";
                 
-                // ถ้ารวม >= 40 ให้โชว์ปุ่มเปิดหน้าแคปรูป
                 document.getElementById('btnGenerateSummary').className = total >= 40 ? 'text-base bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold px-5 py-3 rounded-xl shadow-lg flex items-center gap-2 btn-hover-effect' : 'hidden';
             } catch (e) { console.error(e); }
         }
 
-        // 🔴 5. เปิดหน้าเว็บสรุป (Minimalist Web Style) สำหรับการแคปรูป
         window.openSummaryView = async function() {
             const btn = document.getElementById('btnGenerateSummary');
             const originalText = btn.innerHTML;
@@ -691,10 +695,8 @@
             btn.disabled = true;
             
             try {
-                // 1. ดึงข้อมูลเฉพาะที่ผ่านแล้ว
                 const { data } = await supabase.from('activities').select('*').eq('uid', currentUserId).eq('status', 'approved').order('actDate', { ascending: true });
                 
-                // 2. เติมข้อมูลลงในการ์ด
                 document.getElementById('sumName').innerText = currentUserData.fullName;
                 document.getElementById('sumSignName').innerText = currentUserData.fullName;
                 document.getElementById('sumStudentId').innerText = currentUserData.studentId;
@@ -709,7 +711,6 @@
                     let dateObj = new Date(item.actDate);
                     let dateStr = dateObj.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
                     
-                    // สลับสีแถวตารางให้อ่านง่ายขึ้น (Zebra Striping)
                     let rowBg = index % 2 === 0 ? 'bg-white' : 'bg-blue-50/30';
                     
                     tbody.innerHTML += `
@@ -722,8 +723,6 @@
                 });
                 
                 document.getElementById('sumTotalHours').innerText = total;
-
-                // 3. เปลี่ยนหน้าจอไปที่หน้าแคปรูป
                 window.switchView('summaryView');
 
             } catch (e) {
@@ -735,7 +734,6 @@
             }
         }
 
-        // Admin Tab Logic
         window.toggleAdminTab = function(name) {
             document.getElementById('adminActivitySection').className = name === 'activity' ? '' : 'hidden-section';
             document.getElementById('adminStudentSection').className = name === 'student' ? '' : 'hidden-section';
@@ -757,8 +755,21 @@
                 
                 data.forEach(item => {
                     let filesHtml = item.files.map((f, i) => `<a href="${f.url}" target="_blank" class="text-primary hover:text-blue-700 text-sm font-bold hover:underline bg-blue-50 px-3 py-1 rounded-lg inline-block mb-1 border border-blue-100">📄 ดูหลักฐาน</a>`).join('');
-                    let action = item.status === 'pending' ? `<button onclick="approveActivity('${item.id}')" class="bg-green-500 hover:bg-green-600 text-white p-2 rounded-xl text-sm font-bold w-full mb-2 shadow-sm btn-hover-effect">✅ อนุมัติ</button><button onclick="openRejectModal('${item.id}')" class="bg-red-500 hover:bg-red-600 text-white p-2 rounded-xl text-sm font-bold w-full shadow-sm btn-hover-effect">❌ ปฏิเสธ</button>` : `<span class="text-sm font-bold text-gray-500 bg-gray-100 px-4 py-2 rounded-xl block text-center">${item.status === 'approved' ? 'อนุมัติแล้ว' : 'ปฏิเสธแล้ว'}</span>`;
-                    tbody.innerHTML += `<tr class="border-b border-gray-100 hover:bg-gray-50"><td class="p-5 text-base"><b>${item.studentId}</b><br><span class="text-gray-600">${item.studentName}</span></td><td class="p-5 text-base font-bold">${item.actName} <br><span class="text-accent text-sm">(${item.act_hours} ชม.)</span></td><td class="p-5 text-center">${filesHtml}</td><td class="p-5 text-center">${action}</td></tr>`;
+                    
+                    // 🔴 ปรับปุ่มฝั่งแอดมินให้ใช้ inline-flex เช่นกันเพื่อความสวยงาม
+                    let action = '';
+                    if (item.status === 'pending') {
+                        action = `
+                            <button onclick="approveActivity('${item.id}')" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-3 py-2 rounded-xl text-sm font-bold w-full mb-2 shadow-sm btn-hover-effect flex items-center justify-center gap-1.5 whitespace-nowrap"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> อนุมัติ</button>
+                            <button onclick="openRejectModal('${item.id}')" class="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-3 py-2 rounded-xl text-sm font-bold w-full shadow-sm btn-hover-effect flex items-center justify-center gap-1.5 whitespace-nowrap"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg> ปฏิเสธ</button>
+                        `;
+                    } else if (item.status === 'approved') {
+                        action = `<span class="inline-flex items-center gap-1.5 bg-green-100 text-green-700 px-4 py-2 rounded-xl text-sm font-bold border border-green-200 shadow-sm whitespace-nowrap w-full justify-center"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> อนุมัติแล้ว</span>`;
+                    } else {
+                        action = `<span class="inline-flex items-center gap-1.5 bg-red-100 text-red-700 px-4 py-2 rounded-xl text-sm font-bold border border-red-200 shadow-sm whitespace-nowrap w-full justify-center"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg> ปฏิเสธแล้ว</span>`;
+                    }
+                    
+                    tbody.innerHTML += `<tr class="border-b border-gray-100 hover:bg-gray-50"><td class="p-5 text-base"><b>${item.studentId}</b><br><span class="text-gray-600">${item.studentName}</span></td><td class="p-5 text-base font-bold">${item.actName} <br><span class="text-accent text-sm">(${item.act_hours} ชม.)</span></td><td class="p-5 text-center">${filesHtml}</td><td class="p-5 text-center align-middle">${action}</td></tr>`;
                 });
             } catch(e) { console.error(e); }
         }
