@@ -280,7 +280,7 @@
     </section>
 
     <section id="summaryView" class="hidden-section bg-gray-200 min-h-screen py-10 relative">
-        <div class="max-w-[210mm] mx-auto mb-4 flex justify-between items-center px-4">
+        <div class="mx-auto mb-4 flex justify-between items-center px-4" style="max-width: 794px;">
             <button onclick="switchView('studentView')" class="bg-white hover:bg-gray-100 text-gray-700 border border-gray-300 font-bold py-2 px-6 rounded-lg shadow-sm transition flex items-center gap-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                 ย้อนกลับ
@@ -289,46 +289,48 @@
         </div>
 
         <div class="overflow-x-auto w-full pb-10 flex justify-center">
-            <div class="bg-white shadow-2xl relative" style="width: 210mm; min-height: 297mm; padding: 25mm 20mm; font-family: 'Sarabun', sans-serif; color: black; box-sizing: border-box;">
+            <div id="a4-paper" style="width: 794px; min-height: 1123px; background: white; margin: 0 auto; padding: 75px 75px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); font-family: 'Sarabun', sans-serif; color: black; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;">
                 
-                <div style="text-align: center; margin-bottom: 30px; line-height: 1.4;">
-                    <div style="font-size: 18pt; font-weight: bold;">ใบรายงานแบบบันทึกการทำกิจกรรมและเข้าร่วมโครงการ<br>กิจกรรม ที่มุ่งสู่จิตอาสา</div>
-                    <div style="font-size: 18pt; font-weight: normal;">สำหรับนักศึกษา ประจำปีการศึกษา <span id="sumYear"></span></div>
-                </div>
+                <div>
+                    <div style="text-align: center; margin-bottom: 40px; line-height: 1.4;">
+                        <div style="font-size: 24px; font-weight: bold;">ใบรายงานแบบบันทึกการทำกิจกรรมและเข้าร่วมโครงการ</div>
+                        <div style="font-size: 24px; font-weight: bold;">กิจกรรม ที่มุ่งสู่จิตอาสา</div>
+                        <div style="font-size: 21px; font-weight: normal; margin-top: 5px;">สำหรับนักศึกษา ประจำปีการศึกษา <span id="sumYear"></span></div>
+                    </div>
 
-                <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 16pt; padding: 0 10px;">
-                    <div><b>รหัสนักศึกษา</b> &nbsp;&nbsp;<span id="sumStudentId"></span></div>
-                    <div><b>ชื่อ-นามสกุล</b> &nbsp;&nbsp;<span id="sumName"></span></div>
-                </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 21px; padding: 0 5px;">
+                        <div><b>รหัสนักศึกษา</b> &nbsp;&nbsp;<span id="sumStudentId"></span></div>
+                        <div><b>ชื่อ-นามสกุล</b> &nbsp;&nbsp;<span id="sumName"></span></div>
+                    </div>
 
-                <table style="width: 100%; border-collapse: collapse; font-size: 16pt; margin-bottom: 40px; border: 1px solid black;">
-                    <thead>
-                        <tr>
-                            <th style="border: 1px solid black; padding: 8px 10px; text-align: center; width: 25%;">วัน เดือน ปี</th>
-                            <th style="border: 1px solid black; padding: 8px 10px; text-align: center; width: 60%;">ชื่อกิจกรรม</th>
-                            <th style="border: 1px solid black; padding: 8px 10px; text-align: center; width: 15%;">ชั่วโมง</th>
-                        </tr>
-                    </thead>
-                    <tbody id="sumTableBody"></tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="2" style="border: 1px solid black; padding: 8px 10px; text-align: right; font-weight: bold;">รวมชั่วโมงทั้งหมด</td>
-                            <td style="border: 1px solid black; padding: 8px 10px; text-align: center; font-weight: bold;" id="sumTotalHours">0</td>
-                        </tr>
-                    </tfoot>
-                </table>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 21px; margin-bottom: 60px; border: 1px solid black;">
+                        <thead>
+                            <tr>
+                                <th style="border: 1px solid black; padding: 12px; text-align: center; width: 25%;">วัน เดือน ปี</th>
+                                <th style="border: 1px solid black; padding: 12px; text-align: center; width: 60%;">ชื่อกิจกรรม</th>
+                                <th style="border: 1px solid black; padding: 12px; text-align: center; width: 15%;">ชั่วโมง</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sumTableBody"></tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="2" style="border: 1px solid black; padding: 12px; text-align: right; font-weight: bold;">รวมชั่วโมงทั้งหมด</td>
+                                <td style="border: 1px solid black; padding: 12px; text-align: center; font-weight: bold;" id="sumTotalHours">0</td>
+                            </tr>
+                        </tfoot>
+                    </table>
 
-                <div style="text-align: center; font-size: 16pt; margin-top: 50px;">
-                    <p style="margin-bottom: 40px;">ข้าพเจ้าขอรับรองว่าข้อมูลทั้งหมดเป็นความจริงทุกประการ</p>
-                    <p>ลงชื่อ...................................................................................</p>
-                    <p style="margin-top: 10px;">( &nbsp;&nbsp;<span id="sumSignName"></span>&nbsp;&nbsp; )</p>
-                </div>
-                
-                <div style="position: absolute; bottom: 20mm; left: 20mm; right: 20mm;">
-                    <div style="border-top: 1.5px solid black; padding-top: 10px; font-size: 14pt; text-align: left; line-height: 1.3;">
-                        <b>หมายเหตุ :</b> เอกสารฉบับนี้จัดทำขึ้นโดยระบบ E-Portfolio อัตโนมัติ เพื่อใช้เป็นหลักฐานในการแสดงประวัติการเข้าร่วมกิจกรรมจิตอาสาของนักศึกษา หากตรวจสอบพบว่ามีการปลอมแปลงหรือนำข้อมูลอันเป็นเท็จเข้าสู่ระบบ จะถือว่ามีความผิดตามระเบียบของมหาวิทยาลัย
+                    <div style="text-align: center; font-size: 21px;">
+                        <p style="margin-bottom: 60px;">ข้าพเจ้าขอรับรองว่าข้อมูลทั้งหมดเป็นความจริงทุกประการ</p>
+                        <p>ลงชื่อ...................................................................................</p>
+                        <p style="margin-top: 15px;">( &nbsp;&nbsp;<span id="sumSignName"></span>&nbsp;&nbsp; )</p>
                     </div>
                 </div>
+                
+                <div style="border-top: 1.5px solid black; padding-top: 15px; font-size: 18px; text-align: justify; line-height: 1.4; margin-top: 50px;">
+                    <b>หมายเหตุ :</b> เอกสารฉบับนี้จัดทำขึ้นโดยระบบ E-Portfolio อัตโนมัติ เพื่อใช้เป็นหลักฐานในการแสดงประวัติการเข้าร่วมกิจกรรมจิตอาสาของนักศึกษา หากตรวจสอบพบว่ามีการปลอมแปลงหรือนำข้อมูลอันเป็นเท็จเข้าสู่ระบบ จะถือว่ามีความผิดตามระเบียบของมหาวิทยาลัย
+                </div>
+
             </div>
         </div>
     </section>
@@ -393,6 +395,10 @@
         </div>
     </div>
 
+    <div class="text-center text-xs font-bold text-gray-400 mt-6 absolute bottom-2 w-full">
+        ระบบ e-Portfolio v4.0 (Super Locked Layout)
+    </div>
+
     <script type="module">
         import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm";
 
@@ -407,6 +413,7 @@
         let targetMessageUid = null;
         let targetEditUid = null;
 
+        // Modal Logic
         window.showModal = function(type, title, message, callback = null) {
             const modal = document.getElementById('customModal');
             const iconContainer = document.getElementById('modalIconContainer');
@@ -437,6 +444,7 @@
             if (modalCloseCallback) { modalCloseCallback(); modalCloseCallback = null; }
         }
 
+        // ระบบสลับหน้าจอ (เพิ่มหน้า summaryView)
         window.switchView = function(viewId) {
             document.getElementById('loginView').classList.add('hidden-section');
             document.getElementById('registerView').classList.add('hidden-section');
@@ -449,6 +457,7 @@
             if(viewId === 'loginView') { document.getElementById('loginForm').reset(); supabase.auth.signOut(); }
         }
 
+        // Auth Logic
         window.handleRegister = async function() {
             const name = document.getElementById('regName').value.trim();
             const id = document.getElementById('regId').value.trim();
@@ -501,6 +510,7 @@
             finally { btnLogin.innerHTML = "เข้าสู่ระบบ"; btnLogin.disabled = false; }
         }
 
+        // Notification Logic
         window.checkUnreadNotifications = async function() {
             const { data } = await supabase.from('notifications').select('id').eq('uid', currentUserId).eq('is_read', false);
             const badge = document.getElementById('notifBadge');
@@ -524,6 +534,7 @@
 
         window.closeNotifications = () => document.getElementById('notificationsModal').classList.add('hidden-section');
 
+        // Activity Submission Logic
         window.handleAvatarUpload = async function(event) {
             const file = event.target.files[0]; if (!file) return;
             try {
@@ -576,11 +587,13 @@
                     tbody.innerHTML += `<tr class="border-b"><td class="p-4 text-sm">${item.actDate}</td><td class="p-4 text-sm font-bold">${item.actName} <span class="text-accent">(${item.act_hours} ชม.)</span></td><td class="p-4 text-center">${status}</td></tr>`;
                 });
                 document.getElementById('totalHoursText').innerText = `รวม: ${total} ชม.`;
+                
+                // ถ้ารวม >= 40 ให้โชว์ปุ่มเปิดหน้าแคปรูป
                 document.getElementById('btnGenerateSummary').className = total >= 40 ? 'text-sm bg-green-500 hover:bg-green-600 text-white font-bold px-4 py-2 rounded-lg shadow-md transition flex items-center gap-2 border border-green-600' : 'hidden';
             } catch (e) { console.error(e); }
         }
 
-        // 🔴 ระบบเปิดหน้ากระดาษจำลอง A4 เพื่อให้ นศ. แคปรูป
+        // 🔴 ระบบเปิดหน้ากระดาษ A4 ล็อกสเกล
         window.openSummaryView = async function() {
             const btn = document.getElementById('btnGenerateSummary');
             const originalText = btn.innerHTML;
@@ -590,7 +603,6 @@
             try {
                 const { data } = await supabase.from('activities').select('*').eq('uid', currentUserId).eq('status', 'approved').order('actDate', { ascending: true });
                 
-                // กรอกข้อมูล นศ. แบบไม่ใช้เส้นประใต้ชื่อ
                 document.getElementById('sumName').innerText = currentUserData.fullName;
                 document.getElementById('sumSignName').innerText = currentUserData.fullName;
                 document.getElementById('sumStudentId').innerText = currentUserData.studentId;
@@ -605,9 +617,9 @@
                     let dateStr = new Date(item.actDate).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
                     tbody.innerHTML += `
                         <tr>
-                            <td style="border: 1px solid black; padding: 8px 10px; text-align: center;">${dateStr}</td>
-                            <td style="border: 1px solid black; padding: 8px 10px; text-align: left;">${item.actName}</td>
-                            <td style="border: 1px solid black; padding: 8px 10px; text-align: center;">${item.act_hours}</td>
+                            <td style="border: 1px solid black; padding: 12px; text-align: center;">${dateStr}</td>
+                            <td style="border: 1px solid black; padding: 12px; text-align: left;">${item.actName}</td>
+                            <td style="border: 1px solid black; padding: 12px; text-align: center;">${item.act_hours}</td>
                         </tr>
                     `;
                 });
@@ -623,6 +635,7 @@
             }
         }
 
+        // Admin Tab Logic
         window.toggleAdminTab = function(name) {
             document.getElementById('adminActivitySection').className = name === 'activity' ? '' : 'hidden-section';
             document.getElementById('adminStudentSection').className = name === 'student' ? '' : 'hidden-section';
