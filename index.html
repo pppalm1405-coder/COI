@@ -339,8 +339,8 @@
         </div>
     </div>
 
-    <div id="pdfWrapper" style="display: none;">
-        <div id="pdfContent" style="width: 800px; padding: 40px 50px; background: white; font-family: 'Prompt', sans-serif; color: black; margin: 0 auto; box-sizing: border-box;">
+    <div style="position: absolute; left: -9999px; top: 0; width: 1024px; pointer-events: none; z-index: -1;">
+        <div id="pdfContent" style="width: 210mm; padding: 25mm 20mm; background: white; font-family: 'Prompt', sans-serif; color: black; box-sizing: border-box;">
             
             <div style="text-align: center; margin-bottom: 30px;">
                 <h2 style="font-size: 22px; font-weight: bold; margin-bottom: 5px; color: black;">ใบรายงานแบบบันทึกการเข้าร่วมโครงการ/กิจกรรม ที่มุ่งจิตอาสา</h2>
@@ -383,7 +383,7 @@
     </div>
 
     <div class="text-center text-xs font-bold text-gray-400 mt-6 absolute bottom-2 w-full">
-        ระบบ e-Portfolio v1.5
+        ระบบ e-Portfolio v1.6
     </div>
 
     <script type="module">
@@ -684,29 +684,22 @@
                 });
                 document.getElementById('pdfTotalHours').innerText = total;
 
-                // เทคนิคใหม่: เปิดกล่องให้ระบบเห็นก่อนถ่ายรูป (เพื่อไม่ให้สเกลเพี้ยน) แล้วค่อยปิดกลับ
-                const wrapper = document.getElementById('pdfWrapper');
-                wrapper.style.display = 'block';
-
+                // เทคนิคใหม่: ไม่ใช้ display:none ให้ระบบอ่านหน้ากว้าง 1024px เสมอ
                 const element = document.getElementById('pdfContent');
                 
                 var opt = {
-                  margin:       [15, 15, 15, 15], // เว้นขอบ [บน, ขวา, ล่าง, ซ้าย]
+                  margin:       0, // ไม่ต้องเผื่อ margin เพราะเราตั้ง padding ไว้ในกล่อง HTML แล้ว
                   filename:     `สรุปกิจกรรมจิตอาสา_${currentUserData.studentId}.pdf`,
                   image:        { type: 'jpeg', quality: 1 },
-                  html2canvas:  { scale: 2, useCORS: true, logging: false }, 
+                  html2canvas:  { scale: 2, useCORS: true, windowWidth: 1024, logging: false }, 
                   jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
 
                 await html2pdf().set(opt).from(element).save();
 
-                // ปิดกล่องซ่อนไว้เหมือนเดิม
-                wrapper.style.display = 'none';
-
             } catch (e) {
                 console.error(e);
                 window.showModal('error', 'สร้างเอกสารไม่สำเร็จ', e.message);
-                document.getElementById('pdfWrapper').style.display = 'none';
             } finally {
                 btn.innerHTML = originalText; 
                 btn.disabled = false;
@@ -841,7 +834,7 @@
             try {
                 await supabase.from('users').update({ fullName: name, faculty: fac, major: maj, year: yr }).eq('id', targetEditUid);
                 window.closeEditStudentModal();
-                window.showModal('success', 'บันึกสำเร็จ', 'อัปเดตข้อมูลนักศึกษาเรียบร้อยแล้ว');
+                window.showModal('success', 'บันทึกสำเร็จ', 'อัปเดตข้อมูลนักศึกษาเรียบร้อยแล้ว');
                 window.loadAdminStudents(); 
             } catch (e) { window.showModal('error', 'Error', e.message); }
         }
