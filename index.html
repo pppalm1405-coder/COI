@@ -341,7 +341,7 @@
     </div>
 
     <div class="text-center text-xs font-bold text-gray-400 mt-6 absolute bottom-2 w-full">
-        ระบบ e-Portfolio v1.9 (The Final Print)
+        ระบบ e-Portfolio v2.0 (Official Document PDF)
     </div>
 
     <script type="module">
@@ -533,22 +533,20 @@
             } catch (e) { console.error(e); }
         }
 
-        // 🔴 PDF Final Generation (The Bulletproof Method v1.9)
-        // สร้างเอกสารจาก String HTML สดๆ ในอากาศ เพื่อหนีปัญหาสเกลจอภาพเบี้ยว
+        // 🔴 PDF Final Generation (แก้บัคการตัดขอบหน้าจอ 100%)
         window.generatePDF = async function() {
             const btn = document.getElementById('btnGeneratePDF'); 
             const originalText = btn.innerHTML;
-            btn.innerHTML = "⏳ กำลังสร้างเอกสาร..."; 
+            btn.innerHTML = "⏳ กำลังสร้าง..."; 
             btn.disabled = true;
             
             try {
-                // ดึงเฉพาะกิจกรรมที่ผ่านแล้วเรียงตามวันที่
+                // 1. ดึงข้อมูล
                 const { data } = await supabase.from('activities').select('*').eq('uid', currentUserId).eq('status', 'approved').order('actDate', { ascending: true });
-                
                 let totalHours = 0;
                 let rowsHtml = '';
                 
-                // สร้างแถวตารางแบบฝัง Inline CSS ทั้งหมด
+                // 2. จัดรูปแบบตาราง
                 data.forEach(item => {
                     totalHours += Number(item.act_hours || 0);
                     let dateObj = new Date(item.actDate);
@@ -556,73 +554,81 @@
                     
                     rowsHtml += `
                         <tr>
-                            <td style="border: 1px solid black; padding: 10px; text-align: center;">${dateStr}</td>
-                            <td style="border: 1px solid black; padding: 10px; text-align: left;">${item.actName}</td>
-                            <td style="border: 1px solid black; padding: 10px; text-align: center;">${item.act_hours}</td>
+                            <td style="border: 1px solid black; padding: 8px; text-align: center;">${dateStr}</td>
+                            <td style="border: 1px solid black; padding: 8px; text-align: left;">${item.actName}</td>
+                            <td style="border: 1px solid black; padding: 8px; text-align: center;">${item.act_hours}</td>
                         </tr>
                     `;
                 });
 
                 let yearStr = new Date().getFullYear() + 543;
 
-                // 🔴 โครงสร้าง HTML ที่ถูกออกแบบมาสำหรับเครื่องปริ้นต์โดยเฉพาะ (ไม่แคร์ขนาดจอมือถือ)
-                const pdfHTML = `
-                <div style="width: 210mm; min-height: 297mm; padding: 25mm 20mm; font-family: 'Sarabun', sans-serif; font-size: 16pt; color: black; background: white; position: relative; box-sizing: border-box; line-height: 1.5;">
-                    
-                    <div style="text-align: center; margin-bottom: 30px;">
-                        <div style="font-size: 18pt; font-weight: bold; line-height: 1.2;">ใบรายงานแบบบันทึกการเข้าร่วมโครงการ/กิจกรรม ที่มุ่งจิตอาสา</div>
-                        <div style="font-size: 18pt; line-height: 1.2;">สำหรับนักศึกษา ประจำปีการศึกษา ${yearStr}</div>
-                    </div>
+                // 3. วาดกระดาษ A4 ในหน่วยความจำ (Memory) โดยตรง ไม่พึ่งพาหน้าจอเบราว์เซอร์
+                const pdfContainer = document.createElement('div');
+                pdfContainer.innerHTML = `
+                    <div style="width: 210mm; min-height: 297mm; padding: 25mm 20mm; font-family: 'Sarabun', sans-serif; font-size: 16pt; color: black; background: white; position: relative; box-sizing: border-box; line-height: 1.5;">
+                        
+                        <div style="text-align: center; margin-bottom: 30px;">
+                            <div style="font-size: 18pt; font-weight: bold; line-height: 1.2;">ใบรายงานแบบบันทึกการเข้าร่วมโครงการ/กิจกรรม ที่มุ่งจิตอาสา</div>
+                            <div style="font-size: 18pt; line-height: 1.2;">สำหรับนักศึกษา ประจำปีการศึกษา ${yearStr}</div>
+                        </div>
 
-                    <table style="width: 100%; border: none; margin-bottom: 15px; font-size: 16pt;">
-                        <tr>
-                            <td style="text-align: left; width: 60%;"><b>ชื่อ-นามสกุล</b> &nbsp;&nbsp;&nbsp;${currentUserData.fullName}</td>
-                            <td style="text-align: right; width: 40%;"><b>รหัสนักศึกษา</b> &nbsp;&nbsp;&nbsp;${currentUserData.studentId}</td>
-                        </tr>
-                    </table>
-
-                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 50px; font-size: 16pt;">
-                        <thead>
-                            <tr style="background-color: #f8f9fa;">
-                                <th style="border: 1px solid black; padding: 10px; text-align: center; width: 25%;">วัน เดือน ปี</th>
-                                <th style="border: 1px solid black; padding: 10px; text-align: center; width: 60%;">ชื่อกิจกรรม</th>
-                                <th style="border: 1px solid black; padding: 10px; text-align: center; width: 15%;">ชั่วโมง</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${rowsHtml}
-                        </tbody>
-                        <tfoot>
+                        <table style="width: 100%; border: none; margin-bottom: 20px; font-size: 16pt;">
                             <tr>
-                                <td colspan="2" style="border: 1px solid black; padding: 10px; text-align: right; font-weight: bold;">รวมชั่วโมงทั้งหมด</td>
-                                <td style="border: 1px solid black; padding: 10px; text-align: center; font-weight: bold;">${totalHours}</td>
+                                <td style="text-align: left; width: 60%; padding: 0;"><b>ชื่อ-นามสกุล</b> &nbsp;&nbsp;&nbsp;${currentUserData.fullName}</td>
+                                <td style="text-align: right; width: 40%; padding: 0;"><b>รหัสนักศึกษา</b> &nbsp;&nbsp;&nbsp;${currentUserData.studentId}</td>
                             </tr>
-                        </tfoot>
-                    </table>
+                        </table>
 
-                    <div style="text-align: center; font-size: 16pt; margin-top: 50px;">
-                        <p style="margin-bottom: 50px;">ข้าพเจ้าขอรับรองว่าข้อมูลทั้งหมดเป็นความจริงทุกประการ</p>
-                        <p>ลงชื่อ...................................................................</p>
-                        <p style="margin-top: 5px;">( &nbsp;&nbsp;${currentUserData.fullName}&nbsp;&nbsp; )</p>
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 50px; font-size: 16pt;">
+                            <thead>
+                                <tr>
+                                    <th style="border: 1px solid black; padding: 10px; text-align: center; width: 25%;">วัน เดือน ปี</th>
+                                    <th style="border: 1px solid black; padding: 10px; text-align: center; width: 60%;">ชื่อกิจกรรม</th>
+                                    <th style="border: 1px solid black; padding: 10px; text-align: center; width: 15%;">ชั่วโมง</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${rowsHtml}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="2" style="border: 1px solid black; padding: 10px; text-align: right; font-weight: bold;">รวมชั่วโมงทั้งหมด</td>
+                                    <td style="border: 1px solid black; padding: 10px; text-align: center; font-weight: bold;">${totalHours}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <div style="text-align: center; font-size: 16pt; margin-top: 50px;">
+                            <p style="margin-bottom: 50px;">ข้าพเจ้าขอรับรองว่าข้อมูลทั้งหมดเป็นความจริงทุกประการ</p>
+                            <p>ลงชื่อ...................................................................</p>
+                            <p style="margin-top: 5px;">( &nbsp;&nbsp;${currentUserData.fullName}&nbsp;&nbsp; )</p>
+                        </div>
+                        
+                        <div style="position: absolute; bottom: 20mm; left: 20mm; right: 20mm; font-size: 16pt; border-top: 1px solid black; padding-top: 15px; text-align: justify; line-height: 1.3;">
+                            <b>หมายเหตุ :</b> เอกสารฉบับนี้จัดทำขึ้นโดยระบบ e-Portfolio อัตโนมัติ เพื่อใช้เป็นหลักฐานในการแสดงประวัติการเข้าร่วมกิจกรรมจิตอาสาของนักศึกษา หากตรวจสอบพบว่ามีการปลอมแปลงหรือนำข้อมูลอันเป็นเท็จเข้าสู่ระบบ จะถือว่ามีความผิดตามระเบียบของมหาวิทยาลัย
+                        </div>
                     </div>
-                    
-                    <div style="position: absolute; bottom: 25mm; left: 20mm; right: 20mm; font-size: 16pt; border-top: 1px solid black; padding-top: 15px; text-align: justify; line-height: 1.3;">
-                        <b>หมายเหตุ :</b> เอกสารฉบับนี้จัดทำขึ้นโดยระบบ e-Portfolio อัตโนมัติ เพื่อใช้เป็นหลักฐานในการแสดงประวัติการเข้าร่วมกิจกรรมจิตอาสาของนักศึกษา หากตรวจสอบพบว่ามีการปลอมแปลงหรือนำข้อมูลอันเป็นเท็จเข้าสู่ระบบ จะถือว่ามีความผิดตามระเบียบของมหาวิทยาลัย
-                    </div>
-                </div>
                 `;
                 
-                // ตั้งค่า HTML2PDF
+                // แอบเอาไปวางไว้มุมจอเพื่อให้ระบบ PDF มองเห็นสัดส่วน
+                pdfContainer.style.position = 'absolute';
+                pdfContainer.style.left = '-9999px';
+                pdfContainer.style.top = '0';
+                document.body.appendChild(pdfContainer);
+                
+                // สั่งพิมพ์
                 var opt = {
                   margin:       0, 
                   filename:     `สรุปกิจกรรมจิตอาสา_${currentUserData.studentId}.pdf`,
                   image:        { type: 'jpeg', quality: 1 },
-                  html2canvas:  { scale: 2, useCORS: true }, 
+                  html2canvas:  { scale: 2, useCORS: true, windowWidth: 1000 }, 
                   jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
+                await html2pdf().set(opt).from(pdfContainer.firstElementChild).save();
 
-                // ส่ง String HTML เข้าไปวาดภาพโดยตรง (หนีปัญหาหน้าจอบัง)
-                await html2pdf().set(opt).from(pdfHTML).save();
+                // ลบทิ้งเพื่อความสะอาด
+                document.body.removeChild(pdfContainer);
 
             } catch (e) {
                 console.error(e);
