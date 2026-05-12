@@ -201,7 +201,7 @@
                 </div>
                 <div class="w-auto flex gap-3">
                     <button onclick="loadAdminActivities()" class="bg-primary hover:bg-primaryDark text-white font-bold py-3 px-8 rounded-xl shadow-md transition">🔍 ค้นหา</button>
-                    <button onclick="loadAdminActivities()" class="bg-blue-50 hover:bg-blue-100 text-primary border border-blue-200 font-bold py-3 px-4 rounded-xl transition shadow-md flex items-center justify-center">
+                    <button onclick="loadAdminActivities()" class="bg-blue-50 hover:bg-blue-100 text-primary border border-blue-200 font-bold py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                     </button>
                 </div>
@@ -215,6 +215,7 @@
                         <tr class="bg-primaryDark text-white text-sm">
                             <th class="p-4 font-semibold">ข้อมูลนักศึกษา</th>
                             <th class="p-4 font-semibold">รายละเอียดกิจกรรม</th>
+                            <th class="p-4 font-semibold">หลักฐาน</th>
                             <th class="p-4 font-semibold text-center w-32">การพิจารณา</th>
                         </tr>
                     </thead>
@@ -225,7 +226,7 @@
     </section>
 
     <div id="customModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden-section">
-        <div class="bg-white rounded-3xl shadow-2xl p-8 max-sm w-full text-center border-t-8 border-primary transform transition-all scale-modal">
+        <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-sm w-full text-center border-t-8 border-primary transform transition-all scale-modal">
             <div id="modalIconContainer" class="mx-auto flex items-center justify-center h-20 w-20 rounded-full mb-5">
                 <svg id="modalIcon" class="h-10 w-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"></svg>
             </div>
@@ -246,6 +247,295 @@
         </div>
     </div>
 
-    <script type="module" src="script.js?v=4"></script>
+    <script type="module">
+        import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm";
+
+        const supabaseUrl = 'https://qrkuiwnqwjzmpenmuchd.supabase.co';
+        const supabaseKey = 'sb_publishable_AIuzxSZo9WwRAw_XjuxF7w_Ym84pcp1';
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
+        let currentUserData = null;
+        let currentUserId = null;
+        let modalCloseCallback = null;
+        let targetRejectId = null;
+
+        window.showModal = function(type, title, message, callback = null) {
+            const modal = document.getElementById('customModal');
+            const iconContainer = document.getElementById('modalIconContainer');
+            const icon = document.getElementById('modalIcon');
+            const btn = document.getElementById('modalBtn');
+            
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalMessage').innerText = message;
+            modalCloseCallback = callback;
+
+            iconContainer.className = "mx-auto flex items-center justify-center h-20 w-20 rounded-full mb-5";
+            btn.className = "w-full text-white font-bold py-3 px-4 rounded-xl transition duration-300 shadow-lg";
+
+            if (type === 'success') {
+                iconContainer.classList.add('bg-green-100', 'text-green-600');
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>';
+                btn.classList.add('bg-green-500', 'hover:bg-green-600');
+            } else if (type === 'error') {
+                iconContainer.classList.add('bg-red-100', 'text-red-600');
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path>';
+                btn.classList.add('bg-red-500', 'hover:bg-red-600');
+            } else if (type === 'warning') {
+                iconContainer.classList.add('bg-yellow-100', 'text-yellow-600');
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>';
+                btn.classList.add('bg-yellow-500', 'hover:bg-yellow-600');
+            }
+            modal.classList.remove('hidden-section');
+        }
+
+        window.closeModal = function() {
+            document.getElementById('customModal').classList.add('hidden-section');
+            if (modalCloseCallback) { modalCloseCallback(); modalCloseCallback = null; }
+        }
+
+        window.switchView = function(viewId) {
+            document.getElementById('loginView').classList.add('hidden-section');
+            document.getElementById('registerView').classList.add('hidden-section');
+            document.getElementById('studentView').classList.add('hidden-section');
+            document.getElementById('adminView').classList.add('hidden-section');
+            document.getElementById(viewId).classList.remove('hidden-section');
+            
+            if(viewId === 'registerView') document.getElementById('registerForm').reset();
+            if(viewId === 'loginView') {
+                document.getElementById('loginForm').reset();
+                currentUserData = null; currentUserId = null;
+                supabase.auth.signOut();
+            }
+        }
+
+        window.handleRegister = async function() {
+            const name = document.getElementById('regName').value.trim();
+            const id = document.getElementById('regId').value.trim();
+            const cardId = document.getElementById('regCardId').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('regConfirmPassword').value;
+            const faculty = document.getElementById('regFaculty').value.trim();
+            const major = document.getElementById('regMajor').value.trim();
+            const year = document.getElementById('regYear').value;
+
+            if (!name || !id || !cardId || !email || !password || !confirmPassword) {
+                window.showModal('warning', 'ข้อมูลไม่ครบ', 'กรุณากรอกข้อมูลที่มีเครื่องหมาย * ให้ครบ'); return;
+            }
+            if (password !== confirmPassword) {
+                window.showModal('warning', 'รหัสผ่านไม่ตรงกัน', 'กรุณาตรวจสอบรหัสผ่านอีกครั้ง'); return;
+            }
+            
+            let role = /^[0-9]+$/.test(id) ? 'student' : 'admin';
+            const btnRegister = document.getElementById('btnRegister');
+            const originalText = btnRegister.innerHTML;
+            btnRegister.disabled = true; btnRegister.innerHTML = "⏳ กำลังประมวลผล...";
+
+            try {
+                const { data: authData, error: authError } = await supabase.auth.signUp({ email, password });
+                if (authError) throw authError;
+
+                const { error: dbError } = await supabase.from('users').insert([{ 
+                    id: authData.user.id, fullName: name, studentId: id, citizenId: cardId, email: email, role: role,
+                    faculty: faculty, major: major, year: year,
+                    avatar_url: `https://ui-avatars.com/api/?name=${name}&background=random`
+                }]);
+                if (dbError) throw dbError;
+
+                window.showModal('success', 'สำเร็จ', 'ลงทะเบียนเรียบร้อย', () => window.switchView('loginView'));
+            } catch (error) { 
+                window.showModal('error', 'ผิดพลาด', error.message); 
+            } finally {
+                btnRegister.disabled = false; btnRegister.innerHTML = originalText;
+            }
+        }
+
+        window.handleLogin = async function() {
+            const emailInput = document.getElementById('emailInput').value.trim();
+            const passwordInput = document.getElementById('passwordInput').value.trim();
+            const btnLogin = document.getElementById('btnLogin');
+            const loginError = document.getElementById('loginError');
+
+            loginError.classList.add('hidden');
+
+            if (!emailInput || !passwordInput) {
+                window.showModal('warning', 'ข้อมูลไม่ครบ', 'กรุณาระบุอีเมลและรหัสผ่านเพื่อเข้าสู่ระบบ');
+                return;
+            }
+
+            try {
+                btnLogin.innerHTML = "⏳..."; btnLogin.disabled = true;
+                const { data: authData, error: authError } = await supabase.auth.signInWithPassword({ email: emailInput, password: passwordInput });
+                if (authError) throw authError;
+
+                currentUserId = authData.user.id;
+                const { data: userData, error: userError } = await supabase.from('users').select('*').eq('id', currentUserId).single();
+                if (userError || !userData) {
+                    loginError.innerText = "ไม่พบฐานข้อมูลสิทธิ์การเข้าใช้งาน";
+                    loginError.classList.remove('hidden');
+                    return;
+                }
+
+                currentUserData = userData;
+                if (userData.role === 'admin') {
+                    window.switchView('adminView');
+                    window.loadAdminActivities();
+                } else {
+                    document.getElementById('profileImage').src = userData.avatar_url || `https://ui-avatars.com/api/?name=${userData.fullName}&background=random`;
+                    document.getElementById('studentWelcomeText').innerText = `นักศึกษา: ${userData.fullName} (รหัส: ${userData.studentId}) | คณะ${userData.faculty || '-'}`;
+                    window.switchView('studentView');
+                    window.loadStudentActivities();
+                }
+            } catch (error) { 
+                console.error(error);
+                loginError.innerText = "ไม่พบข้อมูลผู้ใช้งาน หรือรหัสผ่านไม่ถูกต้อง";
+                loginError.classList.remove('hidden'); 
+            } finally { 
+                btnLogin.innerHTML = "เข้าสู่ระบบ"; btnLogin.disabled = false; 
+            }
+        }
+
+        window.handleAvatarUpload = async function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            try {
+                const filePath = `${currentUserId}/avatar_${Date.now()}`;
+                const { error: uploadError } = await supabase.storage.from('avatars').upload(filePath, file, { upsert: true });
+                if (uploadError) throw uploadError;
+
+                const { data: publicUrlData } = supabase.storage.from('avatars').getPublicUrl(filePath);
+                const newAvatarUrl = publicUrlData.publicUrl;
+
+                await supabase.from('users').update({ avatar_url: newAvatarUrl }).eq('id', currentUserId);
+                document.getElementById('profileImage').src = newAvatarUrl;
+                window.showModal('success', 'เปลี่ยนรูปโปรไฟล์สำเร็จ', 'ระบบอัปเดตรูปภาพของคุณเรียบร้อยแล้ว');
+            } catch (error) { window.showModal('error', 'อัปโหลดรูปไม่สำเร็จ', error.message); }
+        }
+
+        window.submitActivity = async function() {
+            const name = document.getElementById('actName').value.trim();
+            const date = document.getElementById('actDate').value;
+            const hours = document.getElementById('actHours').value;
+            const certifier = document.getElementById('actCertifier').value.trim();
+            const fileInput = document.getElementById('actFile');
+
+            if (!name || !date || !hours || !certifier || fileInput.files.length === 0) {
+                return window.showModal('warning', 'ข้อมูลไม่ครบ', 'กรุณากรอกข้อมูลและแนบไฟล์ให้ครบถ้วน');
+            }
+
+            const btnSubmit = document.getElementById('btnSubmitActivity');
+            btnSubmit.innerHTML = "⏳ กำลังบันทึก..."; btnSubmit.disabled = true;
+
+            try {
+                let uploadedFiles = [];
+                for (let i = 0; i < fileInput.files.length; i++) {
+                    let file = fileInput.files[i];
+                    let filePath = `${currentUserId}/${Date.now()}_${file.name}`;
+                    await supabase.storage.from('activities').upload(filePath, file);
+                    const { data } = supabase.storage.from('activities').getPublicUrl(filePath);
+                    uploadedFiles.push({ name: file.name, url: data.publicUrl });
+                }
+
+                await supabase.from('activities').insert([{
+                    uid: currentUserId, studentId: currentUserData.studentId, studentName: currentUserData.fullName,
+                    actName: name, actDate: date, act_hours: parseFloat(hours), actCertifier: certifier, files: uploadedFiles, status: 'pending'
+                }]);
+
+                window.showModal('success', 'ส่งข้อมูลสำเร็จ', 'แฟ้มประวัติถูกส่งเข้าระบบเรียบร้อยแล้ว');
+                document.getElementById('activityForm').reset();
+                document.getElementById('filePreviewContainer').innerHTML = ''; 
+                window.loadStudentActivities();
+            } catch (error) { window.showModal('error', 'ข้อผิดพลาด', error.message); } 
+            finally { btnSubmit.innerHTML = "ส่งข้อมูลเข้าระบบ"; btnSubmit.disabled = false; }
+        }
+
+        window.loadStudentActivities = async function() {
+            const tbody = document.getElementById('studentTableBody');
+            tbody.innerHTML = '<tr><td colspan="3" class="text-center p-4">⏳ โหลด...</td></tr>';
+            let total = 0;
+            try {
+                const { data } = await supabase.from('activities').select('*').eq('uid', currentUserId).order('created_at', { ascending: false });
+                tbody.innerHTML = '';
+                if(data.length === 0) { tbody.innerHTML = '<tr><td colspan="3" class="text-center p-4">ยังไม่มีประวัติ</td></tr>'; return; }
+                
+                data.forEach(item => {
+                    if (item.status === 'approved') total += Number(item.act_hours || 0);
+                    
+                    let statusHtml = `<span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-bold">รอประเมิน</span>`;
+                    if (item.status === 'approved') statusHtml = `<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">อนุมัติแล้ว</span>`;
+                    if (item.status === 'rejected') {
+                        statusHtml = `
+                            <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold block mb-2">ไม่ผ่านเกณฑ์</span>
+                            <div class="text-xs text-left bg-red-50 text-red-600 p-2 rounded-lg border border-red-100 mt-2"><b>เหตุผล:</b> ${item.reject_reason || '-'}</div>
+                        `;
+                    }
+                    
+                    tbody.innerHTML += `<tr class="border-b"><td class="p-4">${item.actDate}</td><td class="p-4 font-bold">${item.actName} (${item.act_hours || 0} ชม.)</td><td class="p-4 text-center align-top">${statusHtml}</td></tr>`;
+                });
+                document.getElementById('totalHoursText').innerText = `รวมชั่วโมงที่ผ่าน: ${total} ชม.`;
+            } catch (e) { console.error(e); }
+        }
+
+        window.loadAdminActivities = async function() {
+            const tbody = document.getElementById('adminTableBody');
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center p-8">⏳ ประมวลผล...</td></tr>';
+            try {
+                const searchVal = document.getElementById('searchInput').value.trim();
+                let query = supabase.from('activities').select('*').order('created_at', { ascending: false });
+                if (searchVal) query = query.ilike('studentId', `%${searchVal}%`);
+                
+                const { data } = await query;
+                tbody.innerHTML = '';
+                if (data.length === 0) { tbody.innerHTML = '<tr><td colspan="4" class="p-8 text-center">ไม่มีข้อมูล</td></tr>'; return; }
+                
+                data.forEach(item => {
+                    let filesHtml = item.files.map((f, i) => `<a href="${f.url}" target="_blank" class="text-primary text-xs hover:underline block mb-1">📄 เอกสาร ${i+1}</a>`).join('');
+                    let action = '';
+                    if(item.status === 'pending') {
+                        action = `<button onclick="approveActivity('${item.id}')" class="bg-green-500 text-white p-1 rounded w-full mb-1">✅ อนุมัติ</button>
+                                  <button onclick="openRejectModal('${item.id}')" class="bg-red-500 text-white p-1 rounded w-full">❌ ปฏิเสธ</button>`;
+                    } else if (item.status === 'approved') {
+                        action = `<span class="text-green-600 font-bold text-sm">✔ อนุมัติแล้ว</span>`;
+                    } else {
+                        action = `<span class="text-red-600 font-bold text-sm">✖ ปฏิเสธแล้ว</span>`;
+                    }
+                    
+                    tbody.innerHTML += `<tr class="border-b"><td class="p-4"><b>${item.studentId}</b><br>${item.studentName}</td><td class="p-4">${item.actName} (${item.act_hours || 0} ชม.)</td><td class="p-4">${filesHtml}</td><td class="p-4 text-center align-middle">${action}</td></tr>`;
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        window.approveActivity = async function(id) {
+            await supabase.from('activities').update({ status: 'approved' }).eq('id', id);
+            window.showModal('success', 'สำเร็จ', 'อนุมัติเรียบร้อย');
+            window.loadAdminActivities();
+        }
+
+        window.openRejectModal = function(id) {
+            targetRejectId = id;
+            document.getElementById('rejectReasonInput').value = '';
+            document.getElementById('rejectModal').classList.remove('hidden-section');
+        }
+
+        window.closeRejectModal = () => document.getElementById('rejectModal').classList.add('hidden-section');
+
+        window.confirmReject = async function() {
+            const reason = document.getElementById('rejectReasonInput').value.trim();
+            if(!reason) { alert("กรุณาระบุเหตุผล"); return; }
+            await supabase.from('activities').update({ status: 'rejected', reject_reason: reason }).eq('id', targetRejectId);
+            window.closeRejectModal();
+            window.loadAdminActivities();
+        }
+
+        window.handleFileSelect = function() {
+            const input = document.getElementById('actFile');
+            const preview = document.getElementById('filePreviewContainer');
+            preview.innerHTML = ''; 
+            Array.from(input.files).forEach((file) => {
+                preview.innerHTML += `<div class="text-xs bg-white p-2 rounded border truncate">📄 ${file.name}</div>`;
+            });
+        }
+    </script>
 </body>
 </html>
