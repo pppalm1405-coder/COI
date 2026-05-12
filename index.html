@@ -340,48 +340,52 @@
     </div>
 
     <div style="position: absolute; left: -9999px; top: 0; z-index: -1;">
-        <div id="pdfContent" style="width: 210mm; padding: 20mm 15mm; background: white; font-family: 'Prompt', sans-serif; color: black;">
-            <h2 style="text-align: center; font-size: 18px; font-weight: bold; margin-bottom: 5px;">ใบรายงานแบบบันทึกการเข้าร่วมโครงการ/กิจกรรม ที่มุ่งจิตอาสา</h2>
-            <h3 style="text-align: center; font-size: 16px; margin-bottom: 25px; font-weight: normal;">สำหรับนักศึกษา ประจำปีการศึกษา <span id="pdfYear"></span></h3>
+        <div id="pdfContent" style="width: 190mm; min-height: 275mm; padding: 0; background: white; font-family: 'Prompt', sans-serif; color: black; position: relative; margin: 0 auto; box-sizing: border-box;">
             
-            <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 14px;">
+            <div style="text-align: center; margin-bottom: 25px; padding-top: 10px;">
+                <h2 style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">ใบรายงานแบบบันทึกการเข้าร่วมโครงการ/กิจกรรม ที่มุ่งจิตอาสา</h2>
+                <h3 style="font-size: 16px; margin-bottom: 0; font-weight: normal;">สำหรับนักศึกษา ประจำปีการศึกษา <span id="pdfYear"></span></h3>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 14px; padding: 0 5mm;">
                 <div><b>ชื่อ-นามสกุล</b> &nbsp;&nbsp;&nbsp;<span id="pdfName"></span></div>
                 <div><b>รหัสนักศึกษา</b> &nbsp;&nbsp;&nbsp;<span id="pdfStudentId"></span></div>
             </div>
 
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 14px;">
-                <thead>
-                    <tr style="background-color: #f8f9fa;">
-                        <th style="border: 1px solid black; padding: 10px; text-align: center; width: 15%;">ปีการศึกษา</th>
-                        <th style="border: 1px solid black; padding: 10px; text-align: center; width: 50%;">กิจกรรมจิตอาสา</th>
-                        <th style="border: 1px solid black; padding: 10px; text-align: center; width: 20%;">วันที่</th>
-                        <th style="border: 1px solid black; padding: 10px; text-align: center; width: 15%;">ชั่วโมง</th>
-                    </tr>
-                </thead>
-                <tbody id="pdfTableBody">
-                    </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="3" style="border: 1px solid black; padding: 10px; text-align: right; font-weight: bold;">รวมชั่วโมงกิจกรรมจิตอาสาทั้งหมด</td>
-                        <td style="border: 1px solid black; padding: 10px; text-align: center; font-weight: bold;" id="pdfTotalHours">0</td>
-                    </tr>
-                </tfoot>
-            </table>
+            <div style="padding: 0 5mm;">
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 14px;">
+                    <thead>
+                        <tr style="background-color: #f8f9fa;">
+                            <th style="border: 1px solid black; padding: 10px; text-align: center; width: 15%;">ปีการศึกษา</th>
+                            <th style="border: 1px solid black; padding: 10px; text-align: center; width: 50%;">กิจกรรมจิตอาสา</th>
+                            <th style="border: 1px solid black; padding: 10px; text-align: center; width: 20%;">วันที่</th>
+                            <th style="border: 1px solid black; padding: 10px; text-align: center; width: 15%;">ชั่วโมง</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pdfTableBody"></tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" style="border: 1px solid black; padding: 10px; text-align: right; font-weight: bold;">รวมชั่วโมงกิจกรรมจิตอาสาทั้งหมด</td>
+                            <td style="border: 1px solid black; padding: 10px; text-align: center; font-weight: bold;" id="pdfTotalHours">0</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
 
-            <div style="margin-top: 60px; text-align: right; font-size: 14px; padding-right: 30px;">
+            <div style="margin-top: 80px; text-align: right; font-size: 14px; padding-right: 15mm;">
                 <p style="margin-bottom: 40px;">ข้าพเจ้าขอรับรองว่าข้อมูลทั้งหมดเป็นความจริงทุกประการ</p>
                 <p>ลงชื่อ...................................................................</p>
                 <p style="margin-top: 8px;">( <span id="pdfSignName" style="padding: 0 10px;"></span> )</p>
             </div>
             
-            <div style="margin-top: 60px; font-size: 12px; color: #333; border-top: 1px solid #ccc; padding-top: 15px; text-align: center;">
+            <div style="position: absolute; bottom: 0; left: 5mm; right: 5mm; font-size: 12px; color: #333; border-top: 1px solid #ccc; padding-top: 15px; text-align: center;">
                 <b>หมายเหตุ :</b> เอกสารสรุปฉบับนี้ถูกสร้างโดยระบบ e-Portfolio อัตโนมัติ หากตรวจสอบพบว่านักศึกษานำข้อมูลอันเป็นเท็จเข้าสู่ระบบ ถือว่ามีความผิดตามระเบียบของสถานศึกษา
             </div>
         </div>
     </div>
 
     <div class="text-center text-xs font-bold text-gray-400 mt-6 absolute bottom-2 w-full">
-        ระบบ e-Portfolio v1.3
+        ระบบ e-Portfolio v1.4
     </div>
 
     <script type="module">
@@ -395,7 +399,6 @@
         let currentUserId = null;
         let modalCloseCallback = null;
         let targetRejectId = null;
-        
         let targetMessageUid = null;
         let targetEditUid = null;
 
@@ -638,7 +641,6 @@
                 document.getElementById('totalHoursText').innerText = `รวม: ${total} ชม.`;
                 document.getElementById('totalHoursText').className = total >= 40 ? "text-sm bg-green-500 text-white px-3 py-1 rounded-full ml-2 font-bold shadow" : "text-sm bg-gray-100 text-gray-700 px-3 py-1 rounded-full ml-2 font-bold";
 
-                // 🔴 แสดงปุ่ม PDF ถ้าชั่วโมงถึงเกณฑ์
                 const btnPDF = document.getElementById('btnGeneratePDF');
                 if(total >= 40) {
                     btnPDF.classList.remove('hidden');
@@ -649,9 +651,6 @@
             } catch (e) { console.error(e); }
         }
 
-        // ==========================================
-        // ระบบสร้าง PDF (บอสใหญ่)
-        // ==========================================
         window.generatePDF = async function() {
             const btn = document.getElementById('btnGeneratePDF');
             const originalText = btn.innerHTML;
@@ -659,15 +658,11 @@
             btn.disabled = true;
             
             try {
-                // ดึงเฉพาะกิจกรรมที่ผ่านการอนุมัติแล้วเท่านั้น
                 const { data } = await supabase.from('activities').select('*').eq('uid', currentUserId).eq('status', 'approved').order('actDate', { ascending: true });
                 
-                // นำข้อมูลผู้ใช้ไปยัดลงใน Template HTML ซ่อน
                 document.getElementById('pdfName').innerText = currentUserData.fullName;
                 document.getElementById('pdfSignName').innerText = currentUserData.fullName;
                 document.getElementById('pdfStudentId').innerText = currentUserData.studentId;
-                
-                // ใช้ปีปัจจุบัน (พ.ศ.)
                 document.getElementById('pdfYear').innerText = new Date().getFullYear() + 543;
 
                 const tbody = document.getElementById('pdfTableBody');
@@ -690,14 +685,12 @@
                 });
                 document.getElementById('pdfTotalHours').innerText = total;
 
-                // ดึงโครงสร้าง HTML มาแปลงเป็นรูป/PDF
                 const element = document.getElementById('pdfContent');
-                
                 var opt = {
-                  margin:       10, // ขอบกระดาษ
+                  margin:       10, 
                   filename:     `สรุปชั่วโมงกิจกรรม_${currentUserData.studentId}.pdf`,
                   image:        { type: 'jpeg', quality: 0.98 },
-                  html2canvas:  { scale: 2, useCORS: true }, // scale ยิ่งเยอะยิ่งชัด
+                  html2canvas:  { scale: 2, useCORS: true, windowWidth: 800 }, 
                   jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
 
@@ -712,9 +705,6 @@
             }
         }
 
-        // ==========================================
-        // ระบบแอดมิน (Tab ตรวจกิจกรรม & Tab จัดการ นศ.)
-        // ==========================================
         window.toggleAdminTab = function(tabName) {
             const btnAct = document.getElementById('tabActivity');
             const btnStu = document.getElementById('tabStudent');
