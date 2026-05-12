@@ -3,8 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบบริหารจัดการข้อมูลกิจกรรมเสริมหลักสูตร | Student e-Portfolio</title>
+    
+    <title>STUDENT e-PORTFOLIO | ระบบแฟ้มสะสมผลงาน</title>
+    
+    <link rel="icon" type="image/jpeg" href="logo.jpg">
+
+    <meta property="og:title" content="STUDENT e-PORTFOLIO | ระบบแฟ้มสะสมผลงาน">
+    <meta property="og:description" content="ระบบบริหารจัดการข้อมูลกิจกรรมเสริมหลักสูตร และกิจกรรมจิตอาสาสำหรับนักศึกษา">
+    <meta property="og:type" content="website">
+    
+    <meta property="og:url" content="https://pppalm1405-coder.github.io/e-portfolio/">
+    <meta property="og:image" content="https://pppalm1405-coder.github.io/e-portfolio/logo.jpg">
+
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -24,7 +36,6 @@
     </script>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* ลูกเล่นเพิ่มเติมตกแต่งให้เว็บดูพรีเมียมขึ้น */
         body {
             background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
             background-attachment: fixed;
@@ -41,7 +52,6 @@
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.5);
         }
-        /* แอนิเมชันลอยตัวสำหรับอีโมจิใหม่ */
         @keyframes float-extra {
             0% { transform: translateY(0px) rotate(0deg); opacity: 0.7; }
             50% { transform: translateY(-25px) rotate(15deg); opacity: 0.9; }
@@ -333,7 +343,7 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                 ย้อนกลับ
             </button>
-            <p class="text-sm font-bold text-primary bg-blue-100 px-5 py-2.5 rounded-full shadow-sm">📸 ขยายจอให้พอดี แล้วแคปรูปหน้านี้ส่งอาจารย์ได้เลยครับ</p>
+            <p class="text-sm font-bold text-primary bg-blue-100 px-5 py-2.5 rounded-full shadow-sm hidden md:block">📸 ขยายจอให้พอดี แล้วแคปรูปหน้านี้ส่งอาจารย์ได้เลยครับ</p>
         </div>
 
         <div class="bg-white rounded-[2rem] shadow-2xl overflow-hidden border border-gray-100 relative">
@@ -381,7 +391,7 @@
                 <div class="text-center pt-2 pb-6">
                     <p class="text-gray-600 mb-12 font-semibold text-lg max-w-lg mx-auto bg-gray-50 p-4 rounded-xl">" ข้าพเจ้าขอรับรองว่าข้อมูลการเข้าร่วมกิจกรรมจิตอาสาทั้งหมดเป็นความจริงทุกประการ "</p>
                     
-                    <div class="inline-block relative">
+                    <div class="inline-block relative mt-4">
                         <p class="text-gray-400 absolute -top-8 left-0 right-0 text-sm font-semibold">ลงชื่อผู้รับรอง</p>
                         <div class="border-b-[3px] border-dotted border-gray-400 w-72 md:w-96 mx-auto mb-4 h-6"></div>
                         <p class="text-gray-600 font-medium text-lg">( <span id="sumSignName" class="font-bold text-primary mx-3"></span> )</p>
@@ -461,7 +471,7 @@
     </div>
 
     <div class="text-center text-sm font-bold text-blue-400 mt-6 absolute bottom-4 w-full">
-        ✨ ระบบ e-Portfolio v6.1 (Refined UI Edition) ✨
+        ✨ ระบบ e-Portfolio v6.2 (Final + Social Share) ✨
     </div>
 
     <script type="module">
@@ -668,7 +678,6 @@
                 data?.forEach(item => {
                     if (item.status === 'approved') total += Number(item.act_hours || 0);
                     
-                    // 🔴 แก้ปัญหาป้ายสถานะโดนบีบ ด้วย inline-flex และ whitespace-nowrap
                     let statusHtml = '';
                     if (item.status === 'approved') {
                         statusHtml = `<span class="inline-flex items-center gap-1.5 bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-bold border border-green-200 shadow-sm whitespace-nowrap"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> อนุมัติแล้ว</span>`;
@@ -710,7 +719,6 @@
                     total += Number(item.act_hours || 0);
                     let dateObj = new Date(item.actDate);
                     let dateStr = dateObj.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
-                    
                     let rowBg = index % 2 === 0 ? 'bg-white' : 'bg-blue-50/30';
                     
                     tbody.innerHTML += `
@@ -755,8 +763,6 @@
                 
                 data.forEach(item => {
                     let filesHtml = item.files.map((f, i) => `<a href="${f.url}" target="_blank" class="text-primary hover:text-blue-700 text-sm font-bold hover:underline bg-blue-50 px-3 py-1 rounded-lg inline-block mb-1 border border-blue-100">📄 ดูหลักฐาน</a>`).join('');
-                    
-                    // 🔴 ปรับปุ่มฝั่งแอดมินให้ใช้ inline-flex เช่นกันเพื่อความสวยงาม
                     let action = '';
                     if (item.status === 'pending') {
                         action = `
