@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบบริหารจัดการข้อมูลกิจกรรมเสริมหลักสูตร | Student e-Portfolio</title>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -175,7 +174,7 @@
                     <div class="flex gap-2">
                         <button id="btnGenerateSummary" onclick="openSummaryView()" class="hidden text-sm bg-green-500 hover:bg-green-600 text-white font-bold px-4 py-2 rounded-lg shadow-md transition flex items-center gap-2 border border-green-600">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                            📸 ดูหน้าสรุปเพื่อแคปรูป
+                            📸 เปิดหน้าสรุป (เพื่อแคปรูป)
                         </button>
                         
                         <button onclick="loadStudentActivities()" class="text-sm bg-blue-50 hover:bg-blue-100 text-primary font-bold px-4 py-2 rounded-lg border border-blue-200 shadow-sm transition flex items-center gap-2">
@@ -279,59 +278,62 @@
         </div>
     </section>
 
-    <section id="summaryView" class="hidden-section bg-gray-200 min-h-screen py-10 relative">
-        <div class="mx-auto mb-4 flex justify-between items-center px-4" style="max-width: 794px;">
-            <button onclick="switchView('studentView')" class="bg-white hover:bg-gray-100 text-gray-700 border border-gray-300 font-bold py-2 px-6 rounded-lg shadow-sm transition flex items-center gap-2">
+    <section id="summaryView" class="hidden-section max-w-4xl mx-auto p-4 py-8 relative z-10">
+        <div class="flex justify-between items-center mb-6">
+            <button onclick="switchView('studentView')" class="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 font-bold py-2 px-6 rounded-xl shadow-sm transition flex items-center gap-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                 ย้อนกลับ
             </button>
-            <p class="text-sm text-gray-500 hidden sm:block">📸 จัดหน้าจอให้พอดีและทำการแคปภาพ (Screenshot) เพื่อส่งอาจารย์</p>
+            <p class="text-sm font-semibold text-primary bg-blue-50 px-4 py-2 rounded-full border border-blue-100 shadow-sm">📸 คุณสามารถแคปหน้าจอนี้เพื่อใช้เป็นหลักฐานได้เลย</p>
         </div>
 
-        <div class="overflow-x-auto w-full pb-10 flex justify-center">
-            <div id="a4-paper" style="width: 794px; min-height: 1123px; background: white; margin: 0 auto; padding: 75px 75px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); font-family: 'Sarabun', sans-serif; color: black; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;">
-                
-                <div>
-                    <div style="text-align: center; margin-bottom: 40px; line-height: 1.4;">
-                        <div style="font-size: 24px; font-weight: bold;">ใบรายงานแบบบันทึกการทำกิจกรรมและเข้าร่วมโครงการ</div>
-                        <div style="font-size: 24px; font-weight: bold;">กิจกรรม ที่มุ่งสู่จิตอาสา</div>
-                        <div style="font-size: 21px; font-weight: normal; margin-top: 5px;">สำหรับนักศึกษา ประจำปีการศึกษา <span id="sumYear"></span></div>
-                    </div>
+        <div class="glass-panel bg-white rounded-3xl shadow-xl overflow-hidden border-t-8 border-accent">
+            
+            <div class="bg-gray-50/50 p-8 text-center border-b border-gray-100">
+                <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-3xl mx-auto mb-4 shadow-md">🏅</div>
+                <h2 class="text-2xl md:text-3xl font-bold text-primaryDark mb-2">สรุปประวัติกิจกรรมจิตอาสา</h2>
+                <p class="text-gray-500 font-medium">ประจำปีการศึกษา <span id="sumYear" class="text-accent font-bold"></span></p>
+            </div>
 
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 21px; padding: 0 5px;">
-                        <div><b>รหัสนักศึกษา</b> &nbsp;&nbsp;<span id="sumStudentId"></span></div>
-                        <div><b>ชื่อ-นามสกุล</b> &nbsp;&nbsp;<span id="sumName"></span></div>
-                    </div>
+            <div class="p-8 pb-4">
+                <div class="flex flex-col sm:flex-row justify-between bg-blue-50 p-5 rounded-2xl border border-blue-100 mb-8 text-primaryDark">
+                    <div class="mb-3 sm:mb-0"><span class="text-sm text-gray-500 block">รหัสนักศึกษา</span> <span id="sumStudentId" class="text-lg font-bold"></span></div>
+                    <div class="sm:text-right"><span class="text-sm text-gray-500 block">ชื่อ - นามสกุล</span> <span id="sumName" class="text-lg font-bold"></span></div>
+                </div>
 
-                    <table style="width: 100%; border-collapse: collapse; font-size: 21px; margin-bottom: 60px; border: 1px solid black;">
-                        <thead>
+                <div class="overflow-x-auto rounded-2xl border border-gray-200 mb-8">
+                    <table class="w-full text-left border-collapse bg-white">
+                        <thead class="bg-gray-100 text-primaryDark">
                             <tr>
-                                <th style="border: 1px solid black; padding: 12px; text-align: center; width: 25%;">วัน เดือน ปี</th>
-                                <th style="border: 1px solid black; padding: 12px; text-align: center; width: 60%;">ชื่อกิจกรรม</th>
-                                <th style="border: 1px solid black; padding: 12px; text-align: center; width: 15%;">ชั่วโมง</th>
+                                <th class="p-4 font-bold text-center border-b border-gray-200">วันที่</th>
+                                <th class="p-4 font-bold border-b border-gray-200">ชื่อกิจกรรม</th>
+                                <th class="p-4 font-bold text-center border-b border-gray-200">ชั่วโมง</th>
                             </tr>
                         </thead>
-                        <tbody id="sumTableBody"></tbody>
-                        <tfoot>
-                            <tr>
-                                <td colspan="2" style="border: 1px solid black; padding: 12px; text-align: right; font-weight: bold;">รวมชั่วโมงทั้งหมด</td>
-                                <td style="border: 1px solid black; padding: 12px; text-align: center; font-weight: bold;" id="sumTotalHours">0</td>
-                            </tr>
-                        </tfoot>
+                        <tbody id="sumTableBody" class="divide-y divide-gray-100"></tbody>
                     </table>
+                </div>
 
-                    <div style="text-align: center; font-size: 21px;">
-                        <p style="margin-bottom: 60px;">ข้าพเจ้าขอรับรองว่าข้อมูลทั้งหมดเป็นความจริงทุกประการ</p>
-                        <p>ลงชื่อ...................................................................................</p>
-                        <p style="margin-top: 15px;">( &nbsp;&nbsp;<span id="sumSignName"></span>&nbsp;&nbsp; )</p>
+                <div class="flex justify-end items-center mb-10 border-b border-gray-100 pb-8">
+                    <span class="text-lg font-bold text-gray-600 mr-4">รวมชั่วโมงกิจกรรมทั้งหมด:</span>
+                    <span class="text-3xl font-black text-green-600 bg-green-100 px-6 py-2 rounded-2xl border border-green-200 shadow-sm" id="sumTotalHours">0</span>
+                    <span class="text-lg font-bold text-gray-600 ml-3">ชม.</span>
+                </div>
+
+                <div class="text-center pt-4 pb-8">
+                    <p class="text-gray-600 mb-10 font-medium text-sm md:text-base">" ข้าพเจ้าขอรับรองว่าข้อมูลกิจกรรมที่ปรากฏด้านบนเป็นความจริงทุกประการ "</p>
+                    
+                    <div class="inline-block">
+                        <div class="border-b-2 border-dashed border-gray-400 w-64 md:w-80 mx-auto mb-3 h-8"></div>
+                        <p class="text-gray-500 font-medium">(&nbsp; <span id="sumSignName" class="font-bold text-primaryDark"></span> &nbsp;)</p>
                     </div>
                 </div>
-                
-                <div style="border-top: 1.5px solid black; padding-top: 15px; font-size: 18px; text-align: justify; line-height: 1.4; margin-top: 50px;">
-                    <b>หมายเหตุ :</b> เอกสารฉบับนี้จัดทำขึ้นโดยระบบ E-Portfolio อัตโนมัติ เพื่อใช้เป็นหลักฐานในการแสดงประวัติการเข้าร่วมกิจกรรมจิตอาสาของนักศึกษา หากตรวจสอบพบว่ามีการปลอมแปลงหรือนำข้อมูลอันเป็นเท็จเข้าสู่ระบบ จะถือว่ามีความผิดตามระเบียบของมหาวิทยาลัย
-                </div>
-
             </div>
+            
+        </div>
+        
+        <div class="text-center mt-6">
+            <p class="text-xs text-gray-400 font-medium">เอกสารอ้างอิงนี้ออกโดยระบบ Student e-Portfolio อัตโนมัติ</p>
         </div>
     </section>
 
@@ -396,7 +398,7 @@
     </div>
 
     <div class="text-center text-xs font-bold text-gray-400 mt-6 absolute bottom-2 w-full">
-        ระบบ e-Portfolio v4.0 (Super Locked Layout)
+        ระบบ e-Portfolio v5.0 (Minimalist Screenshot Edition)
     </div>
 
     <script type="module">
@@ -444,7 +446,7 @@
             if (modalCloseCallback) { modalCloseCallback(); modalCloseCallback = null; }
         }
 
-        // ระบบสลับหน้าจอ (เพิ่มหน้า summaryView)
+        // ระบบสลับหน้าจอ (ซ่อนหน้าอื่นๆ เมื่อเปิดหน้าสรุป)
         window.switchView = function(viewId) {
             document.getElementById('loginView').classList.add('hidden-section');
             document.getElementById('registerView').classList.add('hidden-section');
@@ -593,39 +595,47 @@
             } catch (e) { console.error(e); }
         }
 
-        // 🔴 ระบบเปิดหน้ากระดาษ A4 ล็อกสเกล
+        // 🔴 ระบบเปิดหน้าเว็บสไตล์ Minimal สำหรับแคปรูปส่ง
         window.openSummaryView = async function() {
             const btn = document.getElementById('btnGenerateSummary');
             const originalText = btn.innerHTML;
-            btn.innerHTML = "⏳ กำลังเตรียมหน้ากระดาษ..."; 
+            btn.innerHTML = "⏳ โหลดข้อมูล..."; 
             btn.disabled = true;
             
             try {
+                // 1. ดึงข้อมูล
                 const { data } = await supabase.from('activities').select('*').eq('uid', currentUserId).eq('status', 'approved').order('actDate', { ascending: true });
                 
+                // 2. เติมข้อมูล นศ. ลงในการ์ด Minimal
                 document.getElementById('sumName').innerText = currentUserData.fullName;
                 document.getElementById('sumSignName').innerText = currentUserData.fullName;
                 document.getElementById('sumStudentId').innerText = currentUserData.studentId;
                 document.getElementById('sumYear').innerText = new Date().getFullYear() + 543;
 
+                // 3. เติมข้อมูลลงตาราง
                 const tbody = document.getElementById('sumTableBody');
                 tbody.innerHTML = '';
                 let total = 0;
 
                 data.forEach(item => {
                     total += Number(item.act_hours || 0);
-                    let dateStr = new Date(item.actDate).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
+                    let dateObj = new Date(item.actDate);
+                    let dateStr = dateObj.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
+                    
                     tbody.innerHTML += `
-                        <tr>
-                            <td style="border: 1px solid black; padding: 12px; text-align: center;">${dateStr}</td>
-                            <td style="border: 1px solid black; padding: 12px; text-align: left;">${item.actName}</td>
-                            <td style="border: 1px solid black; padding: 12px; text-align: center;">${item.act_hours}</td>
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="p-4 text-center text-gray-600">${dateStr}</td>
+                            <td class="p-4 font-semibold text-gray-800">${item.actName}</td>
+                            <td class="p-4 text-center text-accent font-bold">${item.act_hours}</td>
                         </tr>
                     `;
                 });
+                
                 document.getElementById('sumTotalHours').innerText = total;
 
+                // 4. เปลี่ยนหน้าจอ
                 window.switchView('summaryView');
+
             } catch (e) {
                 console.error(e);
                 window.showModal('error', 'ข้อผิดพลาด', e.message);
