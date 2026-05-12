@@ -8,188 +8,237 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            theme: { extend: { fontFamily: { sans: ['Prompt', 'sans-serif'] }, colors: { primary: '#1E3A8A', primaryDark: '#172554', accent: '#F59E0B', accentHover: '#D97706', bgLight: '#EFF6FF' } } }
+            theme: { 
+                extend: { 
+                    fontFamily: { sans: ['Prompt', 'sans-serif'] }, 
+                    colors: { 
+                        primary: '#1E3A8A', 
+                        primaryDark: '#172554', 
+                        accent: '#F59E0B', 
+                        accentHover: '#D97706', 
+                        bgLight: '#F0F9FF' // เปลี่ยนให้สว่างและสดใสขึ้นนิดนึง
+                    } 
+                } 
+            }
         }
     </script>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* ลูกเล่นเพิ่มเติมตกแต่งให้เว็บดูพรีเมียมขึ้น */
+        body {
+            background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
+            background-attachment: fixed;
+        }
+        .btn-hover-effect {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-hover-effect:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        /* แอนิเมชันลอยตัวสำหรับอีโมจิใหม่ */
+        @keyframes float-extra {
+            0% { transform: translateY(0px) rotate(0deg); opacity: 0.7; }
+            50% { transform: translateY(-25px) rotate(15deg); opacity: 0.9; }
+            100% { transform: translateY(0px) rotate(0deg); opacity: 0.7; }
+        }
+        .emoji-extra { animation: float-extra 7s ease-in-out infinite; position: fixed; z-index: -1; }
+    </style>
 </head>
-<body class="text-gray-700 min-h-screen font-sans relative pb-10 overflow-x-hidden bg-bgLight">
+<body class="text-gray-800 min-h-screen font-sans relative pb-10 overflow-x-hidden">
 
     <div class="floating-bg">
         <div class="floating-emoji emoji-1">🎓</div><div class="floating-emoji emoji-2">📚</div><div class="floating-emoji emoji-3">🏫</div><div class="floating-emoji emoji-4">✍️</div><div class="floating-emoji emoji-5">🏅</div>
         <div class="floating-emoji emoji-6">💡</div><div class="floating-emoji emoji-7">🎒</div><div class="floating-emoji emoji-8">🌟</div><div class="floating-emoji emoji-9">📖</div><div class="floating-emoji emoji-10">🎓</div>
+        <div class="emoji-extra" style="top: 15%; left: 10%; font-size: 2.5rem; animation-delay: 1s;">✨</div>
+        <div class="emoji-extra" style="top: 80%; left: 85%; font-size: 3rem; animation-delay: 3s;">🚀</div>
+        <div class="emoji-extra" style="top: 40%; left: 90%; font-size: 2.5rem; animation-delay: 2s;">💻</div>
+        <div class="emoji-extra" style="top: 75%; left: 15%; font-size: 2.8rem; animation-delay: 5s;">🎯</div>
+        <div class="emoji-extra" style="top: 25%; left: 80%; font-size: 2.2rem; animation-delay: 4s;">🏆</div>
     </div>
 
     <section id="loginView" class="flex items-center justify-center min-h-screen p-4">
-        <div class="glass-panel p-8 rounded-2xl shadow-xl w-full max-w-md border-t-4 border-primary relative overflow-hidden">
-            <div class="absolute top-0 right-0 -mr-8 -mt-8 w-24 h-24 rounded-full bg-accent opacity-20"></div>
-            <div class="text-center mb-8 relative z-10">
-                <div class="mx-auto bg-primary text-white w-16 h-16 flex items-center justify-center rounded-full text-3xl mb-4 shadow-lg">🏫</div>
-                <h1 class="text-2xl font-bold text-primaryDark">ระบบบันทึกกิจกรรมนักศึกษา</h1>
-                <p class="text-sm text-gray-500 mt-2">เข้าสู่ระบบเพื่อจัดการแฟ้มสะสมผลงาน</p>
+        <div class="glass-panel p-10 rounded-[2rem] shadow-2xl w-full max-w-lg border-t-8 border-primary relative overflow-hidden">
+            <div class="absolute top-0 right-0 -mr-10 -mt-10 w-32 h-32 rounded-full bg-gradient-to-br from-accent to-yellow-300 opacity-20 blur-xl"></div>
+            <div class="absolute bottom-0 left-0 -ml-10 -mb-10 w-32 h-32 rounded-full bg-gradient-to-tr from-primary to-blue-400 opacity-10 blur-xl"></div>
+            
+            <div class="text-center mb-10 relative z-10">
+                <div class="mx-auto bg-gradient-to-b from-primary to-primaryDark text-white w-20 h-20 flex items-center justify-center rounded-2xl text-4xl mb-6 shadow-xl transform rotate-3">🏫</div>
+                <h1 class="text-3xl font-bold text-primaryDark tracking-tight">ระบบ e-Portfolio</h1>
+                <p class="text-base text-gray-500 mt-2 font-medium">เข้าสู่ระบบเพื่อจัดการแฟ้มสะสมผลงานกิจกรรม</p>
             </div>
-            <form id="loginForm" class="space-y-5 relative z-10">
+            
+            <form id="loginForm" class="space-y-6 relative z-10">
                 <div>
-                    <label class="block text-sm font-semibold text-primaryDark mb-1">อีเมลสถาบัน</label>
-                    <input type="email" id="emailInput" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary focus:border-primary transition-colors bg-white/80">
+                    <label class="block text-base font-bold text-primaryDark mb-2">อีเมลสถาบัน</label>
+                    <input type="email" id="emailInput" class="block w-full px-5 py-4 text-lg border border-gray-300 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-primary transition-all bg-white/90 shadow-inner">
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-primaryDark mb-1">รหัสผ่าน</label>
-                    <input type="password" id="passwordInput" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary focus:border-primary transition-colors bg-white/80">
+                    <label class="block text-base font-bold text-primaryDark mb-2">รหัสผ่าน</label>
+                    <input type="password" id="passwordInput" class="block w-full px-5 py-4 text-lg border border-gray-300 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-primary transition-all bg-white/90 shadow-inner">
                 </div>
-                <p id="loginError" class="text-red-500 text-sm text-center font-medium hidden bg-red-50 py-2 rounded-lg">ไม่พบข้อมูลผู้ใช้งาน หรือรหัสผ่านไม่ถูกต้อง</p>
-                <button type="button" id="btnLogin" onclick="handleLogin()" class="w-full bg-primary hover:bg-primaryDark text-white font-bold py-3 px-4 rounded-xl shadow-lg transition">เข้าสู่ระบบ</button>
+                <p id="loginError" class="text-red-600 text-sm text-center font-bold hidden bg-red-50 py-3 rounded-xl border border-red-200">❌ ไม่พบข้อมูลผู้ใช้งาน หรือรหัสผ่านไม่ถูกต้อง</p>
+                <button type="button" id="btnLogin" onclick="handleLogin()" class="w-full bg-gradient-to-r from-primary to-primaryDark hover:from-primaryDark hover:to-[#0f172a] text-white font-bold py-4 px-6 rounded-2xl shadow-xl shadow-blue-900/20 text-lg btn-hover-effect">เข้าสู่ระบบ 🚀</button>
             </form>
-            <div class="mt-8 text-center relative z-10 border-t border-gray-200 pt-4">
-                <p class="text-sm text-gray-500">นักศึกษาใหม่? <button type="button" onclick="switchView('registerView')" class="text-accent hover:text-accentHover hover:underline font-bold transition-colors">ขึ้นทะเบียนนักศึกษาที่นี่</button></p>
+            
+            <div class="mt-8 text-center relative z-10 border-t border-gray-100 pt-6">
+                <p class="text-base text-gray-500">นักศึกษาใหม่? <button type="button" onclick="switchView('registerView')" class="text-accent hover:text-accentHover hover:underline font-bold transition-colors">ขึ้นทะเบียนนักศึกษาที่นี่</button></p>
             </div>
         </div>
     </section>
 
-    <section id="registerView" class="hidden-section flex items-center justify-center min-h-screen py-10 p-4">
-        <div class="glass-panel p-8 rounded-2xl shadow-xl w-full max-w-3xl border-t-4 border-accent relative">
-            <div class="text-center mb-8">
-                <h1 class="text-2xl font-bold text-primaryDark">ขึ้นทะเบียนประวัติผู้ใช้งาน</h1>
-                <p class="text-sm text-gray-500 mt-1">ระบบจะกำหนดสถานะให้อัตโนมัติจากรูปแบบรหัสประจำตัว</p>
+    <section id="registerView" class="hidden-section flex items-center justify-center min-h-screen py-12 p-4">
+        <div class="glass-panel p-10 rounded-[2rem] shadow-2xl w-full max-w-4xl border-t-8 border-accent relative">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl font-bold text-primaryDark">📝 ขึ้นทะเบียนประวัติผู้ใช้งาน</h1>
+                <p class="text-base text-gray-500 mt-2">กรอกข้อมูลให้ครบถ้วน (ระบบจะกำหนดสถานะให้อัตโนมัติจากรูปแบบรหัส)</p>
             </div>
-            <form id="registerForm" class="space-y-5">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <form id="registerForm" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">ชื่อ - นามสกุล <span class="text-red-500">*</span></label>
-                        <input type="text" id="regName" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary focus:border-primary bg-white/80" placeholder="ชื่อ-สกุล">
+                        <label class="block text-base font-bold text-gray-700 mb-2">ชื่อ - นามสกุล <span class="text-red-500">*</span></label>
+                        <input type="text" id="regName" class="block w-full px-5 py-3 text-lg border border-gray-300 rounded-2xl focus:ring-2 focus:ring-accent focus:border-accent bg-white/80 transition-all" placeholder="ชื่อ-สกุล">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">รหัสประจำตัว <span class="text-red-500">*</span> <span class="text-xs text-blue-600 font-normal">(เลข=นศ. / อักษร=แอดมิน)</span></label>
-                        <input type="text" id="regId" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary focus:border-primary bg-white/80" placeholder="เช่น 6610XXXXXX หรือ ADMIN">
+                        <label class="block text-base font-bold text-gray-700 mb-2">รหัสประจำตัว <span class="text-red-500">*</span> <span class="text-sm text-blue-600 font-medium bg-blue-50 px-2 py-0.5 rounded-lg ml-1">(เลข=นศ. / อักษร=แอดมิน)</span></label>
+                        <input type="text" id="regId" class="block w-full px-5 py-3 text-lg border border-gray-300 rounded-2xl focus:ring-2 focus:ring-accent focus:border-accent bg-white/80 transition-all" placeholder="เช่น 6610XXXXXX หรือ ADMIN">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">คณะ</label>
-                        <input type="text" id="regFaculty" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary focus:border-primary bg-white/80">
+                        <label class="block text-base font-bold text-gray-700 mb-2">คณะ</label>
+                        <input type="text" id="regFaculty" class="block w-full px-5 py-3 text-lg border border-gray-300 rounded-2xl focus:ring-2 focus:ring-accent focus:border-accent bg-white/80 transition-all" placeholder="ระบุคณะ">
                     </div>
-                    <div class="flex gap-2">
+                    <div class="flex gap-4">
                         <div class="w-2/3">
-                            <label class="block text-sm font-semibold text-gray-700 mb-1">สาขาวิชา</label>
-                            <input type="text" id="regMajor" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary bg-white/80">
+                            <label class="block text-base font-bold text-gray-700 mb-2">สาขาวิชา</label>
+                            <input type="text" id="regMajor" class="block w-full px-5 py-3 text-lg border border-gray-300 rounded-2xl focus:ring-2 focus:ring-accent focus:border-accent bg-white/80 transition-all" placeholder="ระบุสาขา">
                         </div>
                         <div class="w-1/3">
-                            <label class="block text-sm font-semibold text-gray-700 mb-1">ชั้นปี</label>
-                            <select id="regYear" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary bg-white/80">
+                            <label class="block text-base font-bold text-gray-700 mb-2">ชั้นปี</label>
+                            <select id="regYear" class="block w-full px-5 py-3 text-lg border border-gray-300 rounded-2xl focus:ring-2 focus:ring-accent focus:border-accent bg-white/80 transition-all">
                                 <option value="">เลือก</option><option value="1">ปี 1</option><option value="2">ปี 2</option><option value="3">ปี 3</option><option value="4">ปี 4</option>
                             </select>
                         </div>
                     </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">รหัสประจำตัวประชาชน 13 หลัก <span class="text-red-500">*</span></label>
-                    <input type="text" id="regCardId" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary bg-white/80" maxlength="13">
+                    <label class="block text-base font-bold text-gray-700 mb-2">รหัสประจำตัวประชาชน 13 หลัก <span class="text-red-500">*</span></label>
+                    <input type="text" id="regCardId" class="block w-full px-5 py-3 text-lg border border-gray-300 rounded-2xl focus:ring-2 focus:ring-accent focus:border-accent bg-white/80 transition-all" maxlength="13">
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 border-t border-gray-200 pt-5 mt-2">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 border-t-2 border-gray-100 pt-6 mt-4">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">อีเมลสถาบัน <span class="text-red-500">*</span></label>
-                        <input type="email" id="regEmail" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary bg-white/80">
+                        <label class="block text-base font-bold text-gray-700 mb-2">อีเมลสถาบัน <span class="text-red-500">*</span></label>
+                        <input type="email" id="regEmail" class="block w-full px-5 py-3 text-lg border border-gray-300 rounded-2xl focus:ring-2 focus:ring-accent focus:border-accent bg-white/80 transition-all" placeholder="example@university.ac.th">
                     </div>
-                    <div class="space-y-5">
+                    <div class="space-y-6">
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1">รหัสผ่าน (ขั้นต่ำ 6 ตัวอักษร) <span class="text-red-500">*</span></label>
-                            <input type="password" id="regPassword" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary bg-white/80">
+                            <label class="block text-base font-bold text-gray-700 mb-2">รหัสผ่าน (ขั้นต่ำ 6 ตัวอักษร) <span class="text-red-500">*</span></label>
+                            <input type="password" id="regPassword" class="block w-full px-5 py-3 text-lg border border-gray-300 rounded-2xl focus:ring-2 focus:ring-accent focus:border-accent bg-white/80 transition-all">
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1">ยืนยันรหัสผ่าน <span class="text-red-500">*</span></label>
-                            <input type="password" id="regConfirmPassword" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary bg-white/80">
+                            <label class="block text-base font-bold text-gray-700 mb-2">ยืนยันรหัสผ่าน <span class="text-red-500">*</span></label>
+                            <input type="password" id="regConfirmPassword" class="block w-full px-5 py-3 text-lg border border-gray-300 rounded-2xl focus:ring-2 focus:ring-accent focus:border-accent bg-white/80 transition-all">
                         </div>
                     </div>
                 </div>
-                <div class="pt-6 flex gap-4">
-                    <button type="button" onclick="switchView('loginView')" class="w-1/3 bg-white hover:bg-gray-50 border-2 border-gray-200 text-gray-700 font-bold py-3 rounded-xl transition">ย้อนกลับ</button>
-                    <button type="button" id="btnRegister" onclick="handleRegister()" class="w-2/3 bg-accent hover:bg-accentHover text-white font-bold py-3 rounded-xl shadow-md transition">📝 บันทึกประวัติขึ้นระบบ</button>
+                <div class="pt-8 flex gap-4">
+                    <button type="button" onclick="switchView('loginView')" class="w-1/3 bg-white hover:bg-gray-100 border-2 border-gray-300 text-gray-700 font-bold py-4 text-lg rounded-2xl transition btn-hover-effect">ย้อนกลับ</button>
+                    <button type="button" id="btnRegister" onclick="handleRegister()" class="w-2/3 bg-gradient-to-r from-accent to-yellow-500 hover:from-yellow-500 hover:to-orange-500 text-white font-bold py-4 text-lg rounded-2xl shadow-xl btn-hover-effect">📝 บันทึกประวัติขึ้นระบบ</button>
                 </div>
             </form>
         </div>
     </section>
 
-    <section id="studentView" class="hidden-section max-w-6xl mx-auto p-4 py-8">
-        <div class="glass-panel rounded-2xl shadow-sm p-6 mb-8 flex flex-col md:flex-row justify-between items-center border-l-8 border-primary relative">
-            <div class="flex items-center gap-5 mb-4 md:mb-0">
+    <section id="studentView" class="hidden-section max-w-7xl mx-auto p-4 py-10">
+        <div class="glass-panel rounded-[2rem] shadow-lg p-8 mb-10 flex flex-col md:flex-row justify-between items-center border-l-[12px] border-primary relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-50 -z-10"></div>
+            
+            <div class="flex items-center gap-6 mb-6 md:mb-0 z-10">
                 <div class="relative group">
-                    <div class="w-20 h-20 rounded-full overflow-hidden border-4 border-white shadow-md bg-gray-200">
+                    <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-xl bg-gray-200">
                         <img id="profileImage" src="" class="w-full h-full object-cover">
                     </div>
-                    <button onclick="document.getElementById('avatarUpload').click()" class="absolute bottom-0 right-0 bg-primary text-white p-1.5 rounded-full shadow hover:bg-primaryDark transition">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <button onclick="document.getElementById('avatarUpload').click()" class="absolute bottom-0 right-0 bg-primary text-white p-2 rounded-full shadow-lg hover:bg-primaryDark transition transform hover:scale-110">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                     </button>
                     <input type="file" id="avatarUpload" class="hidden" accept="image/*" onchange="handleAvatarUpload(event)">
                 </div>
                 <div>
-                    <h1 class="text-3xl font-bold text-primaryDark">แฟ้มสะสมผลงาน (e-Portfolio)</h1>
-                    <p class="text-gray-600 mt-1 font-medium" id="studentWelcomeText">ยินดีต้อนรับ</p>
+                    <h1 class="text-4xl font-black text-primaryDark tracking-tight">แฟ้มสะสมผลงาน <span class="text-accent">e-Portfolio</span></h1>
+                    <p class="text-lg text-gray-600 mt-2 font-medium bg-white/60 inline-block px-4 py-1 rounded-full border border-gray-100" id="studentWelcomeText">ยินดีต้อนรับ</p>
                 </div>
             </div>
             
-            <div class="flex items-center gap-4">
-                <button onclick="openNotifications()" class="relative p-3 text-primaryDark hover:text-primary transition bg-blue-50 rounded-full border border-blue-200 shadow-sm" title="ข้อความแจ้งเตือน">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-                    <span id="notifBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center hidden border-2 border-white">0</span>
+            <div class="flex items-center gap-5 z-10">
+                <button onclick="openNotifications()" class="relative p-4 text-primaryDark hover:text-white hover:bg-primary transition bg-blue-50 rounded-2xl border border-blue-200 shadow-sm btn-hover-effect" title="ข้อความแจ้งเตือน">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                    <span id="notifBadge" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center hidden border-2 border-white shadow-md">0</span>
                 </button>
-                <button onclick="switchView('loginView')" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-semibold px-5 py-2.5 rounded-xl shadow-sm transition">ออกจากระบบ</button>
+                <button onclick="switchView('loginView')" class="bg-red-50 hover:bg-red-500 hover:text-white text-red-600 border border-red-200 font-bold px-6 py-4 rounded-2xl shadow-sm transition btn-hover-effect">ออกจากระบบ</button>
             </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="lg:col-span-1 glass-panel p-6 rounded-2xl shadow-md border-t-4 border-accent">
-                <h2 class="text-xl font-bold mb-5 flex items-center gap-2 text-primaryDark"><span>📝</span> แบบฟอร์มบันทึกกิจกรรม</h2>
-                <form id="activityForm" class="space-y-4">
+            <div class="lg:col-span-1 glass-panel p-8 rounded-3xl shadow-xl border-t-8 border-accent">
+                <h2 class="text-2xl font-bold mb-6 flex items-center gap-3 text-primaryDark"><span class="bg-accent/20 p-2 rounded-xl">📝</span> บันทึกกิจกรรมใหม่</h2>
+                <form id="activityForm" class="space-y-5">
                     <div>
-                        <label class="block text-sm font-semibold mb-1 text-gray-700">ชื่อกิจกรรม <span class="text-red-500">*</span></label>
-                        <input type="text" id="actName" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:border-primary transition">
+                        <label class="block text-base font-bold mb-2 text-gray-700">ชื่อกิจกรรม <span class="text-red-500">*</span></label>
+                        <input type="text" id="actName" class="w-full px-4 py-3 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition bg-white/80">
                     </div>
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-semibold mb-1 text-gray-700">วันที่จัด <span class="text-red-500">*</span></label>
-                            <input type="date" id="actDate" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:border-primary transition">
+                            <label class="block text-base font-bold mb-2 text-gray-700">วันที่จัด <span class="text-red-500">*</span></label>
+                            <input type="date" id="actDate" class="w-full px-4 py-3 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition bg-white/80">
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold mb-1 text-gray-700">จำนวนชั่วโมง <span class="text-red-500">*</span></label>
-                            <input type="number" id="actHours" min="1" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:border-primary transition">
+                            <label class="block text-base font-bold mb-2 text-gray-700">จำนวนชั่วโมง <span class="text-red-500">*</span></label>
+                            <input type="number" id="actHours" min="1" class="w-full px-4 py-3 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition bg-white/80 text-center font-bold text-primary">
                         </div>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold mb-1 text-gray-700">หน่วยงานรับรอง <span class="text-red-500">*</span></label>
-                        <input type="text" id="actCertifier" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:border-primary transition">
+                        <label class="block text-base font-bold mb-2 text-gray-700">หน่วยงานรับรอง <span class="text-red-500">*</span></label>
+                        <input type="text" id="actCertifier" class="w-full px-4 py-3 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition bg-white/80">
                     </div>
-                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
-                        <label class="block text-sm font-semibold mb-2 text-primaryDark">อัปโหลดหลักฐาน <span class="text-red-500">*</span></label>
-                        <input type="file" id="actFile" multiple accept="image/*,.pdf" onchange="handleFileSelect()" class="w-full text-sm text-gray-600 bg-white rounded-xl border border-gray-200 p-1">
+                    <div class="bg-blue-50/80 p-5 rounded-2xl border border-blue-100">
+                        <label class="block text-base font-bold mb-3 text-primaryDark flex items-center gap-2"><svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg> อัปโหลดหลักฐาน <span class="text-red-500">*</span></label>
+                        <input type="file" id="actFile" multiple accept="image/*,.pdf" onchange="handleFileSelect()" class="w-full text-sm text-gray-600 bg-white rounded-xl border border-gray-200 p-2 cursor-pointer">
                         <div id="filePreviewContainer" class="mt-3 flex flex-col gap-2"></div>
                     </div>
-                    <button type="button" id="btnSubmitActivity" onclick="submitActivity()" class="w-full bg-accent hover:bg-accentHover text-white font-bold py-3 px-4 rounded-xl shadow-lg mt-4 transition">ส่งข้อมูลเข้าระบบ</button>
+                    <button type="button" id="btnSubmitActivity" onclick="submitActivity()" class="w-full bg-gradient-to-r from-accent to-yellow-500 hover:from-yellow-500 hover:to-orange-500 text-white font-bold py-4 px-4 rounded-xl shadow-lg mt-6 text-lg btn-hover-effect">ส่งข้อมูลเข้าระบบ 🚀</button>
                 </form>
             </div>
 
-            <div class="lg:col-span-2 glass-panel p-6 rounded-2xl shadow-md border-t-4 border-primary flex flex-col">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5 border-b border-gray-200 pb-3 gap-3">
-                    <h2 class="text-xl font-bold flex items-center gap-2 text-primaryDark">
-                        <span>📊</span> ประวัติกิจกรรม <span id="totalHoursText" class="text-sm bg-gray-100 text-gray-700 px-3 py-1 rounded-full ml-2 font-bold">รวม: 0 ชม.</span>
+            <div class="lg:col-span-2 glass-panel p-8 rounded-3xl shadow-xl border-t-8 border-primary flex flex-col">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b-2 border-gray-100 pb-5 gap-4">
+                    <h2 class="text-2xl font-bold flex items-center gap-3 text-primaryDark">
+                        <span class="bg-blue-100 p-2 rounded-xl">📊</span> ประวัติกิจกรรม 
+                        <span id="totalHoursText" class="text-base bg-gray-100 text-gray-700 px-4 py-1.5 rounded-full ml-2 font-bold border border-gray-200">รวม: 0 ชม.</span>
                     </h2>
                     
-                    <div class="flex gap-2">
-                        <button id="btnGenerateSummary" onclick="openSummaryView()" class="hidden text-sm bg-green-500 hover:bg-green-600 text-white font-bold px-4 py-2 rounded-lg shadow-md transition flex items-center gap-2 border border-green-600">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                            📸 เปิดหน้าสรุป (เพื่อแคปรูป)
+                    <div class="flex flex-wrap gap-3">
+                        <button id="btnGenerateSummary" onclick="openSummaryView()" class="hidden text-base bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold px-5 py-3 rounded-xl shadow-lg flex items-center gap-2 btn-hover-effect">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            📸 เปิดหน้าสรุป
                         </button>
                         
-                        <button onclick="loadStudentActivities()" class="text-sm bg-blue-50 hover:bg-blue-100 text-primary font-bold px-4 py-2 rounded-lg border border-blue-200 shadow-sm transition flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                            รีเฟรชข้อมูล
+                        <button onclick="loadStudentActivities()" class="text-base bg-white hover:bg-blue-50 text-primary font-bold px-5 py-3 rounded-xl border-2 border-blue-100 shadow-sm flex items-center gap-2 btn-hover-effect">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                            รีเฟรช
                         </button>
                     </div>
                 </div>
-                <div class="overflow-x-auto rounded-xl border border-gray-200 flex-1">
-                    <table class="w-full text-left border-collapse bg-white">
+                <div class="overflow-x-auto rounded-2xl border border-gray-200 flex-1 shadow-sm bg-white/50">
+                    <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-gray-100 text-primaryDark text-sm">
-                                <th class="p-4 font-bold border-b">วันที่</th>
-                                <th class="p-4 font-bold border-b">ชื่อกิจกรรม</th>
-                                <th class="p-4 font-bold border-b text-center">สถานะ</th>
+                            <tr class="bg-gray-100/80 text-primaryDark text-base border-b border-gray-200">
+                                <th class="p-5 font-bold whitespace-nowrap">วันที่จัด</th>
+                                <th class="p-5 font-bold w-full">ชื่อกิจกรรม</th>
+                                <th class="p-5 font-bold text-center whitespace-nowrap">สถานะ</th>
                             </tr>
                         </thead>
                         <tbody id="studentTableBody" class="divide-y divide-gray-100"></tbody>
@@ -200,75 +249,75 @@
     </section>
 
     <section id="adminView" class="hidden-section max-w-7xl mx-auto p-4 py-8">
-         <div class="glass-panel rounded-2xl shadow-sm p-6 mb-6 flex justify-between items-center border-l-8 border-accent">
+         <div class="glass-panel rounded-3xl shadow-xl p-8 mb-8 flex justify-between items-center border-l-[12px] border-accent">
             <div>
-                <h1 class="text-3xl font-bold text-primaryDark">👨‍💻 ระบบจัดการฝ่ายกิจการนักศึกษา</h1>
-                <p class="text-gray-600 mt-1 font-medium">จัดการข้อมูลและประเมินกิจกรรมนักศึกษา</p>
+                <h1 class="text-3xl md:text-4xl font-black text-primaryDark">👨‍💻 ระบบจัดการฝ่ายกิจการนักศึกษา</h1>
+                <p class="text-lg text-gray-600 mt-2 font-medium">จัดการข้อมูลและประเมินกิจกรรมนักศึกษาแบบเรียลไทม์</p>
             </div>
-            <button onclick="switchView('loginView')" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-semibold px-5 py-2.5 rounded-xl shadow-sm transition">ออกจากระบบ</button>
+            <button onclick="switchView('loginView')" class="bg-red-50 hover:bg-red-500 hover:text-white text-red-600 border border-red-200 font-bold px-6 py-3 rounded-2xl shadow-sm transition btn-hover-effect hidden md:block">ออกจากระบบ</button>
         </div>
 
-        <div class="flex gap-4 mb-6">
-            <button id="tabActivity" onclick="toggleAdminTab('activity')" class="bg-primary text-white font-bold px-6 py-3 rounded-xl shadow-md transition border-2 border-primary">📋 ตรวจสอบกิจกรรม</button>
-            <button id="tabStudent" onclick="toggleAdminTab('student')" class="bg-white text-gray-600 hover:bg-gray-50 font-bold px-6 py-3 rounded-xl shadow-sm transition border-2 border-gray-200">👩‍🎓 จัดการข้อมูลนักศึกษา</button>
+        <div class="flex flex-wrap gap-4 mb-8">
+            <button id="tabActivity" onclick="toggleAdminTab('activity')" class="bg-primary text-white font-bold px-8 py-4 text-lg rounded-2xl shadow-md border-2 border-primary btn-hover-effect">📋 ตรวจสอบกิจกรรม</button>
+            <button id="tabStudent" onclick="toggleAdminTab('student')" class="bg-white text-gray-600 hover:bg-gray-50 font-bold px-8 py-4 text-lg rounded-2xl shadow-sm border-2 border-gray-200 btn-hover-effect">👩‍🎓 จัดการข้อมูลนักศึกษา</button>
         </div>
 
         <div id="adminActivitySection">
-            <div class="glass-panel p-6 rounded-2xl shadow-sm mb-6 border border-gray-200">
-                <div class="flex gap-5 items-end">
-                    <div class="w-1/3">
-                        <label class="block text-sm font-semibold mb-2 text-primaryDark">ค้นหาจากรหัสนักศึกษา</label>
-                        <input type="text" id="searchActInput" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-primary bg-white/90" placeholder="พิมพ์รหัสเพื่อค้นหา...">
+            <div class="glass-panel p-6 rounded-3xl shadow-sm mb-8 border border-gray-200 bg-white">
+                <div class="flex flex-col md:flex-row gap-5 items-end">
+                    <div class="w-full md:w-1/3">
+                        <label class="block text-base font-bold mb-2 text-primaryDark">ค้นหาจากรหัสนักศึกษา</label>
+                        <input type="text" id="searchActInput" class="w-full px-5 py-3 text-lg border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-gray-50" placeholder="พิมพ์รหัสเพื่อค้นหา...">
                     </div>
-                    <div class="w-auto flex gap-3">
-                        <button onclick="loadAdminActivities()" class="bg-primary hover:bg-primaryDark text-white font-bold py-3 px-8 rounded-xl shadow-md transition">🔍 ค้นหา</button>
-                        <button onclick="loadAdminActivities()" class="bg-blue-50 hover:bg-blue-100 text-primary border border-blue-200 font-bold py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center">
+                    <div class="w-full md:w-auto flex gap-3">
+                        <button onclick="loadAdminActivities()" class="w-full md:w-auto bg-primary hover:bg-primaryDark text-white font-bold py-3 px-8 text-lg rounded-xl shadow-md btn-hover-effect">🔍 ค้นหา</button>
+                        <button onclick="loadAdminActivities()" class="bg-blue-50 hover:bg-blue-100 text-primary border border-blue-200 font-bold py-3 px-5 rounded-xl shadow-md btn-hover-effect">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                         </button>
                     </div>
                 </div>
             </div>
-            <div class="glass-panel rounded-2xl shadow-md overflow-hidden border-t-4 border-primary">
+            <div class="glass-panel rounded-3xl shadow-xl overflow-hidden border-t-8 border-primary bg-white">
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse bg-white">
+                    <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-primaryDark text-white text-sm">
-                                <th class="p-4 font-semibold">ข้อมูลนักศึกษา</th>
-                                <th class="p-4 font-semibold">รายละเอียดกิจกรรม</th>
-                                <th class="p-4 font-semibold">หลักฐาน</th>
-                                <th class="p-4 font-semibold text-center w-32">การพิจารณา</th>
+                            <tr class="bg-gray-100 text-primaryDark text-base border-b border-gray-200">
+                                <th class="p-5 font-bold whitespace-nowrap">ข้อมูลนักศึกษา</th>
+                                <th class="p-5 font-bold min-w-[250px]">รายละเอียดกิจกรรม</th>
+                                <th class="p-5 font-bold text-center">หลักฐาน</th>
+                                <th class="p-5 font-bold text-center w-40">การพิจารณา</th>
                             </tr>
                         </thead>
-                        <tbody id="adminTableBody" class="divide-y divide-gray-200"></tbody>
+                        <tbody id="adminTableBody" class="divide-y divide-gray-100"></tbody>
                     </table>
                 </div>
             </div>
         </div>
 
         <div id="adminStudentSection" class="hidden-section">
-            <div class="glass-panel p-6 rounded-2xl shadow-sm mb-6 border border-gray-200">
-                <div class="flex gap-5 items-end">
-                    <div class="w-1/3">
-                        <label class="block text-sm font-semibold mb-2 text-primaryDark">ค้นหานักศึกษา (ชื่อ หรือ รหัส)</label>
-                        <input type="text" id="searchStuInput" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-primary bg-white/90" placeholder="พิมพ์ชื่อหรือรหัส...">
+            <div class="glass-panel p-6 rounded-3xl shadow-sm mb-8 border border-gray-200 bg-white">
+                <div class="flex flex-col md:flex-row gap-5 items-end">
+                    <div class="w-full md:w-1/3">
+                        <label class="block text-base font-bold mb-2 text-primaryDark">ค้นหานักศึกษา (ชื่อ หรือ รหัส)</label>
+                        <input type="text" id="searchStuInput" class="w-full px-5 py-3 text-lg border border-gray-300 rounded-xl focus:ring-2 focus:ring-accent focus:border-accent bg-gray-50" placeholder="พิมพ์ชื่อหรือรหัส...">
                     </div>
-                    <div class="w-auto flex gap-3">
-                        <button onclick="loadAdminStudents()" class="bg-accent hover:bg-accentHover text-white font-bold py-3 px-8 rounded-xl shadow-md transition">🔍 ค้นหา</button>
-                        <button onclick="loadAdminStudents()" class="bg-yellow-50 hover:bg-yellow-100 text-accent border border-yellow-200 font-bold py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center">
+                    <div class="w-full md:w-auto flex gap-3">
+                        <button onclick="loadAdminStudents()" class="w-full md:w-auto bg-accent hover:bg-accentHover text-white font-bold py-3 px-8 text-lg rounded-xl shadow-md btn-hover-effect">🔍 ค้นหา</button>
+                        <button onclick="loadAdminStudents()" class="bg-yellow-50 hover:bg-yellow-100 text-accent border border-yellow-200 font-bold py-3 px-5 rounded-xl shadow-md btn-hover-effect">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                         </button>
                     </div>
                 </div>
             </div>
-            <div class="glass-panel rounded-2xl shadow-md overflow-hidden border-t-4 border-accent">
+            <div class="glass-panel rounded-3xl shadow-xl overflow-hidden border-t-8 border-accent bg-white">
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse bg-white">
+                    <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-gray-100 text-primaryDark text-sm border-b">
-                                <th class="p-4 font-bold">รหัสประจำตัว</th>
-                                <th class="p-4 font-bold">ชื่อ-นามสกุล</th>
-                                <th class="p-4 font-bold">ข้อมูลการศึกษา</th>
-                                <th class="p-4 font-bold text-center">จัดการระบบ</th>
+                            <tr class="bg-gray-100 text-primaryDark text-base border-b border-gray-200">
+                                <th class="p-5 font-bold whitespace-nowrap">รหัสประจำตัว</th>
+                                <th class="p-5 font-bold">ชื่อ-นามสกุล</th>
+                                <th class="p-5 font-bold">ข้อมูลการศึกษา</th>
+                                <th class="p-5 font-bold text-center">จัดการระบบ</th>
                             </tr>
                         </thead>
                         <tbody id="adminStudentTableBody" class="divide-y divide-gray-100"></tbody>
@@ -278,79 +327,93 @@
         </div>
     </section>
 
-    <section id="summaryView" class="hidden-section max-w-4xl mx-auto p-4 py-8 relative z-10">
+    <section id="summaryView" class="hidden-section max-w-4xl mx-auto p-4 py-8 relative z-20">
         <div class="flex justify-between items-center mb-6">
-            <button onclick="switchView('studentView')" class="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 font-bold py-2 px-6 rounded-xl shadow-sm transition flex items-center gap-2">
+            <button onclick="switchView('studentView')" class="bg-white hover:bg-gray-50 text-gray-700 border-2 border-gray-200 font-bold py-2.5 px-6 rounded-xl shadow-sm transition flex items-center gap-2 btn-hover-effect">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                 ย้อนกลับ
             </button>
-            <p class="text-sm font-semibold text-primary bg-blue-50 px-4 py-2 rounded-full border border-blue-100 shadow-sm">📸 คุณสามารถแคปหน้าจอนี้เพื่อใช้เป็นหลักฐานได้เลย</p>
+            <p class="text-sm font-bold text-primary bg-blue-100 px-5 py-2.5 rounded-full shadow-sm">📸 ขยายจอให้พอดี แล้วแคปรูปหน้านี้ส่งอาจารย์ได้เลยครับ</p>
         </div>
 
-        <div class="glass-panel bg-white rounded-3xl shadow-xl overflow-hidden border-t-8 border-accent">
+        <div class="bg-white rounded-[2rem] shadow-2xl overflow-hidden border border-gray-100 relative">
             
-            <div class="bg-gray-50/50 p-8 text-center border-b border-gray-100">
-                <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-3xl mx-auto mb-4 shadow-md">🏅</div>
-                <h2 class="text-2xl md:text-3xl font-bold text-primaryDark mb-2">สรุปประวัติกิจกรรมจิตอาสา</h2>
-                <p class="text-gray-500 font-medium">ประจำปีการศึกษา <span id="sumYear" class="text-accent font-bold"></span></p>
+            <div class="absolute top-0 left-0 w-full h-40 bg-gradient-to-br from-blue-50 to-white -z-10"></div>
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary via-accent to-primaryDark"></div>
+
+            <div class="p-10 text-center border-b border-gray-100 relative">
+                <div class="w-20 h-20 bg-gradient-to-br from-primary to-blue-600 text-white rounded-full flex items-center justify-center text-4xl mx-auto mb-5 shadow-lg border-4 border-white">🎖️</div>
+                <h2 class="text-3xl md:text-4xl font-black text-primaryDark mb-3 tracking-tight">สรุปประวัติกิจกรรมจิตอาสา</h2>
+                <p class="text-lg text-gray-500 font-medium">ประจำปีการศึกษา <span id="sumYear" class="text-accent font-bold text-xl ml-1 border-b-2 border-accent/30 px-1"></span></p>
             </div>
 
-            <div class="p-8 pb-4">
-                <div class="flex flex-col sm:flex-row justify-between bg-blue-50 p-5 rounded-2xl border border-blue-100 mb-8 text-primaryDark">
-                    <div class="mb-3 sm:mb-0"><span class="text-sm text-gray-500 block">รหัสนักศึกษา</span> <span id="sumStudentId" class="text-lg font-bold"></span></div>
-                    <div class="sm:text-right"><span class="text-sm text-gray-500 block">ชื่อ - นามสกุล</span> <span id="sumName" class="text-lg font-bold"></span></div>
+            <div class="p-10 pt-8 pb-6">
+                <div class="flex flex-col sm:flex-row justify-between bg-gradient-to-r from-blue-50 to-blue-50/30 p-6 rounded-2xl border border-blue-100 mb-10 text-primaryDark shadow-sm">
+                    <div class="mb-4 sm:mb-0">
+                        <span class="text-sm text-gray-500 block mb-1 font-semibold uppercase tracking-wider">รหัสนักศึกษา</span> 
+                        <span id="sumStudentId" class="text-2xl font-black text-primary"></span>
+                    </div>
+                    <div class="sm:text-right">
+                        <span class="text-sm text-gray-500 block mb-1 font-semibold uppercase tracking-wider">ชื่อ - นามสกุล</span> 
+                        <span id="sumName" class="text-2xl font-black text-primary"></span>
+                    </div>
                 </div>
 
-                <div class="overflow-x-auto rounded-2xl border border-gray-200 mb-8">
+                <div class="overflow-hidden rounded-2xl border border-gray-200 mb-10 shadow-sm">
                     <table class="w-full text-left border-collapse bg-white">
-                        <thead class="bg-gray-100 text-primaryDark">
+                        <thead class="bg-primary text-white">
                             <tr>
-                                <th class="p-4 font-bold text-center border-b border-gray-200">วันที่</th>
-                                <th class="p-4 font-bold border-b border-gray-200">ชื่อกิจกรรม</th>
-                                <th class="p-4 font-bold text-center border-b border-gray-200">ชั่วโมง</th>
+                                <th class="p-5 text-lg font-bold text-center border-r border-blue-800/30 w-1/4">วัน เดือน ปี</th>
+                                <th class="p-5 text-lg font-bold border-r border-blue-800/30 w-2/4">ชื่อกิจกรรมที่เข้าร่วม</th>
+                                <th class="p-5 text-lg font-bold text-center w-1/4">ชั่วโมง</th>
                             </tr>
                         </thead>
                         <tbody id="sumTableBody" class="divide-y divide-gray-100"></tbody>
                     </table>
                 </div>
 
-                <div class="flex justify-end items-center mb-10 border-b border-gray-100 pb-8">
-                    <span class="text-lg font-bold text-gray-600 mr-4">รวมชั่วโมงกิจกรรมทั้งหมด:</span>
-                    <span class="text-3xl font-black text-green-600 bg-green-100 px-6 py-2 rounded-2xl border border-green-200 shadow-sm" id="sumTotalHours">0</span>
-                    <span class="text-lg font-bold text-gray-600 ml-3">ชม.</span>
+                <div class="flex justify-end items-center mb-12 border-b-2 border-dashed border-gray-200 pb-10">
+                    <span class="text-xl font-bold text-gray-600 mr-5 uppercase tracking-wide">รวมชั่วโมงทั้งหมด :</span>
+                    <span class="text-5xl font-black text-green-600 bg-green-50 px-8 py-3 rounded-2xl border-2 border-green-200 shadow-inner" id="sumTotalHours">0</span>
+                    <span class="text-xl font-bold text-gray-500 ml-4">ชม.</span>
                 </div>
 
-                <div class="text-center pt-4 pb-8">
-                    <p class="text-gray-600 mb-10 font-medium text-sm md:text-base">" ข้าพเจ้าขอรับรองว่าข้อมูลกิจกรรมที่ปรากฏด้านบนเป็นความจริงทุกประการ "</p>
+                <div class="text-center pt-2 pb-6">
+                    <p class="text-gray-600 mb-12 font-semibold text-lg max-w-lg mx-auto bg-gray-50 p-4 rounded-xl">" ข้าพเจ้าขอรับรองว่าข้อมูลการเข้าร่วมกิจกรรมจิตอาสาทั้งหมดเป็นความจริงทุกประการ "</p>
                     
-                    <div class="inline-block">
-                        <div class="border-b-2 border-dashed border-gray-400 w-64 md:w-80 mx-auto mb-3 h-8"></div>
-                        <p class="text-gray-500 font-medium">(&nbsp; <span id="sumSignName" class="font-bold text-primaryDark"></span> &nbsp;)</p>
+                    <div class="inline-block relative">
+                        <p class="text-gray-400 absolute -top-8 left-0 right-0 text-sm font-semibold">ลงชื่อผู้รับรอง</p>
+                        <div class="border-b-[3px] border-dotted border-gray-400 w-72 md:w-96 mx-auto mb-4 h-6"></div>
+                        <p class="text-gray-600 font-medium text-lg">( <span id="sumSignName" class="font-bold text-primary mx-3"></span> )</p>
                     </div>
                 </div>
             </div>
             
+            <div class="w-full h-4 bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100"></div>
         </div>
         
-        <div class="text-center mt-6">
-            <p class="text-xs text-gray-400 font-medium">เอกสารอ้างอิงนี้ออกโดยระบบ Student e-Portfolio อัตโนมัติ</p>
+        <div class="text-center mt-8 opacity-70">
+            <p class="text-sm text-gray-500 font-bold flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                เอกสารอ้างอิงนี้ออกโดยระบบ Student e-Portfolio อัตโนมัติ
+            </p>
         </div>
     </section>
 
     <div id="customModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden-section">
-        <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-sm w-full text-center border-t-8 border-primary transform transition-all scale-modal">
-            <div id="modalIconContainer" class="mx-auto flex items-center justify-center h-20 w-20 rounded-full mb-5"></div>
-            <h3 id="modalTitle" class="text-2xl font-bold text-gray-800 mb-2">Title</h3>
-            <p id="modalMessage" class="text-gray-500 mb-8 font-medium">Message</p>
-            <button id="modalBtn" onclick="closeModal()" class="w-full text-white font-bold py-3 px-4 rounded-xl shadow-lg">รับทราบ</button>
+        <div class="bg-white rounded-3xl shadow-2xl p-10 max-w-sm w-full text-center border-t-8 border-primary transform transition-all scale-modal">
+            <div id="modalIconContainer" class="mx-auto flex items-center justify-center h-24 w-24 rounded-full mb-6"></div>
+            <h3 id="modalTitle" class="text-2xl font-black text-gray-800 mb-3">Title</h3>
+            <p id="modalMessage" class="text-base text-gray-500 mb-8 font-medium leading-relaxed">Message</p>
+            <button id="modalBtn" onclick="closeModal()" class="w-full text-white font-bold py-4 px-4 text-lg rounded-2xl shadow-lg transition btn-hover-effect">รับทราบ</button>
         </div>
     </div>
 
     <div id="notificationsModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden-section">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md border-t-8 border-accent transform transition-all scale-modal overflow-hidden flex flex-col max-h-[80vh]">
             <div class="p-6 border-b flex justify-between items-center bg-gray-50">
-                <h3 class="text-xl font-bold text-primaryDark flex items-center gap-2">🔔 กล่องข้อความแจ้งเตือน</h3>
-                <button onclick="closeNotifications()" class="text-gray-400 hover:text-red-500 transition font-bold text-xl">&times;</button>
+                <h3 class="text-xl font-bold text-primaryDark flex items-center gap-2">🔔 กล่องข้อความ</h3>
+                <button onclick="closeNotifications()" class="text-gray-400 hover:text-red-500 transition font-bold text-2xl">&times;</button>
             </div>
             <div class="p-6 overflow-y-auto bg-white flex-1" id="notifListContainer"></div>
         </div>
@@ -360,10 +423,10 @@
         <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full border-t-8 border-primary transform transition-all scale-modal">
             <h3 class="text-xl font-bold text-gray-800 mb-1">ส่งข้อความแจ้งเตือน</h3>
             <p class="text-sm text-gray-500 mb-4" id="sendMessageTargetName">ถึงนักศึกษา: ...</p>
-            <textarea id="messageInput" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-primary mb-6" placeholder="พิมพ์ข้อความที่ต้องการแจ้งให้นักศึกษาทราบ..."></textarea>
+            <textarea id="messageInput" rows="4" class="w-full px-5 py-4 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary mb-6 bg-gray-50" placeholder="พิมพ์ข้อความที่ต้องการแจ้งให้นักศึกษาทราบ..."></textarea>
             <div class="flex gap-4">
-                <button onclick="closeSendMessageModal()" class="w-1/2 bg-gray-100 font-bold py-3 rounded-xl">ยกเลิก</button>
-                <button onclick="confirmSendMessage()" class="w-1/2 bg-primary text-white font-bold py-3 rounded-xl shadow-lg">ส่งข้อความ ✉️</button>
+                <button onclick="closeSendMessageModal()" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-4 text-lg rounded-xl transition">ยกเลิก</button>
+                <button onclick="confirmSendMessage()" class="w-1/2 bg-primary hover:bg-primaryDark text-white font-bold py-4 text-lg rounded-xl shadow-lg transition">ส่งข้อความ ✉️</button>
             </div>
         </div>
     </div>
@@ -371,17 +434,17 @@
     <div id="editStudentModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden-section">
         <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full border-t-8 border-accent transform transition-all scale-modal">
             <h3 class="text-xl font-bold text-gray-800 mb-4">แก้ไขข้อมูลนักศึกษา</h3>
-            <div class="space-y-4 mb-6">
-                <div><label class="block text-sm font-semibold mb-1">ชื่อ-นามสกุล</label><input type="text" id="editName" class="w-full px-4 py-2 border rounded-xl bg-gray-50"></div>
-                <div><label class="block text-sm font-semibold mb-1">คณะ</label><input type="text" id="editFaculty" class="w-full px-4 py-2 border rounded-xl"></div>
+            <div class="space-y-4 mb-6 text-left">
+                <div><label class="block text-sm font-semibold mb-1">ชื่อ-นามสกุล</label><input type="text" id="editName" class="w-full px-4 py-3 border rounded-xl bg-gray-50"></div>
+                <div><label class="block text-sm font-semibold mb-1">คณะ</label><input type="text" id="editFaculty" class="w-full px-4 py-3 border rounded-xl"></div>
                 <div class="flex gap-3">
-                    <div class="w-2/3"><label class="block text-sm font-semibold mb-1">สาขา</label><input type="text" id="editMajor" class="w-full px-4 py-2 border rounded-xl"></div>
-                    <div class="w-1/3"><label class="block text-sm font-semibold mb-1">ชั้นปี</label><input type="text" id="editYear" class="w-full px-4 py-2 border rounded-xl text-center"></div>
+                    <div class="w-2/3"><label class="block text-sm font-semibold mb-1">สาขา</label><input type="text" id="editMajor" class="w-full px-4 py-3 border rounded-xl"></div>
+                    <div class="w-1/3"><label class="block text-sm font-semibold mb-1">ชั้นปี</label><input type="text" id="editYear" class="w-full px-4 py-3 border rounded-xl text-center"></div>
                 </div>
             </div>
             <div class="flex gap-4">
-                <button onclick="closeEditStudentModal()" class="w-1/2 bg-gray-100 font-bold py-3 rounded-xl">ยกเลิก</button>
-                <button onclick="confirmEditStudent()" class="w-1/2 bg-accent text-white font-bold py-3 rounded-xl shadow-lg">บันทึกข้อมูล</button>
+                <button onclick="closeEditStudentModal()" class="w-1/2 bg-gray-100 hover:bg-gray-200 font-bold py-4 rounded-xl transition">ยกเลิก</button>
+                <button onclick="confirmEditStudent()" class="w-1/2 bg-accent hover:bg-accentHover text-white font-bold py-4 rounded-xl shadow-lg transition">บันทึกข้อมูล</button>
             </div>
         </div>
     </div>
@@ -389,16 +452,16 @@
     <div id="rejectModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden-section">
         <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full border-t-8 border-red-500 transform transition-all scale-modal">
             <h3 class="text-xl font-bold text-gray-800 mb-2">ระบุเหตุผลที่ไม่อนุมัติ</h3>
-            <textarea id="rejectReasonInput" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-red-500 mb-6 bg-red-50" placeholder="ระบุเหตุผล..."></textarea>
+            <textarea id="rejectReasonInput" rows="3" class="w-full px-4 py-3 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 mb-6 bg-red-50" placeholder="ระบุเหตุผล..."></textarea>
             <div class="flex gap-4">
-                <button onclick="closeRejectModal()" class="w-1/2 bg-gray-100 font-bold py-3 rounded-xl">ยกเลิก</button>
-                <button onclick="confirmReject()" class="w-1/2 bg-red-500 text-white font-bold py-3 rounded-xl shadow-lg">ยืนยัน</button>
+                <button onclick="closeRejectModal()" class="w-1/2 bg-gray-100 hover:bg-gray-200 font-bold py-4 rounded-xl transition">ยกเลิก</button>
+                <button onclick="confirmReject()" class="w-1/2 bg-red-500 hover:bg-red-600 text-white font-bold py-4 rounded-xl shadow-lg transition">ยืนยัน</button>
             </div>
         </div>
     </div>
 
-    <div class="text-center text-xs font-bold text-gray-400 mt-6 absolute bottom-2 w-full">
-        ระบบ e-Portfolio v5.0 (Minimalist Screenshot Edition)
+    <div class="text-center text-sm font-bold text-blue-300 mt-6 absolute bottom-4 w-full">
+        ✨ ระบบ e-Portfolio v6.0 (Colorful & Readable Edition) ✨
     </div>
 
     <script type="module">
@@ -415,7 +478,6 @@
         let targetMessageUid = null;
         let targetEditUid = null;
 
-        // Modal Logic
         window.showModal = function(type, title, message, callback = null) {
             const modal = document.getElementById('customModal');
             const iconContainer = document.getElementById('modalIconContainer');
@@ -423,20 +485,22 @@
             document.getElementById('modalTitle').innerText = title;
             document.getElementById('modalMessage').innerText = message;
             modalCloseCallback = callback;
-            iconContainer.className = "mx-auto flex items-center justify-center h-20 w-20 rounded-full mb-5";
-            btn.className = "w-full text-white font-bold py-3 px-4 rounded-xl shadow-lg transition";
+            
+            iconContainer.className = "mx-auto flex items-center justify-center h-24 w-24 rounded-full mb-6 shadow-md";
+            btn.className = "w-full text-white font-bold py-4 px-4 text-lg rounded-2xl shadow-lg transition btn-hover-effect";
+            
             if (type === 'success') {
                 iconContainer.classList.add('bg-green-100', 'text-green-600');
-                iconContainer.innerHTML = '<svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>';
-                btn.classList.add('bg-green-500', 'hover:bg-green-600');
+                iconContainer.innerHTML = '<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>';
+                btn.classList.add('bg-gradient-to-r', 'from-green-500', 'to-green-600', 'hover:from-green-600', 'hover:to-green-700');
             } else if (type === 'error') {
                 iconContainer.classList.add('bg-red-100', 'text-red-600');
-                iconContainer.innerHTML = '<svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>';
-                btn.classList.add('bg-red-500', 'hover:bg-red-600');
+                iconContainer.innerHTML = '<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>';
+                btn.classList.add('bg-gradient-to-r', 'from-red-500', 'to-red-600', 'hover:from-red-600', 'hover:to-red-700');
             } else {
                 iconContainer.classList.add('bg-yellow-100', 'text-yellow-600');
-                iconContainer.innerHTML = '<svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>';
-                btn.classList.add('bg-yellow-500', 'hover:bg-yellow-600');
+                iconContainer.innerHTML = '<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>';
+                btn.classList.add('bg-gradient-to-r', 'from-yellow-400', 'to-yellow-500', 'hover:from-yellow-500', 'hover:to-yellow-600');
             }
             modal.classList.remove('hidden-section');
         }
@@ -446,7 +510,6 @@
             if (modalCloseCallback) { modalCloseCallback(); modalCloseCallback = null; }
         }
 
-        // ระบบสลับหน้าจอ (ซ่อนหน้าอื่นๆ เมื่อเปิดหน้าสรุป)
         window.switchView = function(viewId) {
             document.getElementById('loginView').classList.add('hidden-section');
             document.getElementById('registerView').classList.add('hidden-section');
@@ -455,11 +518,12 @@
             document.getElementById('summaryView').classList.add('hidden-section'); 
             
             document.getElementById(viewId).classList.remove('hidden-section');
+            window.scrollTo(0,0); // เลื่อนจอขึ้นบนสุดเวลาสลับหน้า
+            
             if(viewId === 'registerView') document.getElementById('registerForm').reset();
             if(viewId === 'loginView') { document.getElementById('loginForm').reset(); supabase.auth.signOut(); }
         }
 
-        // Auth Logic
         window.handleRegister = async function() {
             const name = document.getElementById('regName').value.trim();
             const id = document.getElementById('regId').value.trim();
@@ -470,8 +534,10 @@
             const faculty = document.getElementById('regFaculty').value.trim();
             const major = document.getElementById('regMajor').value.trim();
             const year = document.getElementById('regYear').value;
-            if (!name || !id || !cardId || !email || !password || !confirmPassword) return window.showModal('warning', 'ข้อมูลไม่ครบ', 'กรุณากรอกช่อง * ให้ครบ');
-            if (password !== confirmPassword) return window.showModal('warning', 'รหัสผ่านไม่ตรงกัน', 'ตรวจสอบรหัสผ่านอีกครั้ง');
+            
+            if (!name || !id || !cardId || !email || !password || !confirmPassword) return window.showModal('warning', 'ข้อมูลไม่ครบ', 'กรุณากรอกช่องที่มีเครื่องหมาย * ให้ครบถ้วน');
+            if (password !== confirmPassword) return window.showModal('warning', 'รหัสผ่านไม่ตรงกัน', 'กรุณาตรวจสอบรหัสผ่านอีกครั้ง');
+            
             let role = /^[0-9]+$/.test(id) ? 'student' : 'admin';
             const btnRegister = document.getElementById('btnRegister');
             btnRegister.disabled = true; btnRegister.innerHTML = "⏳ กำลังประมวลผล...";
@@ -482,7 +548,7 @@
                     id: authData.user.id, fullName: name, studentId: id, citizenId: cardId, email: email, role: role,
                     faculty: faculty, major: major, year: year, avatar_url: `https://ui-avatars.com/api/?name=${name}&background=random`
                 }]);
-                window.showModal('success', 'สำเร็จ', 'ลงทะเบียนเรียบร้อย', () => window.switchView('loginView'));
+                window.showModal('success', 'ลงทะเบียนสำเร็จ', 'คุณสามารถเข้าสู่ระบบด้วยอีเมลที่ลงทะเบียนได้เลย', () => window.switchView('loginView'));
             } catch (error) { window.showModal('error', 'ผิดพลาด', error.message); } 
             finally { btnRegister.disabled = false; btnRegister.innerHTML = "📝 บันทึกประวัติขึ้นระบบ"; }
         }
@@ -493,26 +559,34 @@
             const btnLogin = document.getElementById('btnLogin');
             const loginError = document.getElementById('loginError');
             loginError.classList.add('hidden');
-            if (!emailInput || !passwordInput) return window.showModal('warning', 'ข้อมูลไม่ครบ', 'ระบุอีเมลและรหัสผ่าน');
+            
+            if (!emailInput || !passwordInput) return window.showModal('warning', 'ข้อมูลไม่ครบ', 'กรุณาระบุอีเมลและรหัสผ่าน');
+            
             try {
-                btnLogin.innerHTML = "⏳..."; btnLogin.disabled = true;
+                btnLogin.innerHTML = "⏳ กำลังเข้าสู่ระบบ..."; btnLogin.disabled = true;
                 const { data: authData, error: authError } = await supabase.auth.signInWithPassword({ email: emailInput, password: passwordInput });
                 if (authError) throw authError;
                 currentUserId = authData.user.id;
+                
                 const { data: userData, error: userError } = await supabase.from('users').select('*').eq('id', currentUserId).single();
                 if (userError || !userData) throw new Error("ไม่พบสิทธิ์เข้าใช้งาน");
+                
                 currentUserData = userData;
-                if (userData.role === 'admin') { window.switchView('adminView'); window.toggleAdminTab('activity'); }
-                else {
+                if (userData.role === 'admin') { 
+                    window.switchView('adminView'); 
+                    window.toggleAdminTab('activity'); 
+                } else {
                     document.getElementById('profileImage').src = userData.avatar_url;
                     document.getElementById('studentWelcomeText').innerText = `นักศึกษา: ${userData.fullName} (รหัส: ${userData.studentId})`;
-                    window.switchView('studentView'); window.loadStudentActivities();
+                    window.switchView('studentView'); 
+                    window.loadStudentActivities();
                 }
-            } catch (error) { loginError.innerText = error.message; loginError.classList.remove('hidden'); } 
-            finally { btnLogin.innerHTML = "เข้าสู่ระบบ"; btnLogin.disabled = false; }
+            } catch (error) { 
+                loginError.classList.remove('hidden'); 
+            } 
+            finally { btnLogin.innerHTML = "เข้าสู่ระบบ 🚀"; btnLogin.disabled = false; }
         }
 
-        // Notification Logic
         window.checkUnreadNotifications = async function() {
             const { data } = await supabase.from('notifications').select('id').eq('uid', currentUserId).eq('is_read', false);
             const badge = document.getElementById('notifBadge');
@@ -523,12 +597,15 @@
         window.openNotifications = async function() {
             document.getElementById('notificationsModal').classList.remove('hidden-section');
             const container = document.getElementById('notifListContainer');
-            container.innerHTML = '<p class="text-center py-4">⏳ โหลดข้อความ...</p>';
+            container.innerHTML = '<p class="text-center py-4 font-bold text-primary">⏳ โหลดข้อความ...</p>';
+            
             const { data } = await supabase.from('notifications').select('*').eq('uid', currentUserId).order('created_at', { ascending: false });
-            container.innerHTML = (data && data.length > 0) ? '' : '<div class="text-center text-gray-400 py-8">ไม่มีข้อความ</div>';
+            container.innerHTML = (data && data.length > 0) ? '' : '<div class="text-center text-gray-400 py-10 font-bold text-lg">📭 ไม่มีข้อความแจ้งเตือนใหม่</div>';
+            
             data?.forEach(msg => {
                 let dateStr = new Date(msg.created_at).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short'});
-                container.innerHTML += `<div class="p-4 rounded-xl border mb-3 flex gap-3 ${msg.is_read ? 'bg-white' : 'bg-blue-50'}"><div><p class="text-xs text-gray-400 font-bold">ฝ่ายกิจการนักศึกษา • ${dateStr}</p><p class="text-sm">${msg.message}</p></div></div>`;
+                let highlight = msg.is_read ? 'bg-white border-gray-100' : 'bg-blue-50 border-blue-200 shadow-md';
+                container.innerHTML += `<div class="p-5 rounded-2xl border mb-4 flex gap-4 ${highlight} transition-all hover:scale-[1.02]"><div><p class="text-sm text-primary mb-1 font-bold">ฝ่ายกิจการนักศึกษา • ${dateStr}</p><p class="text-base text-gray-700">${msg.message}</p></div></div>`;
             });
             await supabase.from('notifications').update({ is_read: true }).eq('uid', currentUserId);
             window.checkUnreadNotifications();
@@ -536,7 +613,6 @@
 
         window.closeNotifications = () => document.getElementById('notificationsModal').classList.add('hidden-section');
 
-        // Activity Submission Logic
         window.handleAvatarUpload = async function(event) {
             const file = event.target.files[0]; if (!file) return;
             try {
@@ -545,13 +621,13 @@
                 const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
                 await supabase.from('users').update({ avatar_url: data.publicUrl }).eq('id', currentUserId);
                 document.getElementById('profileImage').src = data.publicUrl;
-                window.showModal('success', 'สำเร็จ', 'เปลี่ยนรูปเรียบร้อย');
-            } catch (error) { window.showModal('error', 'ล้มเหลว', error.message); }
+                window.showModal('success', 'สำเร็จ', 'เปลี่ยนรูปโปรไฟล์เรียบร้อยแล้ว');
+            } catch (error) { window.showModal('error', 'อัปโหลดล้มเหลว', error.message); }
         }
 
         window.handleFileSelect = function() {
             const input = document.getElementById('actFile'); const preview = document.getElementById('filePreviewContainer');
-            preview.innerHTML = ''; Array.from(input.files).forEach(f => preview.innerHTML += `<div class="text-xs p-1 border truncate">📄 ${f.name}</div>`);
+            preview.innerHTML = ''; Array.from(input.files).forEach(f => preview.innerHTML += `<div class="text-sm p-2 bg-white rounded-lg border border-gray-200 shadow-sm truncate font-medium text-gray-600">📄 ${f.name}</div>`);
         }
 
         window.submitActivity = async function() {
@@ -560,8 +636,10 @@
             const hours = document.getElementById('actHours').value;
             const certifier = document.getElementById('actCertifier').value.trim();
             const fileInput = document.getElementById('actFile');
-            if (!name || !date || !hours || !certifier || fileInput.files.length === 0) return window.showModal('warning', 'ข้อมูลไม่ครบ', 'แนบหลักฐานและระบุชั่วโมงด้วยครับ');
-            const btn = document.getElementById('btnSubmitActivity'); btn.disabled = true; btn.innerHTML = "⏳ บันทึก...";
+            
+            if (!name || !date || !hours || !certifier || fileInput.files.length === 0) return window.showModal('warning', 'ข้อมูลไม่ครบ', 'กรุณากรอกข้อมูลและแนบไฟล์หลักฐานให้ครบถ้วน');
+            
+            const btn = document.getElementById('btnSubmitActivity'); btn.disabled = true; btn.innerHTML = "⏳ กำลังบันทึกข้อมูล...";
             try {
                 let uploaded = [];
                 for (let f of fileInput.files) {
@@ -570,70 +648,82 @@
                     uploaded.push({ name: f.name, url: supabase.storage.from('activities').getPublicUrl(`${currentUserId}/${safeName}`).data.publicUrl });
                 }
                 await supabase.from('activities').insert([{ uid: currentUserId, studentId: currentUserData.studentId, studentName: currentUserData.fullName, actName: name, actDate: date, act_hours: parseFloat(hours), actCertifier: certifier, files: uploaded, status: 'pending' }]);
-                window.showModal('success', 'ส่งข้อมูลสำเร็จ', 'แฟ้มถูกส่งเข้าระบบแล้ว');
-                document.getElementById('activityForm').reset(); document.getElementById('filePreviewContainer').innerHTML = ''; window.loadStudentActivities();
+                
+                window.showModal('success', 'ส่งข้อมูลสำเร็จ', 'ระบบได้รับแบบฟอร์มกิจกรรมของคุณเรียบร้อยแล้ว');
+                document.getElementById('activityForm').reset(); 
+                document.getElementById('filePreviewContainer').innerHTML = ''; 
+                window.loadStudentActivities();
             } catch (error) { window.showModal('error', 'ข้อผิดพลาด', error.message); } 
-            finally { btn.disabled = false; btn.innerHTML = "ส่งข้อมูลเข้าระบบ"; }
+            finally { btn.disabled = false; btn.innerHTML = "ส่งข้อมูลเข้าระบบ 🚀"; }
         }
 
         window.loadStudentActivities = async function() {
             window.checkUnreadNotifications();
-            const tbody = document.getElementById('studentTableBody'); tbody.innerHTML = '<tr><td colspan="3" class="text-center p-4">⏳ โหลด...</td></tr>';
+            const tbody = document.getElementById('studentTableBody'); tbody.innerHTML = '<tr><td colspan="3" class="text-center p-8 text-lg font-bold text-gray-400">⏳ กำลังโหลดประวัติ...</td></tr>';
             let total = 0;
             try {
                 const { data } = await supabase.from('activities').select('*').eq('uid', currentUserId).order('created_at', { ascending: false });
-                tbody.innerHTML = (data && data.length > 0) ? '' : '<tr><td colspan="3" class="text-center p-4">ไม่มีประวัติ</td></tr>';
+                tbody.innerHTML = (data && data.length > 0) ? '' : '<tr><td colspan="3" class="text-center p-8 text-lg font-bold text-gray-400">📝 ยังไม่มีประวัติกิจกรรม</td></tr>';
+                
                 data?.forEach(item => {
                     if (item.status === 'approved') total += Number(item.act_hours || 0);
-                    let status = item.status === 'approved' ? '<span class="text-green-600 font-bold">อนุมัติแล้ว</span>' : (item.status === 'rejected' ? `<span class="text-red-600 font-bold">ไม่ผ่าน</span><p class="text-[10px]">${item.reject_reason || '-'}</p>` : 'รอประเมิน');
-                    tbody.innerHTML += `<tr class="border-b"><td class="p-4 text-sm">${item.actDate}</td><td class="p-4 text-sm font-bold">${item.actName} <span class="text-accent">(${item.act_hours} ชม.)</span></td><td class="p-4 text-center">${status}</td></tr>`;
+                    
+                    let status = item.status === 'approved' ? '<span class="bg-green-100 text-green-700 px-4 py-1.5 rounded-full text-sm font-bold border border-green-200 shadow-sm">✔ อนุมัติแล้ว</span>' : 
+                                 (item.status === 'rejected' ? `<span class="bg-red-100 text-red-700 px-4 py-1.5 rounded-full text-sm font-bold border border-red-200 shadow-sm">✖ ไม่ผ่านเกณฑ์</span><p class="text-xs text-red-500 mt-2 font-medium bg-red-50 p-2 rounded-lg border border-red-100">เหตุผล: ${item.reject_reason || '-'}</p>` : 
+                                 '<span class="bg-yellow-100 text-yellow-700 px-4 py-1.5 rounded-full text-sm font-bold border border-yellow-200 shadow-sm">⏳ รอประเมิน</span>');
+                                 
+                    tbody.innerHTML += `<tr class="border-b border-gray-100 hover:bg-blue-50/50 transition-colors"><td class="p-5 text-base text-gray-600 font-medium">${item.actDate}</td><td class="p-5 text-lg font-bold text-gray-800">${item.actName} <span class="text-accent ml-2 text-base bg-yellow-50 px-2 py-1 rounded-lg border border-yellow-100">(${item.act_hours} ชม.)</span></td><td class="p-5 text-center align-middle">${status}</td></tr>`;
                 });
-                document.getElementById('totalHoursText').innerText = `รวม: ${total} ชม.`;
+                
+                document.getElementById('totalHoursText').innerText = `รวมชั่วโมงที่ผ่าน: ${total} ชม.`;
+                document.getElementById('totalHoursText').className = total >= 40 ? "text-base bg-green-500 text-white px-5 py-2 rounded-full ml-3 font-bold shadow-md border-2 border-white" : "text-base bg-gray-100 text-gray-700 px-5 py-2 rounded-full ml-3 font-bold border border-gray-200";
                 
                 // ถ้ารวม >= 40 ให้โชว์ปุ่มเปิดหน้าแคปรูป
-                document.getElementById('btnGenerateSummary').className = total >= 40 ? 'text-sm bg-green-500 hover:bg-green-600 text-white font-bold px-4 py-2 rounded-lg shadow-md transition flex items-center gap-2 border border-green-600' : 'hidden';
+                document.getElementById('btnGenerateSummary').className = total >= 40 ? 'text-base bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold px-5 py-3 rounded-xl shadow-lg flex items-center gap-2 btn-hover-effect' : 'hidden';
             } catch (e) { console.error(e); }
         }
 
-        // 🔴 ระบบเปิดหน้าเว็บสไตล์ Minimal สำหรับแคปรูปส่ง
+        // 🔴 5. เปิดหน้าเว็บสรุป (Minimalist Web Style) สำหรับการแคปรูป
         window.openSummaryView = async function() {
             const btn = document.getElementById('btnGenerateSummary');
             const originalText = btn.innerHTML;
-            btn.innerHTML = "⏳ โหลดข้อมูล..."; 
+            btn.innerHTML = "⏳ กำลังจัดเตรียมหน้าสรุป..."; 
             btn.disabled = true;
             
             try {
-                // 1. ดึงข้อมูล
+                // 1. ดึงข้อมูลเฉพาะที่ผ่านแล้ว
                 const { data } = await supabase.from('activities').select('*').eq('uid', currentUserId).eq('status', 'approved').order('actDate', { ascending: true });
                 
-                // 2. เติมข้อมูล นศ. ลงในการ์ด Minimal
+                // 2. เติมข้อมูลลงในการ์ด
                 document.getElementById('sumName').innerText = currentUserData.fullName;
                 document.getElementById('sumSignName').innerText = currentUserData.fullName;
                 document.getElementById('sumStudentId').innerText = currentUserData.studentId;
                 document.getElementById('sumYear').innerText = new Date().getFullYear() + 543;
 
-                // 3. เติมข้อมูลลงตาราง
                 const tbody = document.getElementById('sumTableBody');
                 tbody.innerHTML = '';
                 let total = 0;
 
-                data.forEach(item => {
+                data.forEach((item, index) => {
                     total += Number(item.act_hours || 0);
                     let dateObj = new Date(item.actDate);
                     let dateStr = dateObj.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
                     
+                    // สลับสีแถวตารางให้อ่านง่ายขึ้น (Zebra Striping)
+                    let rowBg = index % 2 === 0 ? 'bg-white' : 'bg-blue-50/30';
+                    
                     tbody.innerHTML += `
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="p-4 text-center text-gray-600">${dateStr}</td>
-                            <td class="p-4 font-semibold text-gray-800">${item.actName}</td>
-                            <td class="p-4 text-center text-accent font-bold">${item.act_hours}</td>
+                        <tr class="${rowBg} hover:bg-blue-100/50 transition-colors border-b border-gray-100">
+                            <td class="p-5 text-center text-gray-600 font-medium text-lg border-r border-gray-100">${dateStr}</td>
+                            <td class="p-5 font-bold text-gray-800 text-xl border-r border-gray-100">${item.actName}</td>
+                            <td class="p-5 text-center text-accent font-black text-2xl">${item.act_hours}</td>
                         </tr>
                     `;
                 });
                 
                 document.getElementById('sumTotalHours').innerText = total;
 
-                // 4. เปลี่ยนหน้าจอ
+                // 3. เปลี่ยนหน้าจอไปที่หน้าแคปรูป
                 window.switchView('summaryView');
 
             } catch (e) {
@@ -649,32 +739,49 @@
         window.toggleAdminTab = function(name) {
             document.getElementById('adminActivitySection').className = name === 'activity' ? '' : 'hidden-section';
             document.getElementById('adminStudentSection').className = name === 'student' ? '' : 'hidden-section';
-            document.getElementById('tabActivity').className = name === 'activity' ? 'bg-primary text-white font-bold px-6 py-3 rounded-xl' : 'bg-white text-gray-600 px-6 py-3 rounded-xl border';
-            document.getElementById('tabStudent').className = name === 'student' ? 'bg-primary text-white font-bold px-6 py-3 rounded-xl' : 'bg-white text-gray-600 px-6 py-3 rounded-xl border';
+            document.getElementById('tabActivity').className = name === 'activity' ? 'bg-primary text-white font-bold px-8 py-4 text-lg rounded-2xl shadow-md border-2 border-primary btn-hover-effect' : 'bg-white text-gray-600 hover:bg-gray-50 font-bold px-8 py-4 text-lg rounded-2xl shadow-sm border-2 border-gray-200 btn-hover-effect';
+            document.getElementById('tabStudent').className = name === 'student' ? 'bg-primary text-white font-bold px-8 py-4 text-lg rounded-2xl shadow-md border-2 border-primary btn-hover-effect' : 'bg-white text-gray-600 hover:bg-gray-50 font-bold px-8 py-4 text-lg rounded-2xl shadow-sm border-2 border-gray-200 btn-hover-effect';
             name === 'activity' ? window.loadAdminActivities() : window.loadAdminStudents();
         }
 
         window.loadAdminActivities = async function() {
-            const tbody = document.getElementById('adminTableBody'); tbody.innerHTML = '<tr><td colspan="4" class="text-center p-8">⏳...</td></tr>';
-            const { data } = await supabase.from('activities').select('*').order('created_at', { ascending: false });
-            tbody.innerHTML = '';
-            data?.forEach(item => {
-                let action = item.status === 'pending' ? `<button onclick="approveActivity('${item.id}')" class="bg-green-500 text-white p-1 rounded text-xs w-full mb-1">อนุมัติ</button><button onclick="openRejectModal('${item.id}')" class="bg-red-500 text-white p-1 rounded text-xs w-full">ปฏิเสธ</button>` : `<span class="text-xs">${item.status}</span>`;
-                tbody.innerHTML += `<tr class="border-b"><td class="p-4 text-xs"><b>${item.studentId}</b><br>${item.studentName}</td><td class="p-4 text-xs">${item.actName} (${item.act_hours}ชม.)</td><td class="p-4 text-xs"><a href="${item.files[0]?.url}" target="_blank" class="text-blue-500 underline">ดูไฟล์</a></td><td class="p-4 text-center">${action}</td></tr>`;
-            });
+            const searchVal = document.getElementById('searchActInput').value.trim();
+            const tbody = document.getElementById('adminTableBody'); tbody.innerHTML = '<tr><td colspan="4" class="text-center p-10 text-lg font-bold text-gray-400">⏳ กำลังโหลดข้อมูล...</td></tr>';
+            try {
+                let query = supabase.from('activities').select('*').order('created_at', { ascending: false });
+                if (searchVal) query = query.ilike('studentId', `%${searchVal}%`);
+                
+                const { data } = await query;
+                tbody.innerHTML = '';
+                if(data.length === 0) { tbody.innerHTML = '<tr><td colspan="4" class="text-center p-10 text-lg font-bold text-gray-400">ไม่พบกิจกรรมในระบบ</td></tr>'; return; }
+                
+                data.forEach(item => {
+                    let filesHtml = item.files.map((f, i) => `<a href="${f.url}" target="_blank" class="text-primary hover:text-blue-700 text-sm font-bold hover:underline bg-blue-50 px-3 py-1 rounded-lg inline-block mb-1 border border-blue-100">📄 ดูหลักฐาน</a>`).join('');
+                    let action = item.status === 'pending' ? `<button onclick="approveActivity('${item.id}')" class="bg-green-500 hover:bg-green-600 text-white p-2 rounded-xl text-sm font-bold w-full mb-2 shadow-sm btn-hover-effect">✅ อนุมัติ</button><button onclick="openRejectModal('${item.id}')" class="bg-red-500 hover:bg-red-600 text-white p-2 rounded-xl text-sm font-bold w-full shadow-sm btn-hover-effect">❌ ปฏิเสธ</button>` : `<span class="text-sm font-bold text-gray-500 bg-gray-100 px-4 py-2 rounded-xl block text-center">${item.status === 'approved' ? 'อนุมัติแล้ว' : 'ปฏิเสธแล้ว'}</span>`;
+                    tbody.innerHTML += `<tr class="border-b border-gray-100 hover:bg-gray-50"><td class="p-5 text-base"><b>${item.studentId}</b><br><span class="text-gray-600">${item.studentName}</span></td><td class="p-5 text-base font-bold">${item.actName} <br><span class="text-accent text-sm">(${item.act_hours} ชม.)</span></td><td class="p-5 text-center">${filesHtml}</td><td class="p-5 text-center">${action}</td></tr>`;
+                });
+            } catch(e) { console.error(e); }
         }
 
         window.loadAdminStudents = async function() {
-            const tbody = document.getElementById('adminStudentTableBody'); tbody.innerHTML = '<tr><td colspan="4" class="text-center p-8">⏳...</td></tr>';
-            const { data } = await supabase.from('users').select('*').eq('role', 'student');
-            tbody.innerHTML = '';
-            data?.forEach(u => {
-                tbody.innerHTML += `<tr class="border-b"><td class="p-4 font-bold text-xs">${u.studentId}</td><td class="p-4 text-xs">${u.fullName}</td><td class="p-4 text-xs">${u.faculty}/${u.major}</td><td class="p-4 flex gap-2"><button onclick="openSendMessage('${u.id}', '${u.fullName}')" class="bg-blue-500 text-white p-1 rounded text-xs">💬</button><button onclick="openEditStudent('${u.id}', '${u.fullName}')" class="bg-yellow-500 text-white p-1 rounded text-xs">✏️</button></td></tr>`;
-            });
+            const searchVal = document.getElementById('searchStuInput').value.trim();
+            const tbody = document.getElementById('adminStudentTableBody'); tbody.innerHTML = '<tr><td colspan="4" class="text-center p-10 text-lg font-bold text-gray-400">⏳ กำลังโหลดข้อมูล...</td></tr>';
+            try {
+                let query = supabase.from('users').select('*').eq('role', 'student').order('created_at', { ascending: false });
+                if (searchVal) query = query.or(`studentId.ilike.%${searchVal}%,fullName.ilike.%${searchVal}%`);
+                
+                const { data } = await query;
+                tbody.innerHTML = '';
+                if(data.length === 0) { tbody.innerHTML = '<tr><td colspan="4" class="text-center p-10 text-lg font-bold text-gray-400">ไม่พบข้อมูลนักศึกษา</td></tr>'; return; }
+                
+                data.forEach(u => {
+                    tbody.innerHTML += `<tr class="border-b border-gray-100 hover:bg-gray-50"><td class="p-5 font-black text-lg text-primaryDark">${u.studentId}</td><td class="p-5 text-base font-bold text-gray-800">${u.fullName}</td><td class="p-5 text-sm text-gray-600 font-medium">คณะ${u.faculty || '-'}<br>สาขา${u.major || '-'} (ปี ${u.year || '-'})</td><td class="p-5 flex gap-3 justify-center"><button onclick="openSendMessage('${u.id}', '${u.fullName}')" class="bg-blue-100 hover:bg-blue-200 text-blue-700 p-3 rounded-xl btn-hover-effect" title="ส่งข้อความ">💬 ส่งข้อความ</button><button onclick="openEditStudent('${u.id}', '${u.fullName}', '${u.faculty || ''}', '${u.major || ''}', '${u.year || ''}')" class="bg-yellow-100 hover:bg-yellow-200 text-yellow-700 p-3 rounded-xl btn-hover-effect" title="แก้ไขข้อมูล">✏️ แก้ไข</button></td></tr>`;
+                });
+            } catch(e) { console.error(e); }
         }
 
         window.approveActivity = async function(id) { await supabase.from('activities').update({ status: 'approved' }).eq('id', id); window.loadAdminActivities(); }
-        window.openRejectModal = (id) => { targetRejectId = id; document.getElementById('rejectModal').classList.remove('hidden-section'); }
+        window.openRejectModal = (id) => { targetRejectId = id; document.getElementById('rejectReasonInput').value = ''; document.getElementById('rejectModal').classList.remove('hidden-section'); }
         window.closeRejectModal = () => document.getElementById('rejectModal').classList.add('hidden-section');
         window.confirmReject = async function() {
             const reason = document.getElementById('rejectReasonInput').value;
@@ -682,19 +789,19 @@
             window.closeRejectModal(); window.loadAdminActivities();
         }
 
-        window.openSendMessage = (uid, name) => { targetMessageUid = uid; document.getElementById('sendMessageTargetName').innerText = `ถึง: ${name}`; document.getElementById('sendMessageModal').classList.remove('hidden-section'); }
+        window.openSendMessage = (uid, name) => { targetMessageUid = uid; document.getElementById('sendMessageTargetName').innerText = `ถึงนักศึกษา: ${name}`; document.getElementById('messageInput').value = ''; document.getElementById('sendMessageModal').classList.remove('hidden-section'); }
         window.closeSendMessageModal = () => document.getElementById('sendMessageModal').classList.add('hidden-section');
         window.confirmSendMessage = async function() {
             const msg = document.getElementById('messageInput').value;
             await supabase.from('notifications').insert([{ uid: targetMessageUid, message: msg }]);
-            window.closeSendMessageModal(); window.showModal('success', 'ส่งแล้ว', 'แจ้งเตือนส่งถึง นศ. แล้ว');
+            window.closeSendMessageModal(); window.showModal('success', 'ส่งข้อความแล้ว', 'ระบบได้แจ้งเตือนไปยังนักศึกษาเรียบร้อยแล้ว');
         }
 
-        window.openEditStudent = (uid, name) => { targetEditUid = uid; document.getElementById('editName').value = name; document.getElementById('editStudentModal').classList.remove('hidden-section'); }
+        window.openEditStudent = (uid, name, fac, maj, yr) => { targetEditUid = uid; document.getElementById('editName').value = name; document.getElementById('editFaculty').value = fac; document.getElementById('editMajor').value = maj; document.getElementById('editYear').value = yr; document.getElementById('editStudentModal').classList.remove('hidden-section'); }
         window.closeEditStudentModal = () => document.getElementById('editStudentModal').classList.add('hidden-section');
         window.confirmEditStudent = async function() {
-            await supabase.from('users').update({ fullName: document.getElementById('editName').value, faculty: document.getElementById('editFaculty').value, major: document.getElementById('editMajor').value }).eq('id', targetEditUid);
-            window.closeEditStudentModal(); window.loadAdminStudents();
+            await supabase.from('users').update({ fullName: document.getElementById('editName').value, faculty: document.getElementById('editFaculty').value, major: document.getElementById('editMajor').value, year: document.getElementById('editYear').value }).eq('id', targetEditUid);
+            window.closeEditStudentModal(); window.loadAdminStudents(); window.showModal('success', 'บันทึกสำเร็จ', 'อัปเดตข้อมูลนักศึกษาเรียบร้อย');
         }
     </script>
 </body>
