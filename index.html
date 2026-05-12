@@ -413,6 +413,7 @@
             } catch (error) { window.showModal('error', 'อัปโหลดรูปไม่สำเร็จ', error.message); }
         }
 
+        // 🔴 แก้ปัญหา InvalidKey: แปลงชื่อไฟล์ก่อนโยนขึ้นเซิร์ฟเวอร์
         window.submitActivity = async function() {
             const name = document.getElementById('actName').value.trim();
             const date = document.getElementById('actDate').value;
@@ -431,9 +432,16 @@
                 let uploadedFiles = [];
                 for (let i = 0; i < fileInput.files.length; i++) {
                     let file = fileInput.files[i];
-                    let filePath = `${currentUserId}/${Date.now()}_${file.name}`;
+                    
+                    // แปลงชื่อไฟล์ให้ปลอดภัย (สุ่มตัวอักษรอังกฤษ) เพื่อไม่ให้เซิร์ฟเวอร์อ่านภาษาไทยไม่ออก
+                    let fileExt = file.name.split('.').pop();
+                    let safeFileName = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
+                    let filePath = `${currentUserId}/${safeFileName}`;
+
                     await supabase.storage.from('activities').upload(filePath, file);
                     const { data } = supabase.storage.from('activities').getPublicUrl(filePath);
+                    
+                    // แต่บันทึกลง Database ด้วยชื่อไฟล์ดั้งเดิม (ภาษาไทย) เพื่อให้แอดมินเห็นชื่อจริง
                     uploadedFiles.push({ name: file.name, url: data.publicUrl });
                 }
 
@@ -490,7 +498,7 @@
                 if (data.length === 0) { tbody.innerHTML = '<tr><td colspan="4" class="p-8 text-center">ไม่มีข้อมูล</td></tr>'; return; }
                 
                 data.forEach(item => {
-                    let filesHtml = item.files.map((f, i) => `<a href="${f.url}" target="_blank" class="text-primary text-xs hover:underline block mb-1">📄 เอกสาร ${i+1}</a>`).join('');
+                    let filesHtml = item.files.map((f, i) => `<a href="${f.url}" target="_blank" class="text-primary text-xs hover:underline block mb-1">📄 ${f.name}</a>`).join('');
                     let action = '';
                     if(item.status === 'pending') {
                         action = `<button onclick="approveActivity('${item.id}')" class="bg-green-500 text-white p-1 rounded w-full mb-1">✅ อนุมัติ</button>
