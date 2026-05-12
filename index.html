@@ -12,8 +12,9 @@
         }
     </script>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
-<body class="text-gray-700 min-h-screen font-sans relative pb-10">
+<body class="text-gray-700 min-h-screen font-sans relative pb-10 overflow-x-hidden">
 
     <div class="floating-bg">
         <div class="floating-emoji emoji-1">🎓</div><div class="floating-emoji emoji-2">📚</div><div class="floating-emoji emoji-3">🏫</div><div class="floating-emoji emoji-4">✍️</div><div class="floating-emoji emoji-5">🏅</div>
@@ -165,17 +166,25 @@
                 </form>
             </div>
 
-            <div class="lg:col-span-2 glass-panel p-6 rounded-2xl shadow-md border-t-4 border-primary">
-                <div class="flex justify-between items-center mb-5 border-b border-gray-200 pb-3">
+            <div class="lg:col-span-2 glass-panel p-6 rounded-2xl shadow-md border-t-4 border-primary flex flex-col">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5 border-b border-gray-200 pb-3 gap-3">
                     <h2 class="text-xl font-bold flex items-center gap-2 text-primaryDark">
-                        <span>📊</span> ประวัติกิจกรรม <span id="totalHoursText" class="text-sm bg-green-100 text-green-700 px-3 py-1 rounded-full ml-2 font-bold">รวม: 0 ชม.</span>
+                        <span>📊</span> ประวัติกิจกรรม <span id="totalHoursText" class="text-sm bg-gray-100 text-gray-700 px-3 py-1 rounded-full ml-2 font-bold">รวม: 0 ชม.</span>
                     </h2>
-                    <button onclick="loadStudentActivities()" class="text-sm bg-blue-50 hover:bg-blue-100 text-primary font-bold px-4 py-2 rounded-lg border border-blue-200 shadow-sm transition flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                        รีเฟรชข้อมูลทั้งหมด
-                    </button>
+                    
+                    <div class="flex gap-2">
+                        <button id="btnGeneratePDF" onclick="generatePDF()" class="hidden text-sm bg-green-500 hover:bg-green-600 text-white font-bold px-4 py-2 rounded-lg shadow-md transition flex items-center gap-2 border border-green-600">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            พิมพ์แบบสรุป (PDF)
+                        </button>
+                        
+                        <button onclick="loadStudentActivities()" class="text-sm bg-blue-50 hover:bg-blue-100 text-primary font-bold px-4 py-2 rounded-lg border border-blue-200 shadow-sm transition flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                            รีเฟรชข้อมูล
+                        </button>
+                    </div>
                 </div>
-                <div class="overflow-x-auto rounded-xl border border-gray-200">
+                <div class="overflow-x-auto rounded-xl border border-gray-200 flex-1">
                     <table class="w-full text-left border-collapse bg-white">
                         <thead>
                             <tr class="bg-gray-100 text-primaryDark text-sm">
@@ -330,8 +339,49 @@
         </div>
     </div>
 
+    <div style="position: absolute; left: -9999px; top: 0; z-index: -1;">
+        <div id="pdfContent" style="width: 210mm; padding: 20mm 15mm; background: white; font-family: 'Prompt', sans-serif; color: black;">
+            <h2 style="text-align: center; font-size: 18px; font-weight: bold; margin-bottom: 5px;">ใบรายงานแบบบันทึกการเข้าร่วมโครงการ/กิจกรรม ที่มุ่งจิตอาสา</h2>
+            <h3 style="text-align: center; font-size: 16px; margin-bottom: 25px; font-weight: normal;">สำหรับนักศึกษา ประจำปีการศึกษา <span id="pdfYear"></span></h3>
+            
+            <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 14px;">
+                <div><b>ชื่อ-นามสกุล</b> &nbsp;&nbsp;&nbsp;<span id="pdfName"></span></div>
+                <div><b>รหัสนักศึกษา</b> &nbsp;&nbsp;&nbsp;<span id="pdfStudentId"></span></div>
+            </div>
+
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 14px;">
+                <thead>
+                    <tr style="background-color: #f8f9fa;">
+                        <th style="border: 1px solid black; padding: 10px; text-align: center; width: 15%;">ปีการศึกษา</th>
+                        <th style="border: 1px solid black; padding: 10px; text-align: center; width: 50%;">กิจกรรมจิตอาสา</th>
+                        <th style="border: 1px solid black; padding: 10px; text-align: center; width: 20%;">วันที่</th>
+                        <th style="border: 1px solid black; padding: 10px; text-align: center; width: 15%;">ชั่วโมง</th>
+                    </tr>
+                </thead>
+                <tbody id="pdfTableBody">
+                    </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" style="border: 1px solid black; padding: 10px; text-align: right; font-weight: bold;">รวมชั่วโมงกิจกรรมจิตอาสาทั้งหมด</td>
+                        <td style="border: 1px solid black; padding: 10px; text-align: center; font-weight: bold;" id="pdfTotalHours">0</td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <div style="margin-top: 60px; text-align: right; font-size: 14px; padding-right: 30px;">
+                <p style="margin-bottom: 40px;">ข้าพเจ้าขอรับรองว่าข้อมูลทั้งหมดเป็นความจริงทุกประการ</p>
+                <p>ลงชื่อ...................................................................</p>
+                <p style="margin-top: 8px;">( <span id="pdfSignName" style="padding: 0 10px;"></span> )</p>
+            </div>
+            
+            <div style="margin-top: 60px; font-size: 12px; color: #333; border-top: 1px solid #ccc; padding-top: 15px; text-align: center;">
+                <b>หมายเหตุ :</b> เอกสารสรุปฉบับนี้ถูกสร้างโดยระบบ e-Portfolio อัตโนมัติ หากตรวจสอบพบว่านักศึกษานำข้อมูลอันเป็นเท็จเข้าสู่ระบบ ถือว่ามีความผิดตามระเบียบของสถานศึกษา
+            </div>
+        </div>
+    </div>
+
     <div class="text-center text-xs font-bold text-gray-400 mt-6 absolute bottom-2 w-full">
-        ระบบ e-Portfolio v1.2
+        ระบบ e-Portfolio v1.3
     </div>
 
     <script type="module">
@@ -346,11 +396,9 @@
         let modalCloseCallback = null;
         let targetRejectId = null;
         
-        // ตัวแปรสำหรับจัดการ นศ.
         let targetMessageUid = null;
         let targetEditUid = null;
 
-        // Modal พื้นฐาน
         window.showModal = function(type, title, message, callback = null) {
             const modal = document.getElementById('customModal');
             const iconContainer = document.getElementById('modalIconContainer');
@@ -471,20 +519,14 @@
             } finally { btnLogin.innerHTML = "เข้าสู่ระบบ"; btnLogin.disabled = false; }
         }
 
-        // ==========================================
-        // ระบบกระดิ่งแจ้งเตือน (ฝั่งนักศึกษา)
-        // ==========================================
         window.checkUnreadNotifications = async function() {
             try {
                 const { data } = await supabase.from('notifications').select('id').eq('uid', currentUserId).eq('is_read', false);
                 const badge = document.getElementById('notifBadge');
                 if (data && data.length > 0) {
-                    badge.innerText = data.length;
-                    badge.classList.remove('hidden');
-                } else {
-                    badge.classList.add('hidden');
-                }
-            } catch (error) { console.error("Error checking notifications:", error); }
+                    badge.innerText = data.length; badge.classList.remove('hidden');
+                } else { badge.classList.add('hidden'); }
+            } catch (error) { console.error(error); }
         }
 
         window.openNotifications = async function() {
@@ -494,42 +536,24 @@
 
             try {
                 const { data } = await supabase.from('notifications').select('*').eq('uid', currentUserId).order('created_at', { ascending: false });
-                
                 container.innerHTML = '';
                 if(!data || data.length === 0) {
-                    container.innerHTML = '<div class="text-center text-gray-400 py-8 text-sm">ไม่มีข้อความแจ้งเตือน</div>';
-                    return;
+                    container.innerHTML = '<div class="text-center text-gray-400 py-8 text-sm">ไม่มีข้อความแจ้งเตือน</div>'; return;
                 }
-
                 data.forEach(msg => {
                     let dateStr = new Date(msg.created_at).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short'});
                     let bgClass = msg.is_read ? 'bg-white border-gray-100' : 'bg-blue-50 border-blue-200 shadow-sm';
                     let dot = msg.is_read ? '' : '<span class="w-2 h-2 rounded-full bg-blue-500 shrink-0 mt-1.5"></span>';
                     
-                    container.innerHTML += `
-                        <div class="p-4 rounded-xl border mb-3 flex gap-3 ${bgClass}">
-                            ${dot}
-                            <div>
-                                <p class="text-xs text-gray-400 mb-1 font-bold">ฝ่ายกิจการนักศึกษา • ${dateStr}</p>
-                                <p class="text-sm text-gray-700 font-medium whitespace-pre-line">${msg.message}</p>
-                            </div>
-                        </div>
-                    `;
+                    container.innerHTML += `<div class="p-4 rounded-xl border mb-3 flex gap-3 ${bgClass}">${dot}<div><p class="text-xs text-gray-400 mb-1 font-bold">ฝ่ายกิจการนักศึกษา • ${dateStr}</p><p class="text-sm text-gray-700 font-medium whitespace-pre-line">${msg.message}</p></div></div>`;
                 });
-
-                // มาร์คว่าอ่านแล้ว
                 await supabase.from('notifications').update({ is_read: true }).eq('uid', currentUserId).eq('is_read', false);
                 window.checkUnreadNotifications();
-            } catch (error) { console.error("Error loading notifications:", error); }
+            } catch (error) { console.error(error); }
         }
 
-        window.closeNotifications = function() {
-            document.getElementById('notificationsModal').classList.add('hidden-section');
-        }
+        window.closeNotifications = function() { document.getElementById('notificationsModal').classList.add('hidden-section'); }
 
-        // ==========================================
-        // ระบบส่งกิจกรรม & โหลดกิจกรรม (นักศึกษา)
-        // ==========================================
         window.handleAvatarUpload = async function(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -592,9 +616,7 @@
         }
 
         window.loadStudentActivities = async function() {
-            // 🔴 แจ้งเตือนกระดิ่งจะถูกดึงใหม่ทุกครั้งที่โหลดตารางข้อมูลนักศึกษา
             window.checkUnreadNotifications();
-
             const tbody = document.getElementById('studentTableBody');
             tbody.innerHTML = '<tr><td colspan="3" class="text-center p-4">⏳ โหลด...</td></tr>';
             let total = 0;
@@ -612,8 +634,82 @@
                     }
                     tbody.innerHTML += `<tr class="border-b hover:bg-gray-50"><td class="p-4">${item.actDate}</td><td class="p-4 font-bold">${item.actName} <span class="text-accent ml-2">(${item.act_hours || 0} ชม.)</span></td><td class="p-4 text-center align-top">${statusHtml}</td></tr>`;
                 });
-                document.getElementById('totalHoursText').innerText = `รวมชั่วโมงที่ผ่าน: ${total} ชม.`;
+                
+                document.getElementById('totalHoursText').innerText = `รวม: ${total} ชม.`;
+                document.getElementById('totalHoursText').className = total >= 40 ? "text-sm bg-green-500 text-white px-3 py-1 rounded-full ml-2 font-bold shadow" : "text-sm bg-gray-100 text-gray-700 px-3 py-1 rounded-full ml-2 font-bold";
+
+                // 🔴 แสดงปุ่ม PDF ถ้าชั่วโมงถึงเกณฑ์
+                const btnPDF = document.getElementById('btnGeneratePDF');
+                if(total >= 40) {
+                    btnPDF.classList.remove('hidden');
+                } else {
+                    btnPDF.classList.add('hidden');
+                }
+
             } catch (e) { console.error(e); }
+        }
+
+        // ==========================================
+        // ระบบสร้าง PDF (บอสใหญ่)
+        // ==========================================
+        window.generatePDF = async function() {
+            const btn = document.getElementById('btnGeneratePDF');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = "⏳ กำลังสร้าง PDF..."; 
+            btn.disabled = true;
+            
+            try {
+                // ดึงเฉพาะกิจกรรมที่ผ่านการอนุมัติแล้วเท่านั้น
+                const { data } = await supabase.from('activities').select('*').eq('uid', currentUserId).eq('status', 'approved').order('actDate', { ascending: true });
+                
+                // นำข้อมูลผู้ใช้ไปยัดลงใน Template HTML ซ่อน
+                document.getElementById('pdfName').innerText = currentUserData.fullName;
+                document.getElementById('pdfSignName').innerText = currentUserData.fullName;
+                document.getElementById('pdfStudentId').innerText = currentUserData.studentId;
+                
+                // ใช้ปีปัจจุบัน (พ.ศ.)
+                document.getElementById('pdfYear').innerText = new Date().getFullYear() + 543;
+
+                const tbody = document.getElementById('pdfTableBody');
+                tbody.innerHTML = '';
+                let total = 0;
+
+                data.forEach(item => {
+                    total += Number(item.act_hours || 0);
+                    let dateStr = new Date(item.actDate).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
+                    let yearStr = new Date(item.actDate).getFullYear() + 543;
+                    
+                    tbody.innerHTML += `
+                        <tr>
+                            <td style="border: 1px solid black; padding: 10px; text-align: center;">${yearStr}</td>
+                            <td style="border: 1px solid black; padding: 10px; text-align: left;">${item.actName}</td>
+                            <td style="border: 1px solid black; padding: 10px; text-align: center;">${dateStr}</td>
+                            <td style="border: 1px solid black; padding: 10px; text-align: center;">${item.act_hours}</td>
+                        </tr>
+                    `;
+                });
+                document.getElementById('pdfTotalHours').innerText = total;
+
+                // ดึงโครงสร้าง HTML มาแปลงเป็นรูป/PDF
+                const element = document.getElementById('pdfContent');
+                
+                var opt = {
+                  margin:       10, // ขอบกระดาษ
+                  filename:     `สรุปชั่วโมงกิจกรรม_${currentUserData.studentId}.pdf`,
+                  image:        { type: 'jpeg', quality: 0.98 },
+                  html2canvas:  { scale: 2, useCORS: true }, // scale ยิ่งเยอะยิ่งชัด
+                  jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+
+                await html2pdf().set(opt).from(element).save();
+
+            } catch (e) {
+                console.error(e);
+                window.showModal('error', 'สร้างเอกสารไม่สำเร็จ', e.message);
+            } finally {
+                btn.innerHTML = originalText; 
+                btn.disabled = false;
+            }
         }
 
         // ==========================================
