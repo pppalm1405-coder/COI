@@ -83,21 +83,21 @@
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">รหัสประจำตัวประชาชน 13 หลัก <span class="text-red-500">*</span></label>
-                    <input type="text" id="regCardId" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary focus:border-primary bg-white/80" maxlength="13">
+                    <input type="text" id="regCardId" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary bg-white/80" maxlength="13">
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5 border-t border-gray-200 pt-5 mt-2">
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">อีเมลสถาบัน <span class="text-red-500">*</span></label>
-                        <input type="email" id="regEmail" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary focus:border-primary bg-white/80">
+                        <input type="email" id="regEmail" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary bg-white/80">
                     </div>
                     <div class="space-y-5">
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-1">รหัสผ่าน (ขั้นต่ำ 6 ตัวอักษร) <span class="text-red-500">*</span></label>
-                            <input type="password" id="regPassword" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary focus:border-primary bg-white/80">
+                            <input type="password" id="regPassword" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary bg-white/80">
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-1">ยืนยันรหัสผ่าน <span class="text-red-500">*</span></label>
-                            <input type="password" id="regConfirmPassword" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary focus:border-primary bg-white/80">
+                            <input type="password" id="regConfirmPassword" class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-primary bg-white/80">
                         </div>
                     </div>
                 </div>
@@ -178,6 +178,7 @@
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                             พิมพ์แบบสรุป (PDF)
                         </button>
+                        
                         <button onclick="loadStudentActivities()" class="text-sm bg-blue-50 hover:bg-blue-100 text-primary font-bold px-4 py-2 rounded-lg border border-blue-200 shadow-sm transition flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                             รีเฟรชข้อมูล
@@ -339,49 +340,8 @@
         </div>
     </div>
 
-    <div id="pdfPrintArea" style="position: absolute; left: -9999px; top: 0; width: 1024px; background: white; padding: 0; z-index: -100;">
-        <div id="pdfContent" style="width: 210mm; min-height: 297mm; padding: 25mm 20mm; font-family: 'Sarabun', sans-serif; color: black; background: white; box-sizing: border-box; position: relative; margin: 0 auto; line-height: 1.6;">
-            
-            <div style="text-align: center; margin-bottom: 40px;">
-                <div style="font-size: 18pt; font-weight: bold;">ใบรายงานแบบบันทึกการเข้าร่วมโครงการ/กิจกรรม ที่มุ่งจิตอาสา</div>
-                <div style="font-size: 18pt;">สำหรับนักศึกษา ประจำปีการศึกษา <span id="pdfYear"></span></div>
-            </div>
-
-            <div style="text-align: center; margin-bottom: 30px; font-size: 16pt;">
-                <div>ชื่อ-นามสกุล <span id="pdfName" style="border-bottom: 1px dotted black; padding: 0 10px;"></span> &nbsp;&nbsp;&nbsp;&nbsp; รหัสนักศึกษา <span id="pdfStudentId" style="border-bottom: 1px dotted black; padding: 0 10px;"></span></div>
-            </div>
-
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 40px; font-size: 16pt; color: black; table-layout: fixed;">
-                <thead>
-                    <tr style="background-color: #f2f2f2;">
-                        <th style="border: 1px solid black; padding: 10px; text-align: center; width: 25%;">วัน เดือน ปี</th>
-                        <th style="border: 1px solid black; padding: 10px; text-align: center; width: 60%;">ชื่อกิจกรรม</th>
-                        <th style="border: 1px solid black; padding: 10px; text-align: center; width: 15%;">ชั่วโมง</th>
-                    </tr>
-                </thead>
-                <tbody id="pdfTableBody"></tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="2" style="border: 1px solid black; padding: 12px; text-align: right; font-weight: bold;">รวมชั่วโมงทั้งหมด</td>
-                        <td style="border: 1px solid black; padding: 12px; text-align: center; font-weight: bold;" id="pdfTotalHours">0</td>
-                    </tr>
-                </tfoot>
-            </table>
-
-            <div style="margin-top: 100px; text-align: center; font-size: 16pt; color: black;">
-                <p>ข้าพเจ้าขอรับรองว่าข้อมูลทั้งหมดเป็นความจริงทุกประการ</p>
-                <p style="margin-top: 50px;">ลงชื่อ...................................................................</p>
-                <p style="margin-top: 10px;">( <span id="pdfSignName"></span> )</p>
-            </div>
-            
-            <div style="position: absolute; bottom: 25mm; left: 20mm; right: 20mm; font-size: 14pt; border-top: 1px solid black; padding-top: 15px; text-align: left; color: #333;">
-                <b>หมายเหตุ :</b> เอกสารฉบับนี้จัดทำขึ้นโดยระบบ e-Portfolio อัตโนมัติ เพื่อใช้เป็นหลักฐานในการแสดงประวัติการเข้าร่วมกิจกรรมจิตอาสาของนักศึกษา หากตรวจสอบพบว่ามีการปลอมแปลงหรือนำข้อมูลอันเป็นเท็จเข้าสู่ระบบ จะถือว่ามีความผิดตามระเบียบของมหาวิทยาลัย
-            </div>
-        </div>
-    </div>
-
     <div class="text-center text-xs font-bold text-gray-400 mt-6 absolute bottom-2 w-full">
-        ระบบ e-Portfolio v1.8 (Official PDF)
+        ระบบ e-Portfolio v1.9 (The Final Print)
     </div>
 
     <script type="module">
@@ -565,44 +525,112 @@
                 tbody.innerHTML = (data && data.length > 0) ? '' : '<tr><td colspan="3" class="text-center p-4">ไม่มีประวัติ</td></tr>';
                 data?.forEach(item => {
                     if (item.status === 'approved') total += Number(item.act_hours || 0);
-                    let status = item.status === 'approved' ? '<span class="text-green-600 font-bold">อนุมัติ</span>' : (item.status === 'rejected' ? `<span class="text-red-600 font-bold">ไม่ผ่าน</span><p class="text-[10px]">${item.reject_reason || '-'}</p>` : 'รอ');
-                    tbody.innerHTML += `<tr class="border-b"><td class="p-4 text-xs">${item.actDate}</td><td class="p-4 text-xs font-bold">${item.actName} (${item.act_hours} ชม.)</td><td class="p-4 text-center">${status}</td></tr>`;
+                    let status = item.status === 'approved' ? '<span class="text-green-600 font-bold">อนุมัติแล้ว</span>' : (item.status === 'rejected' ? `<span class="text-red-600 font-bold">ไม่ผ่าน</span><p class="text-[10px]">${item.reject_reason || '-'}</p>` : 'รอประเมิน');
+                    tbody.innerHTML += `<tr class="border-b"><td class="p-4 text-sm">${item.actDate}</td><td class="p-4 text-sm font-bold">${item.actName} <span class="text-accent">(${item.act_hours} ชม.)</span></td><td class="p-4 text-center">${status}</td></tr>`;
                 });
                 document.getElementById('totalHoursText').innerText = `รวม: ${total} ชม.`;
-                document.getElementById('btnGeneratePDF').className = total >= 40 ? 'bg-green-500 text-white px-4 py-2 rounded-lg shadow' : 'hidden';
+                document.getElementById('btnGeneratePDF').className = total >= 40 ? 'text-sm bg-green-500 hover:bg-green-600 text-white font-bold px-4 py-2 rounded-lg shadow-md transition flex items-center gap-2 border border-green-600' : 'hidden';
             } catch (e) { console.error(e); }
         }
 
-        // 🔴 PDF Final Generation (v1.8 Official)
+        // 🔴 PDF Final Generation (The Bulletproof Method v1.9)
+        // สร้างเอกสารจาก String HTML สดๆ ในอากาศ เพื่อหนีปัญหาสเกลจอภาพเบี้ยว
         window.generatePDF = async function() {
-            const btn = document.getElementById('btnGeneratePDF'); btn.innerHTML = "⏳ กำลังสร้าง..."; btn.disabled = true;
+            const btn = document.getElementById('btnGeneratePDF'); 
+            const originalText = btn.innerHTML;
+            btn.innerHTML = "⏳ กำลังสร้างเอกสาร..."; 
+            btn.disabled = true;
+            
             try {
+                // ดึงเฉพาะกิจกรรมที่ผ่านแล้วเรียงตามวันที่
                 const { data } = await supabase.from('activities').select('*').eq('uid', currentUserId).eq('status', 'approved').order('actDate', { ascending: true });
-                document.getElementById('pdfName').innerText = currentUserData.fullName;
-                document.getElementById('pdfSignName').innerText = currentUserData.fullName;
-                document.getElementById('pdfStudentId').innerText = currentUserData.studentId;
-                document.getElementById('pdfYear').innerText = new Date().getFullYear() + 543;
-                const pdfBody = document.getElementById('pdfTableBody'); pdfBody.innerHTML = ''; let total = 0;
+                
+                let totalHours = 0;
+                let rowsHtml = '';
+                
+                // สร้างแถวตารางแบบฝัง Inline CSS ทั้งหมด
                 data.forEach(item => {
-                    total += Number(item.act_hours || 0);
-                    pdfBody.innerHTML += `<tr><td style="border: 1px solid black; padding: 10px; text-align: center;">${new Date(item.actDate).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' })}</td><td style="border: 1px solid black; padding: 10px; text-align: left;">${item.actName}</td><td style="border: 1px solid black; padding: 10px; text-align: center;">${item.act_hours}</td></tr>`;
+                    totalHours += Number(item.act_hours || 0);
+                    let dateObj = new Date(item.actDate);
+                    let dateStr = dateObj.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
+                    
+                    rowsHtml += `
+                        <tr>
+                            <td style="border: 1px solid black; padding: 10px; text-align: center;">${dateStr}</td>
+                            <td style="border: 1px solid black; padding: 10px; text-align: left;">${item.actName}</td>
+                            <td style="border: 1px solid black; padding: 10px; text-align: center;">${item.act_hours}</td>
+                        </tr>
+                    `;
                 });
-                document.getElementById('pdfTotalHours').innerText = total;
 
-                // ระบบควบคุมสเกล A4
-                const wrapper = document.getElementById('pdfPrintArea');
-                wrapper.style.left = '0'; // ย้ายออกมาเพื่อแคปภาพ
+                let yearStr = new Date().getFullYear() + 543;
 
+                // 🔴 โครงสร้าง HTML ที่ถูกออกแบบมาสำหรับเครื่องปริ้นต์โดยเฉพาะ (ไม่แคร์ขนาดจอมือถือ)
+                const pdfHTML = `
+                <div style="width: 210mm; min-height: 297mm; padding: 25mm 20mm; font-family: 'Sarabun', sans-serif; font-size: 16pt; color: black; background: white; position: relative; box-sizing: border-box; line-height: 1.5;">
+                    
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <div style="font-size: 18pt; font-weight: bold; line-height: 1.2;">ใบรายงานแบบบันทึกการเข้าร่วมโครงการ/กิจกรรม ที่มุ่งจิตอาสา</div>
+                        <div style="font-size: 18pt; line-height: 1.2;">สำหรับนักศึกษา ประจำปีการศึกษา ${yearStr}</div>
+                    </div>
+
+                    <table style="width: 100%; border: none; margin-bottom: 15px; font-size: 16pt;">
+                        <tr>
+                            <td style="text-align: left; width: 60%;"><b>ชื่อ-นามสกุล</b> &nbsp;&nbsp;&nbsp;${currentUserData.fullName}</td>
+                            <td style="text-align: right; width: 40%;"><b>รหัสนักศึกษา</b> &nbsp;&nbsp;&nbsp;${currentUserData.studentId}</td>
+                        </tr>
+                    </table>
+
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 50px; font-size: 16pt;">
+                        <thead>
+                            <tr style="background-color: #f8f9fa;">
+                                <th style="border: 1px solid black; padding: 10px; text-align: center; width: 25%;">วัน เดือน ปี</th>
+                                <th style="border: 1px solid black; padding: 10px; text-align: center; width: 60%;">ชื่อกิจกรรม</th>
+                                <th style="border: 1px solid black; padding: 10px; text-align: center; width: 15%;">ชั่วโมง</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rowsHtml}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="2" style="border: 1px solid black; padding: 10px; text-align: right; font-weight: bold;">รวมชั่วโมงทั้งหมด</td>
+                                <td style="border: 1px solid black; padding: 10px; text-align: center; font-weight: bold;">${totalHours}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <div style="text-align: center; font-size: 16pt; margin-top: 50px;">
+                        <p style="margin-bottom: 50px;">ข้าพเจ้าขอรับรองว่าข้อมูลทั้งหมดเป็นความจริงทุกประการ</p>
+                        <p>ลงชื่อ...................................................................</p>
+                        <p style="margin-top: 5px;">( &nbsp;&nbsp;${currentUserData.fullName}&nbsp;&nbsp; )</p>
+                    </div>
+                    
+                    <div style="position: absolute; bottom: 25mm; left: 20mm; right: 20mm; font-size: 16pt; border-top: 1px solid black; padding-top: 15px; text-align: justify; line-height: 1.3;">
+                        <b>หมายเหตุ :</b> เอกสารฉบับนี้จัดทำขึ้นโดยระบบ e-Portfolio อัตโนมัติ เพื่อใช้เป็นหลักฐานในการแสดงประวัติการเข้าร่วมกิจกรรมจิตอาสาของนักศึกษา หากตรวจสอบพบว่ามีการปลอมแปลงหรือนำข้อมูลอันเป็นเท็จเข้าสู่ระบบ จะถือว่ามีความผิดตามระเบียบของมหาวิทยาลัย
+                    </div>
+                </div>
+                `;
+                
+                // ตั้งค่า HTML2PDF
                 var opt = {
-                    margin: 0,
-                    filename: `Report_${currentUserData.studentId}.pdf`,
-                    image: { type: 'jpeg', quality: 1.0 },
-                    html2canvas: { scale: 2, useCORS: true, windowWidth: 1024 },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                  margin:       0, 
+                  filename:     `สรุปกิจกรรมจิตอาสา_${currentUserData.studentId}.pdf`,
+                  image:        { type: 'jpeg', quality: 1 },
+                  html2canvas:  { scale: 2, useCORS: true }, 
+                  jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
-                await html2pdf().set(opt).from(document.getElementById('pdfContent')).save();
-                wrapper.style.left = '-9999px'; // ซ่อนกลับ
-            } catch (e) { window.showModal('error', 'ล้มเหลว', e.message); } finally { btn.innerHTML = "พิมพ์แบบสรุป (PDF)"; btn.disabled = false; }
+
+                // ส่ง String HTML เข้าไปวาดภาพโดยตรง (หนีปัญหาหน้าจอบัง)
+                await html2pdf().set(opt).from(pdfHTML).save();
+
+            } catch (e) {
+                console.error(e);
+                window.showModal('error', 'สร้างเอกสารไม่สำเร็จ', e.message);
+            } finally {
+                btn.innerHTML = originalText; 
+                btn.disabled = false;
+            }
         }
 
         // Admin Tab Logic
